@@ -30,7 +30,7 @@ async function injectTags() {
 
     // LOGIC: If companies exist, map them. If not, show "Dataset NULL"
     if (companies.length > 0) {
-        companies.slice(0, 6).forEach(name => {
+        companies.slice(0, 10).forEach(name => {
             const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
             const span = document.createElement('span');
             span.className = 'company-tag';
