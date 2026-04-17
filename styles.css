@@ -1,7 +1,7 @@
 /* Force the margin and padding to zero using !important */
 .company-tags-wrapper {
     display: flex !important;
-    flex-wrap: wrap !important;
+    /* flex-wrap: wrap !important; */
     gap: 8px !important;
     margin: 0px !important;
     padding: 0px !important;
