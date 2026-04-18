@@ -1,19 +1,24 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode Debugger",
+  "name": "LeetCode Company Tags",
   "version": "1.0",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Company Tags"
+  },
   "content_scripts": [
     {
-      "matches": ["*://leetcode.com/*"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
       "css": ["styles.css"],
       "run_at": "document_end"
     }
   ],
+  "permissions": ["activeTab", "storage"],
   "web_accessible_resources": [
     {
       "resources": ["data.json"],
-      "matches": ["*://leetcode.com/*"]
+      "matches": ["<all_urls>"]
     }
   ]
 }

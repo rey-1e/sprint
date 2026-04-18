@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 300px;
+  height: 450px;
+  overflow: hidden;
+  font-family: 'Red Hat Display', sans-serif;
+  background: #f0f8ff;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-topbar {
+  background: linear-gradient(135deg, #5bb8f5 0%, #1a7ec8 100%);
+  padding: 20px 20px 16px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.popup-topbar::before {
+  content: '';
+  position: absolute;
+  top: -26px; right: -26px;
+  width: 100px; height: 100px;
+  background: rgba(255,255,255,0.10);
+  border-radius: 50%;
+}
+
+.popup-topbar::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: 40px;
+  width: 130px; height: 56px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 50%;
+}
+
+.topbar-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 4px;
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-icon {
+  width: 22px; height: 22px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.topbar-icon svg { width: 13px; height: 13px; }
+
+.popup-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 18px 0;
+  gap: 14px;
+}
+
+.section-eyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #5b9ec9;
+}
+
+.complexity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.complexity-card {
+  background: #fff;
+  border: 0.5px solid #c5e2f5;
+  border-radius: 14px;
+  padding: 14px 10px 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.complexity-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3.5px;
+  background: linear-gradient(90deg, #5bb8f5, #1a7ec8);
+}
+
+.complexity-card.time::before {
+  background: linear-gradient(90deg, #1a7ec8, #0d5fa3);
+}
+
+.card-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #7ab8d8;
+  margin-bottom: 8px;
+}
+
+.card-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d4f80;
+  letter-spacing: -0.5px;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instruction {
+  background: #e3f4fd;
+  border: 0.5px solid #b8dff5;
+  border-radius: 11px;
+  padding: 11px 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.instruction-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #5bb8f5;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.instruction-text {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: #2a6a90;
+  line-height: 1.55;
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.loader-bar {
+  width: 100%;
+  height: 4px;
+  background: #d0eaf8;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loader-bar::after {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 40%;
+  background: #1a7ec8;
+  border-radius: 2px;
+  animation: slide 1s ease-in-out infinite;
+}
+
+@keyframes slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+.loader-text {
+  font-size: 13px;
+  color: #5b9ec9;
+  font-weight: 500;
+}
+
+.popup-footer {
+  padding: 12px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 0.5px solid #d0eaf8;
+  margin-top: auto;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 9px;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+
+.footer-link:hover { background: #e3f4fd; }
+
+.link-icon {
+  width: 24px; height: 24px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.link-icon.donate { background: #ffecd0; }
+.link-icon.rate   { background: #d4f0e0; }
+.link-icon.notes  { background: #dde8fb; }
+.link-icon svg { width: 13px; height: 13px; }
+
+.link-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1a5a80;
+  flex: 1;
+}
+
+.link-arrow { font-size: 12px; color: #9ac8e0; }
+
+.hidden { display: none !important; }

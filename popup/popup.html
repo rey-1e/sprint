@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="popup-topbar">
+    <div class="topbar-label">Complexity Lens</div>
+    <div class="topbar-title">
+      <div class="topbar-icon">
+        <svg viewBox="0 0 10 10" fill="none">
+          <circle cx="5" cy="5" r="3.5" stroke="white" stroke-width="1.2"/>
+          <path d="M5 3v2.5l1.5 1" stroke="white" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Analyze Selection
+    </div>
+  </div>
+
+  <div class="popup-body">
+    <div class="section-eyebrow">Complexity Analysis</div>
+    <div class="complexity-grid">
+      <div class="complexity-card space">
+        <div class="card-label">Space</div>
+        <div class="card-value" id="space">—</div>
+      </div>
+      <div class="complexity-card time">
+        <div class="card-label">Time</div>
+        <div class="card-value" id="time">—</div>
+      </div>
+    </div>
+
+    <div class="instruction" id="instruction">
+      <div class="instruction-dot"></div>
+      <div class="instruction-text">Select any code on the page, then click the icon to analyze.</div>
+    </div>
+
+    <div class="loader hidden" id="loader">
+      <div class="loader-bar"></div>
+      <div class="loader-text">Analyzing...</div>
+    </div>
+  </div>
+
+  <div class="popup-footer">
+    <a class="footer-link" href="https://example.com/donate" target="_blank">
+      <div class="link-icon donate">
+        <svg viewBox="0 0 10 10" fill="none">
+          <path d="M5 8.5S1 6 1 3.5A2 2 0 015 2a2 2 0 014 1.5C9 6 5 8.5 5 8.5z" fill="#f5a623"/>
+        </svg>
+      </div>
+      <span class="link-text">Donate us!</span>
+      <span class="link-arrow">↗</span>
+    </a>
+    <a class="footer-link" href="https://example.com/rate" target="_blank">
+      <div class="link-icon rate">
+        <svg viewBox="0 0 10 10" fill="none">
+          <path d="M5 1.5l.9 2.7H9l-2.4 1.7.9 2.7L5 7l-2.5 1.6.9-2.7L1 4.2h3.1z" fill="#22a06b"/>
+        </svg>
+      </div>
+      <span class="link-text">Rate us!</span>
+      <span class="link-arrow">↗</span>
+    </a>
+    <a class="footer-link" href="https://example.com/updates" target="_blank">
+      <div class="link-icon notes">
+        <svg viewBox="0 0 10 10" fill="none">
+          <rect x="2" y="1.5" width="6" height="7" rx="1" stroke="#4a7fd4" stroke-width="1.1"/>
+          <path d="M3.5 4h3M3.5 6h2" stroke="#4a7fd4" stroke-width="0.9" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="link-text">Update notes</span>
+      <span class="link-arrow">↗</span>
+    </a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
