@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "leetCode Sprint",
   "version": "1.0",
-  "description": "Company-tags, Reviews, Complexities",
+  "description": "Company-tags, Reviews, Complexities.",
   "icons": {
       "128": "icon.png",
       "192": "icon.png",
