@@ -1,19 +1,35 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode Debugger",
-  "version": "1.0",
+  "name": "LeetCode Super-tools",
+  "version": "1.2",
+  "description": "Shows company tags, analyzes code complexity, and provides AI submission reviews on LeetCode.",
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "LeetCode Super-tools"
+  },
+  "permissions": ["storage", "contextMenus"],
+  "host_permissions":[
+    "https://leetcode.com/*",
+    "https://*.a.run.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "matches": ["*://leetcode.com/*"],
+      "matches":[
+        "https://leetcode.com/problems/*",
+        "https://leetcode.com/submissions/*"
+      ],
       "js": ["content.js"],
-      "css": ["styles.css"],
-      "run_at": "document_end"
+      "css": ["styles.css"]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": ["data.json"],
-      "matches": ["*://leetcode.com/*"]
+      "matches": ["https://leetcode.com/*"]
     }
   ]
 }
