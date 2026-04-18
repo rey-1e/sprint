@@ -1,24 +1,29 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode Company Tags",
-  "version": "1.0",
+  "name": "LeetCode Super-tools",
+  "version": "1.1",
+  "description": "Shows company tags and analyzes code complexity on LeetCode.",
+
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "Company Tags"
+    "default_title": "LeetCode Super-tools"
+  },
+  "permissions": ["storage", "contextMenus"],
+  "host_permissions": ["https://leetcode.com/*"],
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://leetcode.com/problems/*"],
       "js": ["content.js"],
-      "css": ["styles.css"],
-      "run_at": "document_end"
+      "css": ["styles.css"]
     }
   ],
-  "permissions": ["activeTab", "storage"],
   "web_accessible_resources": [
     {
       "resources": ["data.json"],
-      "matches": ["<all_urls>"]
+      "matches": ["https://leetcode.com/*"]
     }
   ]
 }
