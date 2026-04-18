@@ -35,7 +35,6 @@ async function injectTags() {
         }
         
         if (!targetElement) return;
-
         if (document.getElementById('custom-company-tags')) return;
 
         const container = document.createElement('div');
@@ -102,48 +101,38 @@ function injectComplexityUI() {
     }
 }
 
-async function analyzeCode(code) {
+// FIX: Send request to background.js instead of fetching directly from content.js
+function analyzeCode(code) {
     injectComplexityUI(); 
 
     const timeEl = document.getElementById('time-complexity-value');
     const spaceEl = document.getElementById('space-complexity-value');
     const statusEl = document.getElementById('complexity-status-text');
 
-    if (!timeEl || !spaceEl || !statusEl) {
-        console.error("Sprint: Complexity UI elements not found.");
-        return;
-    }
+    if (!timeEl || !spaceEl || !statusEl) return;
 
     timeEl.textContent = '...';
     spaceEl.textContent = '...';
     statusEl.textContent = 'Analyzing...';
     statusEl.style.color = '#f5a623'; 
 
-    const SERVER_URL = 'http://localhost:3000/analyze';
-
-    try {
-        const response = await fetch(SERVER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code: code })
-        });
-
-        if (!response.ok) throw new Error(`Server responded with status: ${response.status}`);
-
-        const parsed = await response.json();
-
-        timeEl.textContent = parsed.time || 'N/A';
-        spaceEl.textContent = parsed.space || 'N/A';
-        statusEl.textContent = 'Analysis Complete';
-        statusEl.style.color = '#22a06b'; 
-
-    } catch (err) {
-        console.error("Sprint: Analysis failed.", err);
-        timeEl.textContent = 'Err';
-        spaceEl.textContent = 'Err';
-        statusEl.textContent = 'Analysis Failed';
-        statusEl.style.color = '#ef4444'; 
-    }
+    chrome.runtime.sendMessage(
+        { type: "FETCH_COMPLEXITY", code: code },
+        (response) => {
+            if (response && response.success) {
+                timeEl.textContent = response.data.time || 'N/A';
+                spaceEl.textContent = response.data.space || 'N/A';
+                statusEl.textContent = 'Analysis Complete';
+                statusEl.style.color = '#22a06b'; 
+            } else {
+                console.error("Sprint: Analysis failed.", response?.error);
+                timeEl.textContent = 'Err';
+                spaceEl.textContent = 'Err';
+                statusEl.textContent = 'Analysis Failed';
+                statusEl.style.color = '#ef4444'; 
+            }
+        }
+    );
 }
 
 /**
@@ -155,22 +144,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === "ANALYZE_SELECTION") {
         let codeToAnalyze = request.code;
 
-        // FIX: If Chrome failed to catch the text natively (Monaco Editor quirk),
-        // try grabbing standard window selection.
         if (!codeToAnalyze || codeToAnalyze.trim() === "") {
             codeToAnalyze = window.getSelection().toString();
         }
 
-        // FIX: If still nothing is selected, gracefully grab the ENTIRE code in the editor!
         if (!codeToAnalyze || codeToAnalyze.trim() === "") {
             const codeLines = document.querySelectorAll('.view-line');
             if (codeLines.length > 0) {
                 codeToAnalyze = Array.from(codeLines).map(line => line.textContent).join('\n');
-                console.log("Sprint: No selection detected, analyzing entire editor instead.");
             }
         }
 
-        // Final check
         if (codeToAnalyze && codeToAnalyze.trim() !== "") {
             analyzeCode(codeToAnalyze);
             sendResponse({ status: "Analysis started" });
