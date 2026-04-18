@@ -20,7 +20,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // NEW: Handle the network request from the background script to bypass CORS/HTTPS blocks
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "FETCH_COMPLEXITY") {
-      fetch('http://localhost:3000/analyze', {
+      fetch('https://analyze-i6ptizncma-uc.a.run.app', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code: request.code })
