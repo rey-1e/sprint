@@ -53,3 +53,155 @@ p {
   color: #4a6b8a;
   line-height: 1.5;
 }
+
+/* Force the margin and padding to zero using !important */
+.company-tags-wrapper {
+    display: flex !important;
+    /* flex-wrap: wrap !important; */
+    gap: 8px !important;
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+.company-tag {
+    background-color: #FFFFFF1A !important;
+    color: #FAFAFA !important;
+    padding: 4px 8px !important;
+    border-radius: 12px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    white-space: nowrap; 
+}
+
+/* --- COMPLEXITY ANALYZER STYLES --- */
+#complexity-analyzer-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: #eff1f6bf;
+    margin-right: auto; /* Pushes other items to the right */
+}
+
+.complexity-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.complexity-label {
+    font-weight: 500;
+    color: #eff1f680;
+}
+
+.complexity-value {
+    font-weight: 600;
+    font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+    font-size: 14px;
+    color: #eff1f6;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.complexity-status {
+    font-size: 12px;
+    font-style: italic;
+    transition: color 0.3s;
+}
+
+/* --- NEW: ACCEPTED SUBMISSION AI STYLES --- */
+.sprint-ai-analysis {
+    background: transparent; 
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    color: #eff1f6;
+    width: 100%;
+    margin-bottom: 12px; /* Margin to space it out from Runtime */
+}
+
+.sprint-ai-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.sprint-ai-tabs {
+    display: flex;
+    gap: 12px;
+}
+
+.sprint-ai-tab {
+    color: #8b949e; /* Faded grayish text */
+    font-weight: 500;
+}
+
+.sprint-ai-tab.active {
+    color: #a78bfa; /* Light purple */
+}
+
+.sprint-ai-votes {
+    color: #8b949e;
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.sprint-ai-summary {
+    color: #c4b5fd; /* Soft light purple message */
+    font-size: 13px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.sprint-ai-divider {
+    border: none;
+    border-top: 1px solid #ffffff1a;
+    margin: 12px 0;
+}
+
+.sprint-ai-section-title {
+    color: #a78bfa;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.sprint-ai-icon {
+    font-size: 16px;
+}
+
+.sprint-ai-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 12px;
+    font-size: 13px;
+    align-items: baseline;
+}
+
+.sprint-ai-label {
+    color: #8b949e;
+    font-weight: 500;
+}
+
+.sprint-ai-val {
+    color: #e5e7eb;
+    line-height: 1.4;
+}
+
+.sprint-ai-green {
+    color: #4ade80; /* Success green text */
+}
+
+.sprint-ai-content {
+    transition: opacity 0.3s ease;
+}

@@ -1,21 +1,27 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Super-tools",
-  "version": "1.1",
-  "description": "Shows company tags and analyzes code complexity on LeetCode.",
+  "version": "1.2",
+  "description": "Shows company tags, analyzes code complexity, and provides AI submission reviews on LeetCode.",
 
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "LeetCode Super-tools"
   },
   "permissions": ["storage", "contextMenus"],
-  "host_permissions": ["https://leetcode.com/*"],
+  "host_permissions":[
+    "https://leetcode.com/*",
+    "https://*.a.run.app/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["https://leetcode.com/problems/*"],
+      "matches":[
+        "https://leetcode.com/problems/*",
+        "https://leetcode.com/submissions/*"
+      ],
       "js": ["content.js"],
       "css": ["styles.css"]
     }
