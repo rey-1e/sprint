@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
       // ⚠️ IMPORTANT: Update this URL with your newly deployed analyzeDetailed endpoint!
       // Firebase will give you a new URL when you deploy the updated index.js
-      fetch('https://us-central1-sprint-87863.cloudfunctions.net/analyzeDetailed', { 
+      fetch('https://analyzedetailed-i6ptizncma-uc.a.run.app', { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code: request.code })

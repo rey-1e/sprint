@@ -1,18 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html,
 body {
-  width: 300px;
-  height: 450px;
-  overflow: hidden;
-  font-family: 'Red Hat Display', sans-serif;
-  background: #f0f8ff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4fbf7;
+  color: #1a2e22;
+  width: 360px;
+  height: 420px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  padding: 18px 22px 16px;
+  border-bottom: 1.5px solid #d0eedc;
+  background: #fff;
+}
+
+.logo-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: indianred;
+  flex-shrink: 0;
+}
+
+.ext-name {
+  padding-top : 8px;
+  padding-bottom : 8px;
+  font-size: 25px;
+  font-weight: 700;
+  color: #1a2e22;
+  letter-spacing: -0.01em;
+}
+
+/* ── Main ── */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 26px;
+  gap: 22px;
+}
+
+.tagline {
+  font-size: 20px;
+  color: indianred;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.points li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  color: #1a2e22;
+  font-weight: 500;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: indianred;
+  flex-shrink: 0;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-top: 1.5px solid #d0eedc;
+  background: #fff;
+}
+
+.btn-donate {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  background :indianred;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: opacity .15s, transform .15s;
+}
+
+.btn-donate:hover { opacity: .88; transform: translateY(-1px); }
+.btn-donate:active { opacity: 1; transform: translateY(0); }
+
+.note {
+  font-size: 13px;
+  color: indianred;
+}
+
+.note2 {
+  font-size: 13px;
+  color:cadetblue;
+}
+
+.imageClass {
+  height : 40px;
+  width : 40px;
+}
+
+.redirection-page {
+  font-size : 20px;
+  color : black;
+}
+
+.combine {
+  display : flex;
+  align-items: center;
+  gap:10px;
 }

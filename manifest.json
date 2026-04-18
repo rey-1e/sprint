@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode Super-tools",
-  "version": "1.2",
-  "description": "Shows company tags, analyzes code complexity, and provides AI submission reviews on LeetCode.",
+  "name": "leetCode Sprint",
+  "version": "1.0",
+  "description": "Company-tags, Reviews, Complexity",
+  "icons": {
+      "128": "icon.png",
+      "192": "icon.png",
+      "512": "icon.png"
+    },
 
   "action": {
     "default_popup": "popup/popup.html",
