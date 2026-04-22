@@ -33,7 +33,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["data.json"],
+      "resources": ["data.json", "ratings.json"],
       "matches": ["https://leetcode.com/*"]
     }
   ],

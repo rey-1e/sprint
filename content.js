@@ -1,6 +1,6 @@
 /**
  * ==============================================================================
- * SECTION 1: INJECT COMPANY TAGS
+ * SECTION 1: INJECT COMPANY TAGS AND ELO RATING
  * ==============================================================================
  */
 let isInjectingTags = false; 
@@ -17,6 +17,7 @@ async function injectTags() {
         const slug = urlParts[problemsIndex + 1];
         if (!slug) return;
 
+        // 1. Fetch Question ID for Company Data
         const allProblemsRes = await fetch('/api/problems/all/');
         const allProblemsData = await allProblemsRes.json();
         const problem = allProblemsData.stat_status_pairs.find(p => p.stat.question__title_slug === slug);
@@ -24,10 +25,25 @@ async function injectTags() {
 
         if (!questionId) return;
 
+        // 2. Fetch Company Data
         const companyDataRes = await fetch(chrome.runtime.getURL('data.json'));
         const companyData = await companyDataRes.json();
         const companies = companyData[questionId] ||[];
 
+        // 3. Fetch ELO Rating Data
+        let eloRating = null;
+        try {
+            const ratingRes = await fetch(chrome.runtime.getURL('ratings.json'));
+            const ratingData = await ratingRes.json();
+            const problemData = ratingData.find(p => p.TitleSlug === slug);
+            if (problemData && problemData.Rating) {
+                eloRating = Math.round(problemData.Rating);
+            }
+        } catch (error) {
+            console.error("Sprint: Failed to fetch ratings.json", error);
+        }
+
+        // 4. Find LeetCode's Difficulty Tag
         let targetElement = document.querySelector('[class*="text-difficulty-"]');
         if (!targetElement) {
             const allDivs = Array.from(document.querySelectorAll('div'));
@@ -35,6 +51,16 @@ async function injectTags() {
         }
         
         if (!targetElement) return;
+
+        // 5. INJECT ELO DIRECTLY INTO LEETCODE'S TAG
+        if (eloRating && !targetElement.hasAttribute('data-elo-injected')) {
+            // This will output "Easy - 900", "Medium - 1400", etc.
+            targetElement.textContent = `${targetElement.textContent} - ${eloRating}`;
+            // Mark it so our observer doesn't append it in an infinite loop
+            targetElement.setAttribute('data-elo-injected', 'true'); 
+        }
+
+        // 6. Append Company Tags
         if (document.getElementById('custom-company-tags')) return;
 
         const container = document.createElement('div');
@@ -57,11 +83,12 @@ async function injectTags() {
             container.appendChild(span);
         }
 
+        // Place company tags right next to the difficulty tag
         const appendTarget = targetElement.closest('.flex') || targetElement;
         appendTarget.after(container);
 
     } catch (error) {
-        console.error("Sprint: Failed to inject company tags.", error);
+        console.error("Sprint: Failed to inject tags.", error);
     } finally {
         isInjectingTags = false; 
     }
@@ -89,7 +116,7 @@ function injectComplexityUI() {
             <span class="complexity-label">Space:</span>
             <span class="complexity-value" id="space-complexity-value">—</span>
         </div>
-        <div class="complexity-status" id="complexity-status-text">Right-click anywhere to analyze</div>
+        <div class="complexity-status" id="complexity-status-text">Right-click or Ctrl+Shift+X</div>
     `;
 
     const tabbarInner = targetBar.querySelector('.flexlayout__tabset_tabbar_inner');
