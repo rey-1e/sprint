@@ -1,52 +1,57 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Support Us</title>
+  <title>Sprint</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header>
-    <!-- <div class="logo-dot"></div> -->
-    <div class = "combine">
-      <img src = "../icon.png" class = "imageClass">
-      <span class="ext-name">Sprint</span>
-
+    <div class="brand">
+      <img src="../icon.png" alt="Sprint icon" />
+      <span class="ext-name">leetCode Sprint<span>.</span></span>
     </div>
-    <a href = "help.html" class = "redirection-page">Donate us</a>
+    <a href="help.html" class="header-link">Support us ♥</a>
   </header>
 
   <main>
-    <p class="tagline">How to use: </p>
+    <div>
+      <p class="section-label">How to use</p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span class="feature-text"><strong>Complexity Analysis</strong> — select code → right-click → Analyse with Sprint</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span class="feature-text"><strong>Submission Analysis</strong> — appears automatically after each accepted submission</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span class="feature-text"><strong>Company Tags</strong> — injected automatically on every problem page</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span class="feature-text"><strong>ELO Rating</strong> — shown alongside difficulty label on each problem</span>
+        </div>
+      </div>
+    </div>
 
-    <ul class="points">
-      <li>
-        <span class="dot"></span>
-        select code -> right click -> analyze with sprint to analyze complexities
-      </li>
-      <li>
-        <span class="dot"></span>
-        Submission Analysis appears after each submission
-      </li>
-      <li>
-        <span class="dot"></span>
-        Company Tags appear automatically 
-      </li>
-      <li>
-        <span class="dot"></span>
-        More features coming soon...
-      </li>
-    </ul>
+    <div class="shortcut-row">
+      <span class="shortcut-label">Keyboard shortcut</span>
+      <span class="kbd">Ctrl + Shift + X</span>
+    </div>
+
+    <p class="section-label" style="margin-bottom: 0; color: #cd5c5c; font-size: 11px;">More features coming soon...</p>
   </main>
 
   <footer>
     <a class="btn-donate" href="https://razorpay.me/@raj9589" target="_blank" rel="noopener noreferrer">
       Support this project
     </a>
-    
   </footer>
+
   <script src="popup.js"></script>
 </body>
 </html>
