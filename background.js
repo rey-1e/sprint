@@ -54,3 +54,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true; // Tells Chrome we are responding asynchronously
   }
 });
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "analyze-complexity") {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        type: "ANALYZE_SELECTION",
+        code: "" // Your content.js already falls back to reading the whole editor if code is empty!
+      });
+    });
+  }
+});

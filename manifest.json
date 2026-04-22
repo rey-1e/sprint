@@ -36,5 +36,14 @@
       "resources": ["data.json"],
       "matches": ["https://leetcode.com/*"]
     }
-  ]
+  ],
+  "commands": {
+    "analyze-complexity": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X",
+        "mac": "Command+Shift+X"
+      },
+      "description": "Analyze Time/Space Complexity"
+    }
+  }
 }
