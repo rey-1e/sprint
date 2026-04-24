@@ -57,7 +57,7 @@
     transition: color 0.3s;
 }
 
-/* --- NEW: ACCEPTED SUBMISSION AI STYLES --- */
+/* --- ACCEPTED SUBMISSION AI STYLES --- */
 .sprint-ai-analysis {
     background-color: rgba(255, 255, 255, 0.05) !important;
     padding: 12px !important;
@@ -84,16 +84,16 @@
 
 .sprint-ai-tab {
     color: #8b949e; 
-    cursor: pointer;          /* Shows the user they can click it */
-    transition: color 0.2s;   /* Smooth color transition */
+    cursor: pointer;          
+    transition: color 0.2s;   
 }
 
 .sprint-ai-tab:hover {
-    color: #e5e7eb;           /* Lightens when hovering */
+    color: #e5e7eb;           
 }
 
 .sprint-ai-tab.active {
-    color: #38bdf8;           /* Vibrant Sky Blue */
+    color: #38bdf8;           
     font-weight: 500;
 }
 
@@ -143,15 +143,60 @@
 }
 
 .sprint-ai-content {
-    animation: fadeIn 0.3s ease-in-out; /* Smooth fade when switching tabs */
-}
-
-.sprint-decorative-graph {
-    margin-left: 12px;
-    opacity: 0.8;
+    animation: fadeIn 0.3s ease-in-out; 
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(2px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- NEW: WHERE AM I WRONG UI --- */
+.sprint-wrong-btn-style {
+    display: flex;
+    align-items: center;
+    margin-left: 10px; /* Space between Code tab and this button */
+    padding: 0 10px;
+    background-color: rgba(239, 68, 68, 0.1); 
+    color: #ef4444; 
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    height: 24px;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 99999;
+    font-family: inherit;
+    font-weight: 500;
+    
+    /* CRITICAL FLEXBOX FIXES */
+    flex-shrink: 0; 
+    align-self: center; 
+    white-space: nowrap;
+}
+
+.sprint-wrong-btn-style:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+@keyframes lc-pop-in {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes lc-fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.lc-ext-btn:hover {
+    background: #3e3e3e !important;
+    border-color: #555 !important;
+}
+
+.lc-ext-close-x:hover {
+    color: #eff2f6 !important;
 }

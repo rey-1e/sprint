@@ -35,14 +35,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true; 
   }
 
-  // 2. NEW: Submission Analysis Handler (Accepted screen tool)
+  // 2. Submission Analysis Handler (Accepted screen tool)
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
-      // ⚠️ IMPORTANT: Update this URL with your newly deployed analyzeDetailed endpoint!
-      // Firebase will give you a new URL when you deploy the updated index.js
       fetch('https://analyzedetailed-i6ptizncma-uc.a.run.app', { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code: request.code })
+      })
+      .then(res => {
+          if (!res.ok) throw new Error("Server error " + res.status);
+          return res.json();
+      })
+      .then(data => sendResponse({ success: true, data: data }))
+      .catch(err => sendResponse({ success: false, error: err.message }));
+
+      return true; // Tells Chrome we are responding asynchronously
+  }
+
+  // 3. Where am I wrong Handler (Now includes Title and Context)
+  if (request.type === "FETCH_WHERE_AM_I_WRONG") {
+      fetch('https://findmybug-i6ptizncma-uc.a.run.app', { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+              code: request.code,
+              problemTitle: request.problemTitle,
+              problemContext: request.problemContext
+          })
       })
       .then(res => {
           if (!res.ok) throw new Error("Server error " + res.status);
@@ -60,7 +79,7 @@ chrome.commands.onCommand.addListener((command) => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, {
         type: "ANALYZE_SELECTION",
-        code: "" // Your content.js already falls back to reading the whole editor if code is empty!
+        code: "" // content.js falls back to reading the whole editor if code is empty
       });
     });
   }
