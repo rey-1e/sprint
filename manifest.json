@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "LeetCode Sprint",
   "version": "2.0",
-  "description": "Company-tags, Reviews, Complexities, and AI Debugging for LeetCode.",
+  "description": "Company-tags, Reviews, Complexities, Elo ratings, AI Debugging.",
   "icons": {
     "128": "icon.png",
     "192": "icon.png",
