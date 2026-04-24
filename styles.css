@@ -3,21 +3,10 @@
     display: none !important;
 }
 
-.sprint-text-success {
-    color: #4ade80 !important;
-}
-
-.sprint-text-warning {
-    color: #f5a623 !important;
-}
-
-.sprint-text-error {
-    color: #ef4444 !important;
-}
-
-.sprint-text-info {
-    color: #38bdf8 !important;
-}
+.sprint-text-success { color: #4ade80 !important; }
+.sprint-text-warning { color: #f5a623 !important; }
+.sprint-text-error { color: #ef4444 !important; }
+.sprint-text-info { color: #38bdf8 !important; }
 
 /* --- COMPANY TAGS --- */
 .company-tags-wrapper {
@@ -34,7 +23,7 @@
     border-radius: 12px !important;
     font-size: 12px !important;
     font-weight: 500 !important;
-    white-space: nowrap;
+    white-space: nowrap; 
 }
 
 /* --- COMPLEXITY ANALYZER STYLES --- */
@@ -104,17 +93,17 @@
 }
 
 .sprint-ai-tab {
-    color: #8b949e;
-    cursor: pointer;
-    transition: color 0.2s;
+    color: #8b949e; 
+    cursor: pointer;          
+    transition: color 0.2s;   
 }
 
 .sprint-ai-tab:hover {
-    color: #e5e7eb;
+    color: #e5e7eb;           
 }
 
 .sprint-ai-tab.active {
-    color: #38bdf8;
+    color: #38bdf8;           
     font-weight: 500;
 }
 
@@ -159,29 +148,22 @@
 }
 
 .sprint-ai-content {
-    animation: sprintFadeIn 0.3s ease-in-out;
+    animation: sprintFadeIn 0.3s ease-in-out; 
 }
 
 @keyframes sprintFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(2px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(2px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- "WHERE AM I WRONG" INJECTED BUTTON --- */
 .sprint-wrong-btn-style {
     display: flex;
     align-items: center;
-    margin-left: 10px;
+    margin-left: 10px; 
     padding: 0 10px;
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1); 
+    color: #ef4444; 
     border: 1px solid rgba(239, 68, 68, 0.3);
     border-radius: 5px;
     cursor: pointer;
@@ -192,8 +174,8 @@
     z-index: 99999;
     font-family: inherit;
     font-weight: 500;
-    flex-shrink: 0;
-    align-self: center;
+    flex-shrink: 0; 
+    align-self: center; 
     white-space: nowrap;
 }
 
@@ -318,25 +300,13 @@
 
 /* Animations */
 @keyframes lc-pop-in {
-    0% {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes lc-fade-in {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 .sprint-fade-out {
@@ -348,23 +318,11 @@
 }
 
 @keyframes lc-fade-out {
-    0% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
 @keyframes lc-pop-out {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(0.95);
-        opacity: 0;
-    }
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0; }
 }

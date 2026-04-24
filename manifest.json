@@ -23,7 +23,7 @@
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
+  "content_scripts":[
     {
       "matches":[
         "https://leetcode.com/problems/*",
@@ -55,6 +55,13 @@
         "mac": "Command+Shift+X"
       },
       "description": "Analyze Time/Space Complexity"
+    },
+    "analyze-bug": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Z",
+        "mac": "Command+Shift+Z"
+      },
+      "description": "Toggle Where Am I Wrong Analysis"
     }
   }
 }

@@ -68,14 +68,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 chrome.commands.onCommand.addListener((command) => {
-  if (command === "analyze-complexity") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          type: "ANALYZE_SELECTION",
-          code: "" 
-        });
-      }
-    });
-  }
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs.length === 0) return;
+
+    if (command === "analyze-complexity") {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        type: "ANALYZE_SELECTION",
+        code: "" 
+      });
+    }
+
+    if (command === "analyze-bug") {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        type: "TOGGLE_WHERE_AM_I_WRONG"
+      });
+    }
+  });
 });

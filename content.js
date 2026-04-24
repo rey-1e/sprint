@@ -296,6 +296,18 @@ function injectSubmissionAnalysisUI() {
  * SECTION 4: WHERE AM I WRONG?
  * ==============================================================================
  */
+function closeWhereAmIWrongPopup() {
+    const overlay = document.getElementById('sprint-custom-overlay');
+    if (!overlay) return false; // Not open
+
+    const modal = overlay.querySelector('.sprint-modal');
+    overlay.classList.add('sprint-fade-out');
+    if (modal) modal.classList.add('sprint-pop-out');
+    
+    setTimeout(() => overlay.remove(), 150);
+    return true; // Was successfully closed
+}
+
 function showWhereAmIWrongPopup() {
     if (document.getElementById('sprint-custom-overlay')) return;
 
@@ -332,18 +344,63 @@ function showWhereAmIWrongPopup() {
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
-    const closeModal = () => {
-        if (!document.getElementById('sprint-custom-overlay')) return;
-        overlay.classList.add('sprint-fade-out');
-        modal.classList.add('sprint-pop-out');
-        setTimeout(() => overlay.remove(), 150);
-    };
-
-    document.getElementById('sprint-close-x').addEventListener('click', closeModal);
-    document.getElementById('sprint-close-btn').addEventListener('click', closeModal);
+    document.getElementById('sprint-close-x').addEventListener('click', closeWhereAmIWrongPopup);
+    document.getElementById('sprint-close-btn').addEventListener('click', closeWhereAmIWrongPopup);
     overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) closeModal();
+        if (e.target === overlay) closeWhereAmIWrongPopup();
     });
+}
+
+function triggerWhereAmIWrong() {
+    let codeToAnalyze = "";
+    const codeLines = document.querySelectorAll('.view-line');
+    if (codeLines.length > 0) {
+        codeToAnalyze = Array.from(codeLines).map(line => line.textContent).join('\n');
+    }
+
+    if (!codeToAnalyze || codeToAnalyze.trim() === "") {
+        alert("Sprint: Could not find any code. Please type something in the editor.");
+        return;
+    }
+
+    let problemContext = "Description not found.";
+    let problemTitle = document.title.split('-')[0].trim();
+
+    const descElement = document.querySelector('[data-track-load="description_content"]') || document.querySelector('meta[name="description"]');
+    if (descElement) {
+        problemContext = descElement.innerText || descElement.content;
+    } else {
+        const urlParts = window.location.pathname.split('/');
+        const pIndex = urlParts.indexOf('problems');
+        if (pIndex !== -1) problemContext = "LeetCode Problem Slug: " + urlParts[pIndex + 1];
+    }
+
+    showWhereAmIWrongPopup();
+
+    chrome.runtime.sendMessage(
+        {
+            type: "FETCH_WHERE_AM_I_WRONG",
+            code: codeToAnalyze,
+            problemTitle: problemTitle,
+            problemContext: problemContext
+        },
+        (response) => {
+            const titleEl = document.getElementById('wrong-title');
+            const feedbackEl = document.getElementById('wrong-feedback');
+
+            if (!feedbackEl) return;
+
+            if (response && response.success) {
+                titleEl.textContent = 'Issue Found:';
+                feedbackEl.textContent = response.data.feedback || "Something is wrong, but AI didn't specify.";
+                feedbackEl.className = 'sprint-text-error';
+            } else {
+                titleEl.textContent = 'Analysis Failed';
+                feedbackEl.textContent = response?.error || "Could not reach the server.";
+                feedbackEl.className = 'sprint-text-error';
+            }
+        }
+    );
 }
 
 function injectWhereAmIWrongButton() {
@@ -380,56 +437,7 @@ function injectWhereAmIWrongButton() {
     btn.addEventListener('pointerdown', (e) => {
         e.stopPropagation();
         e.preventDefault();
-
-        let codeToAnalyze = "";
-        const codeLines = document.querySelectorAll('.view-line');
-        if (codeLines.length > 0) {
-            codeToAnalyze = Array.from(codeLines).map(line => line.textContent).join('\n');
-        }
-
-        if (!codeToAnalyze || codeToAnalyze.trim() === "") {
-            alert("Sprint: Could not find any code. Please type something in the editor.");
-            return;
-        }
-
-        let problemContext = "Description not found.";
-        let problemTitle = document.title.split('-')[0].trim();
-
-        const descElement = document.querySelector('[data-track-load="description_content"]') || document.querySelector('meta[name="description"]');
-        if (descElement) {
-            problemContext = descElement.innerText || descElement.content;
-        } else {
-            const urlParts = window.location.pathname.split('/');
-            const pIndex = urlParts.indexOf('problems');
-            if (pIndex !== -1) problemContext = "LeetCode Problem Slug: " + urlParts[pIndex + 1];
-        }
-
-        showWhereAmIWrongPopup();
-
-        chrome.runtime.sendMessage(
-            {
-                type: "FETCH_WHERE_AM_I_WRONG",
-                code: codeToAnalyze,
-                problemTitle: problemTitle,
-                problemContext: problemContext
-            },
-            (response) => {
-                const titleEl = document.getElementById('wrong-title');
-                const feedbackEl = document.getElementById('wrong-feedback');
-
-                if (!feedbackEl) return;
-
-                if (response && response.success) {
-                    titleEl.textContent = 'Issue Found:';
-                    feedbackEl.textContent = response.data.feedback || "Something is wrong, but AI didn't specify.";
-                    feedbackEl.className = 'sprint-text-error';
-                } else {
-                    titleEl.textContent = 'Analysis Failed';
-                    feedbackEl.textContent = response?.error || "Could not reach the server.";
-                    feedbackEl.className = 'sprint-text-error';
-                }
-            }
-        );
+        triggerWhereAmIWrong();
     });
 
     codeTabButton.insertAdjacentElement('afterend', btn);
@@ -463,6 +471,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse({ status: "No code found" });
         }
     }
+
+    // Toggle Where Am I Wrong Triggered By Keyboard Shortcut
+    if (request.type === "TOGGLE_WHERE_AM_I_WRONG") {
+        const isClosed = closeWhereAmIWrongPopup();
+        if (!isClosed) {
+            triggerWhereAmIWrong();
+        }
+        sendResponse({ status: "Toggled" });
+    }
+    
     return true;
 });
 
