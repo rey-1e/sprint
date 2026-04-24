@@ -3,7 +3,7 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
       id: "analyzeCodeWithSprint",
       title: "Analyse with Sprint",
-      contexts:["all"]
+      contexts: ["all"]
     });
   });
 });
@@ -17,70 +17,65 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
+async function handleFetchRequest(url, bodyData, sendResponse) {
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bodyData)
+    });
+    
+    if (!res.ok) throw new Error("Server error " + res.status);
+    
+    const data = await res.json();
+    sendResponse({ success: true, data: data });
+  } catch (err) {
+    sendResponse({ success: false, error: err.message });
+  }
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // 1. Existing Complexity Handler (Right-click tool)
   if (request.type === "FETCH_COMPLEXITY") {
-      fetch('https://analyze-i6ptizncma-uc.a.run.app', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: request.code })
-      })
-      .then(res => {
-          if (!res.ok) throw new Error("Server error " + res.status);
-          return res.json();
-      })
-      .then(data => sendResponse({ success: true, data: data }))
-      .catch(err => sendResponse({ success: false, error: err.message }));
-
-      return true; 
+    handleFetchRequest(
+      'https://analyze-i6ptizncma-uc.a.run.app', 
+      { code: request.code }, 
+      sendResponse
+    );
+    return true; 
   }
 
-  // 2. Submission Analysis Handler (Accepted screen tool)
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
-      fetch('https://analyzedetailed-i6ptizncma-uc.a.run.app', { 
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: request.code })
-      })
-      .then(res => {
-          if (!res.ok) throw new Error("Server error " + res.status);
-          return res.json();
-      })
-      .then(data => sendResponse({ success: true, data: data }))
-      .catch(err => sendResponse({ success: false, error: err.message }));
-
-      return true; // Tells Chrome we are responding asynchronously
+    handleFetchRequest(
+      'https://analyzedetailed-i6ptizncma-uc.a.run.app', 
+      { code: request.code }, 
+      sendResponse
+    );
+    return true; 
   }
 
-  // 3. Where am I wrong Handler (Now includes Title and Context)
   if (request.type === "FETCH_WHERE_AM_I_WRONG") {
-      fetch('https://findmybug-i6ptizncma-uc.a.run.app', { 
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-              code: request.code,
-              problemTitle: request.problemTitle,
-              problemContext: request.problemContext
-          })
-      })
-      .then(res => {
-          if (!res.ok) throw new Error("Server error " + res.status);
-          return res.json();
-      })
-      .then(data => sendResponse({ success: true, data: data }))
-      .catch(err => sendResponse({ success: false, error: err.message }));
-
-      return true; // Tells Chrome we are responding asynchronously
+    handleFetchRequest(
+      'https://findmybug-i6ptizncma-uc.a.run.app', 
+      { 
+        code: request.code,
+        problemTitle: request.problemTitle,
+        problemContext: request.problemContext
+      }, 
+      sendResponse
+    );
+    return true;
   }
 });
 
 chrome.commands.onCommand.addListener((command) => {
   if (command === "analyze-complexity") {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        type: "ANALYZE_SELECTION",
-        code: "" // content.js falls back to reading the whole editor if code is empty
-      });
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          type: "ANALYZE_SELECTION",
+          code: "" 
+        });
+      }
     });
   }
 });
