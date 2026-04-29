@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
   <meta charset="UTF-8" />
   <title>Sprint</title>
   <link rel="stylesheet" href="style.css" />
@@ -9,59 +9,80 @@
   
   <header>
     <div class="brand">
-      <img src="../icon.png" alt="Sprint icon" />
-      <span class="ext-name">leetCode Sprint<span>.</span></span>
+      <img src="../icon.png" alt="Sprint icon" onerror="this.style.display='none'" />
+      <span class="ext-name">leetCode <span>Sprint.</span></span>
     </div>
-    <!-- <a href="help.html" class="header-link">Support us ♥</a> -->
+    <a href="https://getsprint.me" class="website-link" id="website-link" title="Visit getsprint.me">
+      getsprint.me
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+    </a>
   </header>
   
   <main>
-    <div>
+    <div class="section">
       <p class="section-label">Keyboard Shortcuts</p>
       <div class="shortcut-group">
         <div class="shortcut-row">
           <span class="shortcut-label">Complexity Analysis</span>
-          <span class="kbd">Ctrl + Shift + X</span>
+          <div class="kbd-wrap">
+            <span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">X</span>
+          </div>
         </div>
         <div class="shortcut-row">
           <span class="shortcut-label">AI Debugger Toggle</span>
-          <span class="kbd">Ctrl + Shift + Z</span>
-        </div>
-      </div>
-    </div>
-    <div>
-      <p class="section-label">Features</p>
-      <div class="feature-list">
-        <div class="feature-item">
-          <span class="feature-dot"></span>
-          <span class="feature-text"><strong>Complexity Analysis</strong> — select code → right-click → Analyse with Sprint</span>
-        </div>
-        <div class="feature-item">
-          <span class="feature-dot"></span>
-          <span class="feature-text"><strong>Submission Analysis</strong> — AI reviews approach, efficiency &amp; code style after each accepted submission</span>
-        </div>
-        <div class="feature-item">
-          <span class="feature-dot"></span>
-          <span class="feature-text"><strong>AI Debugger</strong> — pinpoints logical flaws in your code before submitting</span>
-        </div>
-        <div class="feature-item">
-          <span class="feature-dot"></span>
-          <span class="feature-text"><strong>Company Tags</strong> — top companies for each problem, injected automatically</span>
-        </div>
-        <div class="feature-item">
-          <span class="feature-dot"></span>
-          <span class="feature-text"><strong>ELO Rating</strong> — true difficulty score shown alongside Easy / Medium / Hard</span>
+          <div class="kbd-wrap">
+            <span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">Z</span>
+          </div>
         </div>
       </div>
     </div>
 
+    <div class="section">
+      <p class="section-label">Features</p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <span class="feature-text"><strong>Complexity Analysis</strong> — select code → right-click → Analyse</span>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </div>
+          <span class="feature-text"><strong>Submission Analysis</strong> — AI reviews approach, efficiency & code style</span>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg>
+          </div>
+          <span class="feature-text"><strong>AI Debugger</strong> — pinpoints logical flaws in your code before submitting</span>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          </div>
+          <span class="feature-text"><strong>Company Tags</strong> — top companies for each problem, injected automatically</span>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+          </div>
+          <span class="feature-text"><strong>ELO Rating</strong> — true difficulty score shown alongside standard ratings</span>
+        </div>
+      </div>
+    </div>
 
     <p class="section-label coming-soon-note">✦ More features coming soon...</p>
   </main>
 
   <footer>
-    <a class="btn-donate" href="https://razorpay.me/@raj9589" target="_blank" rel="noopener noreferrer">
-      Support this project
+    <a class="btn-donate" id="donate-link" href="https://razorpay.me/@raj9589" target="_blank">
+      Support this project ♥
     </a>
   </footer>
 
