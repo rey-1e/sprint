@@ -445,7 +445,40 @@ function injectWhereAmIWrongButton() {
 
 /**
  * ==============================================================================
- * SECTION 5: INITIALIZATION AND LISTENERS
+ * SECTION 5: REDIRECT PILLS (GOOGLE LINK)
+ * ==============================================================================
+ */
+function injectRedirectPills() {
+    // Target: Injected div element (align centrally, properly, and insert at the end/last)
+    let targetDiv = document.querySelector('div.h-8.w-full.min-w-0.flex-1');
+    if (!targetDiv) {
+        targetDiv = document.querySelector('[class*="h-8"][class*="w-full"][class*="flex-1"]');
+    }
+
+    if (targetDiv && !document.getElementById('sprint-google-editor-pill')) {
+        // Ensure parent div layout allows neat flex centering and alignment properties
+        if (!targetDiv.classList.contains('sprint-flex-container-override')) {
+            targetDiv.style.display = 'flex';
+            targetDiv.style.alignItems = 'center';
+            targetDiv.style.justifyContent = 'flex-end'; 
+            targetDiv.classList.add('sprint-flex-container-override');
+        }
+
+        const link = document.createElement('a');
+        link.id = 'sprint-google-editor-pill';
+        link.href = 'https://getsprint.me/problemset';
+        link.target = '_blank';
+        link.className = 'sprint-pill-editor-btn';
+        link.textContent = 'Company-wise Problemset';
+
+        // Append to insert at the end
+        targetDiv.appendChild(link);
+    }
+}
+
+/**
+ * ==============================================================================
+ * SECTION 6: INITIALIZATION AND LISTENERS
  * ==============================================================================
  */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -490,6 +523,7 @@ const observer = new MutationObserver(() => {
     if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
     if (!document.getElementById('sprint-submission-analysis')) injectSubmissionAnalysisUI();
     if (!document.getElementById('sprint-wrong-btn')) injectWhereAmIWrongButton();
+    injectRedirectPills();
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
