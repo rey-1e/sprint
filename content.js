@@ -429,7 +429,7 @@ function injectWhereAmIWrongButton() {
     btn.style.color = "#EFF1F6BF";
     btn.innerHTML = `
         <span class="sprint-btn-inner">
-            <p>AI Debugger</p>
+            <p>AI Insights</p>
         </span>
     `;
 
@@ -468,7 +468,7 @@ function injectRedirectPills() {
         link.href = 'https://getsprint.me/problemset';
         link.target = '_blank';
         link.className = 'sprint-pill-editor-btn';
-        link.textContent = 'Company-wise Problemset';
+        link.textContent = 'Problemset';
 
         // Append to insert at the end
         targetDiv.appendChild(link);
