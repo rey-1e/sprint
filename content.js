@@ -468,7 +468,7 @@ function injectRedirectPills() {
         link.href = 'https://getsprint.me/problemset';
         link.target = '_blank';
         link.className = 'sprint-pill-editor-btn';
-        link.textContent = 'Problemset';
+        link.textContent = 'problem-set';
 
         // Append to insert at the end
         targetDiv.appendChild(link);
