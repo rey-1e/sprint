@@ -1,5 +1,61 @@
 /**
  * ==============================================================================
+ * SECTION 0: GOOGLE CAPSULE REDIRECT BUTTON
+ * ==============================================================================
+ */
+function injectCapsuleButton() {
+    if (document.getElementById('sprint-google-capsule')) return;
+
+    // Target the search bar wrapper by matches of the specified classes
+    const searchBar = document.querySelector('.h-8.w-full.min-w-0.flex-1') || 
+                      document.querySelector('[class*="h-8"][class*="w-full"][class*="min-w-0"][class*="flex-1"]');
+    
+    if (!searchBar) return;
+
+    const capsule = document.createElement('a');
+    capsule.id = 'sprint-google-capsule';
+    capsule.href = 'https://google.com';
+    capsule.target = '_blank';
+    capsule.innerText = 'Google';
+    
+    // Applying inline styles matching LeetCode's capsule layout and aesthetics
+    capsule.style.display = 'inline-flex';
+    capsule.style.alignItems = 'center';
+    capsule.style.justifyContent = 'center';
+    capsule.style.height = '28px';
+    capsule.style.padding = '0 12px';
+    capsule.style.borderRadius = '9999px';
+    capsule.style.fontSize = '12px';
+    capsule.style.fontWeight = '500';
+    capsule.style.textDecoration = 'none';
+    capsule.style.cursor = 'pointer';
+    capsule.style.transition = 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease';
+    capsule.style.marginRight = '8px';
+    capsule.style.flexShrink = '0';
+
+    // Utilizing LeetCode's native CSS variables for seamless theme support
+    capsule.style.backgroundColor = 'var(--fill-3, rgba(255, 255, 255, 0.08))';
+    capsule.style.color = 'var(--text-secondary, rgba(255, 255, 255, 0.6))';
+    capsule.style.border = '1px solid var(--border-quaternary, rgba(255, 255, 255, 0.1))';
+
+    // Hover interactions
+    capsule.addEventListener('mouseenter', () => {
+        capsule.style.backgroundColor = 'var(--fill-2, rgba(255, 255, 255, 0.13))';
+        capsule.style.color = 'var(--text-primary, rgba(255, 255, 255, 0.9))';
+        capsule.style.borderColor = 'var(--border-tertiary, rgba(255, 255, 255, 0.25))';
+    });
+    capsule.addEventListener('mouseleave', () => {
+        capsule.style.backgroundColor = 'var(--fill-3, rgba(255, 255, 255, 0.08))';
+        capsule.style.color = 'var(--text-secondary, rgba(255, 255, 255, 0.6))';
+        capsule.style.borderColor = 'var(--border-quaternary, rgba(255, 255, 255, 0.1))';
+    });
+
+    // Insert the capsule button directly before the search bar element
+    searchBar.parentNode.insertBefore(capsule, searchBar);
+}
+
+/**
+ * ==============================================================================
  * SECTION 1: INJECT COMPANY TAGS AND ELO RATING
  * ==============================================================================
  */
@@ -484,8 +540,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
 });
 
-// A lightweight observer keeping DOM polling extremely fast and robust.
+// A lightweight observer keeping DOM polling fast and robust.
 const observer = new MutationObserver(() => {
+    if (!document.getElementById('sprint-google-capsule')) injectCapsuleButton();
     if (!document.getElementById('custom-company-tags')) injectTags();
     if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
     if (!document.getElementById('sprint-submission-analysis')) injectSubmissionAnalysisUI();
