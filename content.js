@@ -387,6 +387,8 @@ function triggerWhereAmIWrong() {
         (response) => {
             const titleEl = document.getElementById('wrong-title');
             const feedbackEl = document.getElementById('wrong-feedback');
+            
+            feedbackEl.style.fontSize = "18px";
 
             if (!feedbackEl) return;
 
@@ -424,13 +426,10 @@ function injectWhereAmIWrongButton() {
     const btn = document.createElement('div');
     btn.id = 'sprint-wrong-btn';
     btn.className = 'sprint-wrong-btn-style';
-
+    btn.style.color = "#EFF1F6BF";
     btn.innerHTML = `
         <span class="sprint-btn-inner">
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <p>AI Debugger</p>
         </span>
     `;
 

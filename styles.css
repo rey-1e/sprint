@@ -208,7 +208,7 @@
 .sprint-modal {
     background: #282828;
     border: 1px solid #3e3e3e;
-    border-radius: 8px;
+    border-radius: 5px;
     width: 380px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     color: #eff2f6;
@@ -234,7 +234,7 @@
 
 .sprint-modal-title span {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     color: #eff2f6;
 }
 
@@ -286,7 +286,7 @@
     color: #eff2f6;
     border: 1px solid #454545;
     padding: 6px 16px;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
