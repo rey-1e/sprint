@@ -277,26 +277,37 @@
 
 .sprint-modal-body {
     padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .sprint-modal-section-title {
     margin: 0 0 10px;
-    font-size: 13.5px;
+    font-size: 15px;
     font-weight: 600;
-    color: #b56363; /* Softer desaturated Indian Red header */
+    color: #b56363;
+    text-align: center;
+    width: 100%;
 }
 
 .sprint-modal-text-container {
-    background-color: transparent; /* Flat layout drops the contrasting well */
+    background-color: transparent;
     border: none;
     padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .sprint-modal-text-container p {
     margin: 0;
-    font-size: 13.5px;
-    color: #c7c7cc; /* Gentle, low-contrast text color */
+    font-size: 15px;
+    color: #c7c7cc;
     line-height: 1.5;
+    text-align: center;
+    width: 100%;
 }
 
 /* Animations */

@@ -1,4 +1,5 @@
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
+  // 1. Initialize Context Menus safely
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: "analyzeCodeWithSprint",
@@ -6,8 +7,18 @@ chrome.runtime.onInstalled.addListener(() => {
       contexts: ["all"]
     });
   });
+
+  // 2. Launch the Update Splash Page
+  if (details.reason === "update") {
+    // Option A: Open the local index.html packaged inside your extension
+    chrome.tabs.create({ url: chrome.runtime.getURL("index.html") });
+
+    // Option B: Open your external webpage (Uncomment if you are hosting it online instead)
+    // chrome.tabs.create({ url: "https://getsprint.me/updated" });
+  }
 });
 
+// Context Menu Action Handler
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "analyzeCodeWithSprint") {
     chrome.tabs.sendMessage(tab.id, {
@@ -17,6 +28,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
+// Network Fetch Helper Function
 async function handleFetchRequest(url, bodyData, sendResponse) {
   try {
     const res = await fetch(url, {
@@ -34,6 +46,7 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
   }
 }
 
+// Runtime Messaging Dispatcher
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "FETCH_COMPLEXITY") {
     handleFetchRequest(
@@ -67,6 +80,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
+// Command Hotkey Listener
 chrome.commands.onCommand.addListener((command) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length === 0) return;

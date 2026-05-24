@@ -371,8 +371,9 @@ function triggerWhereAmIWrong() {
             problemContext: problemContext
         },
         (response) => {
-            const titleEl = document.getElementById('wrong-title');
-            const feedbackEl = document.getElementById('wrong-feedback');
+            let titleEl = document.getElementById('wrong-title');
+            let feedbackEl = document.getElementById('wrong-feedback');
+
 
             if (!feedbackEl) return;
 
