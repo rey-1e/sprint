@@ -3,22 +3,69 @@
  * SECTION 0: GOOGLE CAPSULE REDIRECT BUTTON
  * ==============================================================================
  */
-function injectCapsuleButton() {
-    if (document.getElementById('sprint-google-capsule')) return;
-
-    // Target the search bar wrapper by matches of the specified classes
-    const searchBar = document.querySelector('.h-8.w-full.min-w-0.flex-1') || 
-                      document.querySelector('[class*="h-8"][class*="w-full"][class*="min-w-0"][class*="flex-1"]');
+function findProblemPageNavbarGroup() {
+    // Locate the top-right toolbar group by tracking standard elements like user avatar
+    const avatar = document.querySelector('[class*="avatar"]') || 
+                   document.querySelector('img[src*="avatar"]') ||
+                   document.querySelector('.h-8.w-8.rounded-full'); // profile wrapper fallback
+                   
+    if (avatar) {
+        let parent = avatar.parentElement;
+        while (parent && parent !== document.body) {
+            const style = window.getComputedStyle(parent);
+            if (parent.classList.contains('flex') || style.display === 'flex') {
+                // Ensure this container holds the system buttons (layout, gear, streak, profile, etc.)
+                if (parent.querySelectorAll('button, a').length >= 3) {
+                    return parent;
+                }
+            }
+            parent = parent.parentElement;
+        }
+    }
     
-    if (!searchBar) return;
+    // Fallback: search for top-right layout/settings parent container directly
+    const buttons = document.querySelectorAll('button');
+    for (let btn of buttons) {
+        const svg = btn.querySelector('svg');
+        if (svg && (svg.innerHTML.includes('gear') || svg.innerHTML.includes('settings'))) {
+            const parent = btn.parentElement;
+            if (parent && (parent.classList.contains('flex') || window.getComputedStyle(parent).display === 'flex')) {
+                return parent;
+            }
+        }
+    }
+    return null;
+}
 
+function findLayoutBtnInGroup(group) {
+    const buttons = Array.from(group.querySelectorAll('button, [role="button"], a'));
+    for (let btn of buttons) {
+        const svg = btn.querySelector('svg');
+        if (svg) {
+            const pathsCount = svg.querySelectorAll('path').length;
+            const rectsCount = svg.querySelectorAll('rect').length;
+            
+            // Detect the Layout Switcher button by checking its grid-like visual shapes
+            if (rectsCount >= 4 || pathsCount >= 4) {
+                return btn;
+            }
+        }
+    }
+    // Fallback to the first child in the container if layout button is not explicitly matched
+    return buttons[0] || null;
+}
+
+function createCapsule() {
     const capsule = document.createElement('a');
     capsule.id = 'sprint-google-capsule';
     capsule.href = 'https://google.com';
     capsule.target = '_blank';
     capsule.innerText = 'Google';
     
-    // Applying inline styles matching LeetCode's capsule layout and aesthetics
+    // Use LeetCode's design-system utility classes for correct theme state & hover transitions
+    capsule.className = "relative inline-flex items-center justify-center rounded-full text-xs font-medium px-3 py-1 bg-fill-three dark:bg-dark-fill-three text-label-two dark:text-dark-label-two hover:bg-fill-two dark:hover:bg-dark-fill-two transition-colors cursor-pointer";
+    
+    // Style alignments matching LeetCode's baseline top navigation elements
     capsule.style.display = 'inline-flex';
     capsule.style.alignItems = 'center';
     capsule.style.justifyContent = 'center';
@@ -29,29 +76,69 @@ function injectCapsuleButton() {
     capsule.style.fontWeight = '500';
     capsule.style.textDecoration = 'none';
     capsule.style.cursor = 'pointer';
-    capsule.style.transition = 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease';
-    capsule.style.marginRight = '8px';
+    capsule.style.transition = 'all 0.15s ease';
+    capsule.style.boxSizing = 'border-box';
     capsule.style.flexShrink = '0';
-
-    // Utilizing LeetCode's native CSS variables for seamless theme support
+    
+    // Internal variable fallbacks
     capsule.style.backgroundColor = 'var(--fill-3, rgba(255, 255, 255, 0.08))';
     capsule.style.color = 'var(--text-secondary, rgba(255, 255, 255, 0.6))';
     capsule.style.border = '1px solid var(--border-quaternary, rgba(255, 255, 255, 0.1))';
 
-    // Hover interactions
     capsule.addEventListener('mouseenter', () => {
         capsule.style.backgroundColor = 'var(--fill-2, rgba(255, 255, 255, 0.13))';
         capsule.style.color = 'var(--text-primary, rgba(255, 255, 255, 0.9))';
-        capsule.style.borderColor = 'var(--border-tertiary, rgba(255, 255, 255, 0.25))';
     });
     capsule.addEventListener('mouseleave', () => {
         capsule.style.backgroundColor = 'var(--fill-3, rgba(255, 255, 255, 0.08))';
         capsule.style.color = 'var(--text-secondary, rgba(255, 255, 255, 0.6))';
-        capsule.style.borderColor = 'var(--border-quaternary, rgba(255, 255, 255, 0.1))';
     });
 
-    // Insert the capsule button directly before the search bar element
-    searchBar.parentNode.insertBefore(capsule, searchBar);
+    return capsule;
+}
+
+function injectCapsuleButton() {
+    const existingCapsule = document.getElementById('sprint-google-capsule');
+    const isProblemPage = window.location.pathname.includes('/problems/');
+
+    if (isProblemPage) {
+        const navbarGroup = findProblemPageNavbarGroup();
+        if (!navbarGroup) return;
+
+        const layoutBtn = findLayoutBtnInGroup(navbarGroup);
+        if (!layoutBtn) return;
+
+        // Ensure capsule layout is matched and nested directly beside layoutBtn inside same row
+        if (existingCapsule) {
+            if (existingCapsule.nextSibling !== layoutBtn) {
+                existingCapsule.remove();
+            } else {
+                return; 
+            }
+        }
+
+        const capsule = createCapsule();
+        capsule.style.marginRight = '12px';
+        layoutBtn.parentNode.insertBefore(capsule, layoutBtn);
+    } else {
+        // Support navigation to standard pages (homepage / problem list)
+        const homeNav = document.querySelector('.relative.m-0.flex.h-full.grow.items-center.gap-6.self-end.p-0') || 
+                        document.querySelector('[class*="relative m-0 flex h-full grow items-center gap-6 self-end p-0"]');
+        
+        if (!homeNav) return;
+
+        if (existingCapsule) {
+            if (existingCapsule.parentNode !== homeNav) {
+                existingCapsule.remove();
+            } else {
+                return; 
+            }
+        }
+
+        const capsule = createCapsule();
+        capsule.style.marginLeft = '8px';
+        homeNav.appendChild(capsule);
+    }
 }
 
 /**
@@ -542,7 +629,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 // A lightweight observer keeping DOM polling fast and robust.
 const observer = new MutationObserver(() => {
-    if (!document.getElementById('sprint-google-capsule')) injectCapsuleButton();
+    injectCapsuleButton();
     if (!document.getElementById('custom-company-tags')) injectTags();
     if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
     if (!document.getElementById('sprint-submission-analysis')) injectSubmissionAnalysisUI();
