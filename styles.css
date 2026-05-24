@@ -3,10 +3,10 @@
     display: none !important;
 }
 
-.sprint-text-success { color: #4ade80 !important; }
-.sprint-text-warning { color: #f5a623 !important; }
-.sprint-text-error { color: #ef4444 !important; }
-.sprint-text-info { color: #38bdf8 !important; }
+.sprint-text-success { color: #CD5C5C !important; }
+.sprint-text-warning { color: #e0a96d !important; }
+.sprint-text-error { color: #f87171 !important; }
+.sprint-text-info { color: #CD5C5C !important; }
 
 /* --- COMPANY TAGS --- */
 .company-tags-wrapper {
@@ -33,7 +33,7 @@
     gap: 16px;
     padding: 0 16px;
     font-size: 13px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #eff1f6bf;
     margin-right: auto;
 }
@@ -51,10 +51,10 @@
 
 .complexity-value {
     font-weight: 600;
-    font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
-    font-size: 14px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 13px;
     color: #eff1f6;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.08);
     padding: 2px 6px;
     border-radius: 4px;
     min-width: 40px;
@@ -69,151 +69,170 @@
 
 /* --- ACCEPTED SUBMISSION AI STYLES --- */
 .sprint-ai-analysis {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    padding: 12px !important;
+    background-color: #2a2a2a !important; /* Elegant matching LeetCode panel background */
+    padding: 16px !important;
     border-radius: 8px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid #3f3f46 !important; /* Subdued contrast border */
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 12px !important;
+    font-size: 13px !important;
     line-height: 1.5;
+    box-sizing: border-box;
 }
 
 .sprint-ai-topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .sprint-ai-tabs {
     display: flex;
     gap: 16px;
+    border-bottom: 1px solid #3f3f46;
+    width: 100%;
+    padding-bottom: 8px;
 }
 
 .sprint-ai-tab {
-    color: #8b949e; 
+    color: #a1a1aa; /* High baseline visibility without being harsh */
     cursor: pointer;          
-    transition: color 0.2s;   
+    transition: color 0.15s ease;   
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 12px;
+    position: relative;
+    padding-bottom: 8px;
 }
 
 .sprint-ai-tab:hover {
-    color: #e5e7eb;           
+    color: #ffffff;
 }
 
 .sprint-ai-tab.active {
-    color: #38bdf8;           
-    font-weight: 500;
+    color: #CD5C5C;           
+}
+
+.sprint-ai-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #CD5C5C;
 }
 
 .sprint-ai-summary {
-    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px 14px;
+    background: rgba(205, 92, 92, 0.08);
+    border-left: 2px solid #CD5C5C;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 14px;
+    color: #ffd1d1; /* High visibility desaturated red */
 }
 
 .sprint-ai-divider {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin: 12px 0;
+    display: none;
 }
 
 .sprint-ai-section-title {
-    color: #38bdf8;
-    font-size: 12px !important;
-    font-weight: 500;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.sprint-ai-icon {
-    color: #38bdf8;
+    display: none;
 }
 
 .sprint-ai-grid {
     display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 6px 12px;
-    align-items: start;
+    grid-template-columns: 100px 1fr;
+    gap: 10px 16px;
+    align-items: flex-start;
 }
 
 .sprint-ai-label {
-    color: #8b949e;
-    white-space: nowrap;
+    color: #a1a1aa;
+    font-weight: 500;
+    font-size: 12.5px;
+    padding-top: 1px;
 }
 
 .sprint-ai-val {
-    color: #e5e7eb;
+    color: #ffffff; /* Contrast for text readouts */
+    font-size: 13px;
 }
 
 .sprint-ai-content {
-    animation: sprintFadeIn 0.3s ease-in-out; 
+    animation: sprintFadeIn 0.15s ease-out forwards; 
 }
 
 @keyframes sprintFadeIn {
-    from { opacity: 0; transform: translateY(2px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* --- "WHERE AM I WRONG" INJECTED BUTTON --- */
 .sprint-wrong-btn-style {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    margin-left: 10px; 
-    padding: 0 10px;
-    background-color: rgba(239, 68, 68, 0.1); 
-    color: #ef4444; 
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    margin-left: 8px; 
+    padding: 4px 12px; /* Increased vertical and horizontal padding */
+    background-color: rgba(205, 92, 92, 0.08); 
+    color: #CD5C5C; 
+    border: 1px solid rgba(205, 92, 92, 0.25);
     border-radius: 5px;
     cursor: pointer;
     font-size: 12px;
-    height: 24px;
-    transition: all 0.2s ease;
-    position: relative;
-    z-index: 99999;
+    height: 28px; /* Slightly taller button for optimal alignment */
+    box-sizing: border-box;
+    transition: all 0.15s ease;
     font-family: inherit;
     font-weight: 500;
-    flex-shrink: 0; 
-    align-self: center; 
     white-space: nowrap;
+    align-self: center;
 }
 
 .sprint-wrong-btn-style:hover {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: #f87171;
-    border-color: rgba(239, 68, 68, 0.5);
+    background-color: rgba(205, 92, 92, 0.12);
+    border-color: rgba(205, 92, 92, 0.4);
+    color: #e28f8f;
 }
 
 .sprint-btn-inner {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+}
+
+.sprint-sparkle-glow {
+    color: #CD5C5C;
 }
 
 /* --- MODAL (POPUP) UI STYLES --- */
 .sprint-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(2px);
+    background: transparent; /* No screen darkening or background changes */
+    backdrop-filter: none !important; /* Ensures blur remains completely disabled */
     z-index: 2147483647;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: lc-fade-in 0.2s ease-out forwards;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    animation: sprint-fade-in 0.15s ease-out forwards;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .sprint-modal {
-    background: #282828;
-    border: 1px solid #3e3e3e;
-    border-radius: 5px;
-    width: 380px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    color: #eff2f6;
+    background: #252528; /* Low contrast dark charcoal */
+    border: 1px solid #38383a; /* Muted inline border */
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Elegant dimensional shadow */
+    color: #d1d1d6; /* Softer, low contrast font */
     overflow: hidden;
-    animation: lc-pop-in 0.2s ease-out forwards;
+    animation: sprint-pop-in 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .sprint-modal-header {
@@ -221,110 +240,92 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    border-bottom: 1px solid #3e3e3e;
-    background: #303030;
+    border-bottom: 1px solid #38383a;
+    background: #202022;
 }
 
 .sprint-modal-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #ef4444;
+    color: #b56363; /* Softer desaturated Indian Red */
 }
 
 .sprint-modal-title span {
-    font-weight: 600;
-    font-size: 15px;
-    color: #eff2f6;
+    font-weight: 500;
+    font-size: 13.5px;
+    color: #d1d1d6;
 }
 
 .sprint-close-x {
     background: transparent;
     border: none;
-    color: #8a929b;
+    color: #8e8e93; /* Muted close button */
     cursor: pointer;
-    font-size: 18px;
-    padding: 0;
-    line-height: 1;
-    transition: color 0.2s;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background-color 0.15s;
 }
 
 .sprint-close-x:hover {
-    color: #eff2f6;
+    color: #d1d1d6;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .sprint-modal-body {
-    padding: 24px 16px;
-    text-align: center;
+    padding: 18px 16px;
 }
 
-.sprint-modal-body h2 {
-    margin: 0 0 8px;
-    font-size: 18px;
+.sprint-modal-section-title {
+    margin: 0 0 10px;
+    font-size: 13.5px;
     font-weight: 600;
+    color: #b56363; /* Softer desaturated Indian Red header */
 }
 
-.sprint-modal-body p {
+.sprint-modal-text-container {
+    background-color: transparent; /* Flat layout drops the contrasting well */
+    border: none;
+    padding: 0;
+}
+
+.sprint-modal-text-container p {
     margin: 0;
-    font-size: 16px;
-    color: #8a929b;
+    font-size: 13.5px;
+    color: #c7c7cc; /* Gentle, low-contrast text color */
     line-height: 1.5;
-    font-weight: 500;
-}
-
-.sprint-modal-footer {
-    padding: 12px 16px;
-    border-top: 1px solid #3e3e3e;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    background: #303030;
-}
-
-.sprint-btn {
-    background: #2a2a2a;
-    color: #eff2f6;
-    border: 1px solid #454545;
-    padding: 6px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.sprint-btn:hover {
-    background: #3e3e3e;
-    border-color: #555;
 }
 
 /* Animations */
-@keyframes lc-pop-in {
-    0% { transform: scale(0.9); opacity: 0; }
+@keyframes sprint-pop-in {
+    0% { transform: scale(0.97); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
 
-@keyframes lc-fade-in {
+@keyframes sprint-fade-in {
     0% { opacity: 0; }
     100% { opacity: 1; }
 }
 
 .sprint-fade-out {
-    animation: lc-fade-out 0.15s ease-in forwards !important;
+    animation: sprint-fade-out 0.12s ease-in forwards !important;
 }
 
 .sprint-pop-out {
-    animation: lc-pop-out 0.15s ease-in forwards !important;
+    animation: sprint-pop-out 0.12s ease-in forwards !important;
 }
 
-@keyframes lc-fade-out {
+@keyframes sprint-fade-out {
     0% { opacity: 1; }
     100% { opacity: 0; }
 }
 
-@keyframes lc-pop-out {
+@keyframes sprint-pop-out {
     0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(0.97); opacity: 0; }
 }
 
 /* --- REDIRECT PILL (GOOGLE LINK) --- */
@@ -333,23 +334,23 @@
     color: rgba(255, 255, 255, 0.8) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     padding: 0 12px !important;
-    border-radius: 9999px !important;
+    border-radius: 4px !important;
     font-size: 12px !important;
     font-weight: 500 !important;
     text-decoration: none !important;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    height: 24px !important;
+    height: 28px !important;
     box-sizing: border-box !important;
     align-self: center !important;
-    margin-left: auto !important; /* Pushes element smoothly to the far right end of the flex layout */
+    margin-left: auto !important;
     margin-right: 12px !important;
 }
 
 .sprint-pill-editor-btn:hover {
-    background-color: rgba(255, 255, 255, 0.16) !important;
+    background-color: rgba(255, 255, 255, 0.14) !important;
     color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.24) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
 }

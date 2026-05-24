@@ -179,57 +179,44 @@ function injectSubmissionAnalysisUI() {
     container.innerHTML = `
         <div class="sprint-ai-topbar">
             <div class="sprint-ai-tabs">
-                <span class="sprint-ai-tab active" data-target="tab-approach">✓ Approach</span>
-                <span class="sprint-ai-tab" data-target="tab-efficiency">✓ Efficiency</span>
-                <span class="sprint-ai-tab" data-target="tab-style">✓ Code Style</span>
+                <span class="sprint-ai-tab active" data-target="tab-approach">Approach</span>
+                <span class="sprint-ai-tab" data-target="tab-efficiency">Efficiency</span>
+                <span class="sprint-ai-tab" data-target="tab-style">Code Style</span>
             </div>
         </div>
-        <div class="sprint-ai-summary sprint-text-info" id="sprint-ai-summary">
+        <div class="sprint-ai-summary" id="sprint-ai-summary">
             Generating expert AI feedback...
         </div>
-        <hr class="sprint-ai-divider"/>
         
         <div class="sprint-ai-content active" id="tab-approach">
-            <div class="sprint-ai-section-title">
-                <svg class="sprint-ai-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                Approach
-            </div>
             <div class="sprint-ai-grid">
-                <div class="sprint-ai-label">Current:</div>
+                <div class="sprint-ai-label">Current</div>
                 <div class="sprint-ai-val" id="val-app-curr">...</div>
-                <div class="sprint-ai-label">Suggested:</div>
+                <div class="sprint-ai-label">Suggested</div>
                 <div class="sprint-ai-val sprint-text-success" id="val-app-sugg">...</div>
-                <div class="sprint-ai-label">Key Idea:</div>
+                <div class="sprint-ai-label">Key Idea</div>
                 <div class="sprint-ai-val" id="val-app-idea">...</div>
             </div>
         </div>
 
         <div class="sprint-ai-content sprint-hidden" id="tab-efficiency">
-            <div class="sprint-ai-section-title">
-                <svg class="sprint-ai-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                Efficiency
-            </div>
             <div class="sprint-ai-grid">
-                <div class="sprint-ai-label">Current complexity:</div>
+                <div class="sprint-ai-label">Current</div>
                 <div class="sprint-ai-val" id="val-eff-curr">...</div>
-                <div class="sprint-ai-label">Suggested complexity:</div>
+                <div class="sprint-ai-label">Suggested</div>
                 <div class="sprint-ai-val sprint-text-success" id="val-eff-sugg">...</div>
-                <div class="sprint-ai-label">Suggestions:</div>
+                <div class="sprint-ai-label">Suggestions</div>
                 <div class="sprint-ai-val" id="val-eff-idea">...</div>
             </div>
         </div>
 
         <div class="sprint-ai-content sprint-hidden" id="tab-style">
-            <div class="sprint-ai-section-title">
-                <svg class="sprint-ai-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
-                Code Style
-            </div>
             <div class="sprint-ai-grid">
-                <div class="sprint-ai-label">Readability:</div>
+                <div class="sprint-ai-label">Readability</div>
                 <div class="sprint-ai-val" id="val-sty-read">...</div>
-                <div class="sprint-ai-label">Structure:</div>
+                <div class="sprint-ai-label">Structure</div>
                 <div class="sprint-ai-val" id="val-sty-struc">...</div>
-                <div class="sprint-ai-label">Suggestions:</div>
+                <div class="sprint-ai-label">Suggestions</div>
                 <div class="sprint-ai-val" id="val-sty-idea">...</div>
             </div>
         </div>
@@ -298,14 +285,14 @@ function injectSubmissionAnalysisUI() {
  */
 function closeWhereAmIWrongPopup() {
     const overlay = document.getElementById('sprint-custom-overlay');
-    if (!overlay) return false; // Not open
+    if (!overlay) return false;
 
     const modal = overlay.querySelector('.sprint-modal');
     overlay.classList.add('sprint-fade-out');
     if (modal) modal.classList.add('sprint-pop-out');
     
-    setTimeout(() => overlay.remove(), 150);
-    return true; // Was successfully closed
+    setTimeout(() => overlay.remove(), 120);
+    return true;
 }
 
 function showWhereAmIWrongPopup() {
@@ -321,23 +308,23 @@ function showWhereAmIWrongPopup() {
     modal.innerHTML = `
         <div class="sprint-modal-header">
             <div class="sprint-modal-title">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <span>Code Debugger</span>
+                <span>Debugger Analysis</span>
             </div>
-            <button id="sprint-close-x" class="sprint-close-x">&times;</button>
+            <button id="sprint-close-x" class="sprint-close-x">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         
         <div class="sprint-modal-body">
-            <h2 id="wrong-title">Analyzing Logic...</h2>
-            <p id="wrong-feedback">Sending code to AI...</p>
-        </div>
-        
-        <div class="sprint-modal-footer">
-            <button id="sprint-close-btn" class="sprint-btn">Dismiss</button>
+            <h2 id="wrong-title" class="sprint-modal-section-title">Analyzing Code Logic...</h2>
+            <div class="sprint-modal-text-container">
+                <p id="wrong-feedback">Consulting AI model to scan for anomalies...</p>
+            </div>
         </div>
     `;
 
@@ -345,7 +332,6 @@ function showWhereAmIWrongPopup() {
     document.body.appendChild(overlay);
 
     document.getElementById('sprint-close-x').addEventListener('click', closeWhereAmIWrongPopup);
-    document.getElementById('sprint-close-btn').addEventListener('click', closeWhereAmIWrongPopup);
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) closeWhereAmIWrongPopup();
     });
@@ -387,13 +373,11 @@ function triggerWhereAmIWrong() {
         (response) => {
             const titleEl = document.getElementById('wrong-title');
             const feedbackEl = document.getElementById('wrong-feedback');
-            
-            feedbackEl.style.fontSize = "18px";
 
             if (!feedbackEl) return;
 
             if (response && response.success) {
-                titleEl.textContent = 'Issue Found:';
+                titleEl.textContent = 'Issue Found';
                 feedbackEl.textContent = response.data.feedback || "Something is wrong, but AI didn't specify.";
                 feedbackEl.className = 'sprint-text-error';
             } else {
@@ -426,10 +410,12 @@ function injectWhereAmIWrongButton() {
     const btn = document.createElement('div');
     btn.id = 'sprint-wrong-btn';
     btn.className = 'sprint-wrong-btn-style';
-    btn.style.color = "#EFF1F6BF";
     btn.innerHTML = `
         <span class="sprint-btn-inner">
-            <p>AI Insights</p>
+            <svg class="sprint-sparkle-glow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+            </svg>
+            <span>AI Insights</span>
         </span>
     `;
 
@@ -448,14 +434,12 @@ function injectWhereAmIWrongButton() {
  * ==============================================================================
  */
 function injectRedirectPills() {
-    // Target: Injected div element (align centrally, properly, and insert at the end/last)
     let targetDiv = document.querySelector('div.h-8.w-full.min-w-0.flex-1');
     if (!targetDiv) {
         targetDiv = document.querySelector('[class*="h-8"][class*="w-full"][class*="flex-1"]');
     }
 
     if (targetDiv && !document.getElementById('sprint-google-editor-pill')) {
-        // Ensure parent div layout allows neat flex centering and alignment properties
         if (!targetDiv.classList.contains('sprint-flex-container-override')) {
             targetDiv.style.display = 'flex';
             targetDiv.style.alignItems = 'center';
@@ -468,9 +452,8 @@ function injectRedirectPills() {
         link.href = 'https://getsprint.me/problemset';
         link.target = '_blank';
         link.className = 'sprint-pill-editor-btn';
-        link.textContent = 'problem-set';
+        link.textContent = 'Problem-Set';
 
-        // Append to insert at the end
         targetDiv.appendChild(link);
     }
 }
@@ -504,7 +487,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
     }
 
-    // Toggle Where Am I Wrong Triggered By Keyboard Shortcut
     if (request.type === "TOGGLE_WHERE_AM_I_WRONG") {
         const isClosed = closeWhereAmIWrongPopup();
         if (!isClosed) {
@@ -516,7 +498,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
 });
 
-// A lightweight observer keeping DOM polling extremely fast and robust.
 const observer = new MutationObserver(() => {
     if (!document.getElementById('custom-company-tags')) injectTags();
     if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
