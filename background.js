@@ -11,10 +11,10 @@ chrome.runtime.onInstalled.addListener((details) => {
   // 2. Launch the Update Splash Page
   if (details.reason === "update") {
     // Option A: Open the local index.html packaged inside your extension
-    chrome.tabs.create({ url: chrome.runtime.getURL("index.html") });
+    // chrome.tabs.create({ url: chrome.runtime.getURL("index.html") });
 
     // Option B: Open your external webpage (Uncomment if you are hosting it online instead)
-    // chrome.tabs.create({ url: "https://getsprint.me/updated" });
+    chrome.tabs.create({ url: "https://getsprint.me/updated" });
   }
 });
 
