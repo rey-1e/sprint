@@ -1,0 +1,499 @@
+/* ----------------------------------------------------
+   THEME CONFIGURATIONS (20 PREMIUM DARK WORKSPACES)
+---------------------------------------------------- */
+
+/* 1. Amethyst Nebula */
+html[data-lc-theme="amethyst"] {
+  --bg-layer-bg: #0d0b18 !important;
+  --bg-layer-1: #131124 !important;
+  --bg-layer-2: #1a1631 !important;
+  --bg-layer-3: #231e42 !important;
+  --bg-layer-card: #29244d !important;
+  --border-primary: #2a254c !important;
+  --brand-orange: #9d4edd !important;
+  --bg-gradient: linear-gradient(135deg, #0d0b18 0%, #17112a 100%) !important;
+}
+
+/* 2. Emerald Aurora */
+html[data-lc-theme="forest"] {
+  --bg-layer-bg: #07100b !important;
+  --bg-layer-1: #0c1b12 !important;
+  --bg-layer-2: #12271a !important;
+  --bg-layer-3: #1a3625 !important;
+  --bg-layer-card: #224831 !important;
+  --border-primary: #1a3b26 !important;
+  --brand-orange: #10b981 !important;
+  --bg-gradient: linear-gradient(135deg, #07100b 0%, #0e2015 100%) !important;
+}
+
+/* 3. Sunset Horizon */
+html[data-lc-theme="sunset"] {
+  --bg-layer-bg: #120d0d !important;
+  --bg-layer-1: #1c1414 !important;
+  --bg-layer-2: #281d1d !important;
+  --bg-layer-3: #342525 !important;
+  --bg-layer-card: #453131 !important;
+  --border-primary: #3b2929 !important;
+  --brand-orange: #ff6b6b !important;
+  --bg-gradient: linear-gradient(135deg, #120d0d 0%, #261717 100%) !important;
+}
+
+/* 4. Midnight Abyss */
+html[data-lc-theme="space"] {
+  --bg-layer-bg: #050a12 !important;
+  --bg-layer-1: #0a1120 !important;
+  --bg-layer-2: #0f1a30 !important;
+  --bg-layer-3: #162545 !important;
+  --bg-layer-card: #1e315b !important;
+  --border-primary: #1a2d52 !important;
+  --brand-orange: #3b82f6 !important;
+  --bg-gradient: linear-gradient(135deg, #050a12 0%, #0c192f 100%) !important;
+}
+
+/* 5. Cyber Neon */
+html[data-lc-theme="cyberpunk"] {
+  --bg-layer-bg: #04040a !important;
+  --bg-layer-1: #0c0c16 !important;
+  --bg-layer-2: #161628 !important;
+  --bg-layer-3: #22223a !important;
+  --bg-layer-card: #2d2d4c !important;
+  --border-primary: #262640 !important;
+  --brand-orange: #ff007f !important;
+  --bg-gradient: linear-gradient(135deg, #04040a 0%, #111124 100%) !important;
+}
+
+/* 6. Obsidian Onyx */
+html[data-lc-theme="obsidian"] {
+  --bg-layer-bg: #050505 !important;
+  --bg-layer-1: #0c0c0c !important;
+  --bg-layer-2: #141414 !important;
+  --bg-layer-3: #1c1c1c !important;
+  --bg-layer-card: #242424 !important;
+  --border-primary: #1e1e1e !important;
+  --brand-orange: #e5e5e5 !important;
+  --bg-gradient: linear-gradient(135deg, #050505 0%, #161616 100%) !important;
+}
+
+/* 7. Dracula Grave */
+html[data-lc-theme="dracula"] {
+  --bg-layer-bg: #1e1f29 !important;
+  --bg-layer-1: #282a36 !important;
+  --bg-layer-2: #343746 !important;
+  --bg-layer-3: #3e4254 !important;
+  --bg-layer-card: #44475a !important;
+  --border-primary: #3b3e51 !important;
+  --brand-orange: #ff79c6 !important;
+}
+
+/* 8. Polar Nord */
+html[data-lc-theme="nord"] {
+  --bg-layer-bg: #1e222b !important;
+  --bg-layer-1: #2e3440 !important;
+  --bg-layer-2: #3b4252 !important;
+  --bg-layer-3: #434c5e !important;
+  --bg-layer-card: #4c566a !important;
+  --border-primary: #353b49 !important;
+  --brand-orange: #88c0d0 !important;
+  --bg-gradient: linear-gradient(135deg, #1e222b 0%, #2f3644 100%) !important;
+}
+
+/* 9. Gruvbox Dark */
+html[data-lc-theme="gruvbox"] {
+  --bg-layer-bg: #1d2021 !important;
+  --bg-layer-1: #282828 !important;
+  --bg-layer-2: #3c3836 !important;
+  --bg-layer-3: #504945 !important;
+  --bg-layer-card: #665c54 !important;
+  --border-primary: #32302f !important;
+  --brand-orange: #fe8019 !important;
+}
+
+/* 10. Solar Flare */
+html[data-lc-theme="solarflare"] {
+  --bg-layer-bg: #100606 !important;
+  --bg-layer-1: #1a0a0a !important;
+  --bg-layer-2: #240e0e !important;
+  --bg-layer-3: #2f1313 !important;
+  --bg-layer-card: #3a1717 !important;
+  --border-primary: #241111 !important;
+  --brand-orange: #ffb000 !important;
+  --bg-gradient: linear-gradient(135deg, #100606 0%, #291111 100%) !important;
+}
+
+/* 11. Monokai Carbon */
+html[data-lc-theme="monokai"] {
+  --bg-layer-bg: #121212 !important;
+  --bg-layer-1: #1e1e1e !important;
+  --bg-layer-2: #272727 !important;
+  --bg-layer-3: #333333 !important;
+  --bg-layer-card: #3e3e3e !important;
+  --border-primary: #2b2b2b !important;
+  --brand-orange: #a6e22e !important;
+}
+
+/* 12. Plum Eclipse */
+html[data-lc-theme="plum"] {
+  --bg-layer-bg: #0c060c !important;
+  --bg-layer-1: #140b14 !important;
+  --bg-layer-2: #1e101e !important;
+  --bg-layer-3: #281628 !important;
+  --bg-layer-card: #321c32 !important;
+  --border-primary: #211121 !important;
+  --brand-orange: #ec4899 !important;
+  --bg-gradient: linear-gradient(135deg, #0c060c 0%, #201120 100%) !important;
+}
+
+/* 13. Ocean Trench */
+html[data-lc-theme="ocean"] {
+  --bg-layer-bg: #02090c !important;
+  --bg-layer-1: #05151c !important;
+  --bg-layer-2: #08212c !important;
+  --bg-layer-3: #0c2d3c !important;
+  --bg-layer-card: #10394c !important;
+  --border-primary: #0a2734 !important;
+  --brand-orange: #06b6d4 !important;
+  --bg-gradient: linear-gradient(135deg, #02090c 0%, #0b2f3f 100%) !important;
+}
+
+/* 14. Toxic Slime */
+html[data-lc-theme="toxic"] {
+  --bg-layer-bg: #070907 !important;
+  --bg-layer-1: #0d120d !important;
+  --bg-layer-2: #141b14 !important;
+  --bg-layer-3: #1a241a !important;
+  --bg-layer-card: #212d21 !important;
+  --border-primary: #111811 !important;
+  --brand-orange: #39ff14 !important;
+  --bg-gradient: linear-gradient(135deg, #070907 0%, #151e15 100%) !important;
+}
+
+/* 15. Rose Gold Dark */
+html[data-lc-theme="rosegold"] {
+  --bg-layer-bg: #0d090a !important;
+  --bg-layer-1: #171012 !important;
+  --bg-layer-2: #21171a !important;
+  --bg-layer-3: #2b1f22 !important;
+  --bg-layer-card: #35262a !important;
+  --border-primary: #211619 !important;
+  --brand-orange: #f43f5e !important;
+  --bg-gradient: linear-gradient(135deg, #0d090a 0%, #26191d 100%) !important;
+}
+
+/* 16. Aurora Green */
+html[data-lc-theme="aurora"] {
+  --bg-layer-bg: #030a0a !important;
+  --bg-layer-1: #061515 !important;
+  --bg-layer-2: #0a2020 !important;
+  --bg-layer-3: #0d2b2b !important;
+  --bg-layer-card: #113636 !important;
+  --border-primary: #071b1b !important;
+  --brand-orange: #2dd4bf !important;
+  --bg-gradient: linear-gradient(135deg, #030a0a 0%, #0d2e2e 100%) !important;
+}
+
+/* 17. Cyberpunk 2077 */
+html[data-lc-theme="cyber2077"] {
+  --bg-layer-bg: #0a0a0c !important;
+  --bg-layer-1: #121217 !important;
+  --bg-layer-2: #1b1b22 !important;
+  --bg-layer-3: #24242d !important;
+  --bg-layer-card: #2d2d38 !important;
+  --border-primary: #1d1d26 !important;
+  --brand-orange: #f3e600 !important;
+}
+
+/* 18. Royal Velvet */
+html[data-lc-theme="royal"] {
+  --bg-layer-bg: #060514 !important;
+  --bg-layer-1: #0d0a27 !important;
+  --bg-layer-2: #130f3a !important;
+  --bg-layer-3: #1a144d !important;
+  --bg-layer-card: #201a61 !important;
+  --border-primary: #120e36 !important;
+  --brand-orange: #6366f1 !important;
+  --bg-gradient: linear-gradient(135deg, #060514 0%, #151040 100%) !important;
+}
+
+/* 19. Vampire Gothic */
+html[data-lc-theme="vampire"] {
+  --bg-layer-bg: #080101 !important;
+  --bg-layer-1: #100202 !important;
+  --bg-layer-2: #180303 !important;
+  --bg-layer-3: #210404 !important;
+  --bg-layer-card: #2a0505 !important;
+  --border-primary: #170303 !important;
+  --brand-orange: #ef4444 !important;
+  --bg-gradient: linear-gradient(135deg, #080101 0%, #260505 100%) !important;
+}
+
+/* ----------------------------------------------------
+   SUBSTRING COUPLING ALIGNMENT (BUILT FOR TAILWIND)
+---------------------------------------------------- */
+
+/* Base Body background rules (including dashboard and list layouts) */
+html[data-lc-theme] body,
+html[data-lc-theme] #__next,
+html[data-lc-theme] [class*="bg-dark-layer-bg"],
+html[data-lc-theme] [class*="bg-zinc-950"],
+html[data-lc-theme] [class*="bg-neutral-950"] {
+  background-color: var(--bg-layer-bg) !important;
+  background-image: var(--bg-gradient, none) !important;
+}
+
+/* Layer 1 Overrides (navbars, headers, dashboards, cards and column grids) */
+html[data-lc-theme] nav,
+html[data-lc-theme] header,
+html[data-lc-theme] [class*="bg-dark-layer-1"],
+html[data-lc-theme] [class*="bg-zinc-900"],
+html[data-lc-theme] [class*="bg-neutral-900"],
+html[data-lc-theme] [class*="bg-dark-lc-layer-01"],
+html[data-lc-theme] div[class*="split-pane"] > div,
+html[data-lc-theme] div[class*="workspace-"] > div,
+html[data-lc-theme] div[class*="pane-"] > div,
+html[data-lc-theme] div[data-key="description-content"],
+html[data-lc-theme] div[class*="main-layout"] {
+  background-color: var(--bg-layer-1) !important;
+}
+
+/* Layer 2 Overrides (Editors, inputs, tab bodies, subheader rows) */
+html[data-lc-theme] [class*="bg-dark-layer-2"],
+html[data-lc-theme] [class*="bg-zinc-800"],
+html[data-lc-theme] [class*="bg-neutral-800"],
+html[data-lc-theme] .flexlayout__tab,
+html[data-lc-theme] div[class*="flexlayout__tab"],
+html[data-lc-theme] div[class*="tab-header"],
+html[data-lc-theme] div[class*="tabs-"],
+html[data-lc-theme] div[class*="navigation"] {
+  background-color: var(--bg-layer-2) !important;
+}
+
+/* Layer 3 / Card Overrides (dropdown menus, floating blocks, hover states) */
+html[data-lc-theme] [class*="bg-dark-layer-3"],
+html[data-lc-theme] [class*="bg-dark-layer-card"],
+html[data-lc-theme] [class*="bg-zinc-700"],
+html[data-lc-theme] [class*="bg-neutral-700"],
+html[data-lc-theme] [class*="bg-overlay-3"],
+html[data-lc-theme] [class*="bg-dark-overlay-3"],
+html[data-lc-theme] tr:hover,
+html[data-lc-theme] div[role="row"]:hover,
+html[data-lc-theme] .bg-neutral-100,
+html[data-lc-theme] .dark\:bg-neutral-800 {
+  background-color: var(--bg-layer-card) !important;
+}
+
+/* Dynamic border structures coupling */
+html[data-lc-theme] div,
+html[data-lc-theme] nav,
+html[data-lc-theme] header,
+html[data-lc-theme] button {
+  border-color: var(--border-primary) !important;
+}
+
+/* ----------------------------------------------------
+   TESTCASE RUNNER & TEXT INPUT CORRECTIONS
+---------------------------------------------------- */
+
+/* Tabs selection buttons (e.g. Case 1, Case 2, Case 3) inside test runner */
+html[data-lc-theme] div[class*="Case"],
+html[data-lc-theme] button[class*="Case"],
+html[data-lc-theme] div[class*="bg-fill-3"],
+html[data-lc-theme] div[class*="bg-fill-4"],
+html[data-lc-theme] [class*="bg-dark-fill-"] {
+  background-color: var(--bg-layer-3) !important;
+  /* border: 1px solid var(--border-primary) !important; */
+}
+
+/* Active tab state buttons mapping */
+html[data-lc-theme] div[class*="Case"][class*="text-"],
+html[data-lc-theme] div[class*="bg-fill-3"][class*="text-"],
+html[data-lc-theme] button[class*="Case"][class*="text-"] {
+  background-color: var(--bg-layer-card) !important;
+  border-color: var(--brand-orange) !important;
+}
+
+/* Code block input text fields styling */
+html[data-lc-theme] textarea,
+html[data-lc-theme] input,
+html[data-lc-theme] div[class*="bg-neutral-"][class*="rounded"],
+html[data-lc-theme] div[class*="bg-zinc-"][class*="rounded"],
+html[data-lc-theme] code {
+  background-color: var(--bg-layer-2) !important;
+  /* border: 1px solid var(--border-primary) !important; */
+}
+
+/* Reset default transparent layers */
+html[data-lc-theme] table,
+html[data-lc-theme] thead,
+html[data-lc-theme] tbody,
+html[data-lc-theme] tr,
+html[data-lc-theme] th,
+html[data-lc-theme] td,
+html[data-lc-theme] .border-sd-border,
+html[data-lc-theme] div[class*="border-sd-border"],
+html[data-lc-theme] div[class*="components_no-scrollbar"],
+html[data-lc-theme] .w-full.flex-1.overflow-y-auto,
+html[data-lc-theme] .flex-1.overflow-y-auto,
+html[data-lc-theme] .h-full.overflow-auto,
+html[data-lc-theme] div[class*="overflow-y-auto"],
+html[data-lc-theme] div[class*="overflow-auto"],
+html[data-lc-theme] .relative.flex.flex-1.justify-center,
+html[data-lc-theme] .flex.w-full.flex-1.overflow-hidden,
+html[data-lc-theme] div[class*="flex w-full flex-1 overflow-hidden"],
+html[data-lc-theme] div[class*="max-w-[1000px]"] {
+  background-color: transparent !important;
+}
+
+/* ----------------------------------------------------
+   MONACO & CORE BRAND ELEMENT HOOKS
+---------------------------------------------------- */
+html[data-lc-theme] .monaco-editor,
+html[data-lc-theme] .monaco-editor-background,
+html[data-lc-theme] .monaco-editor .margin,
+html[data-lc-theme] .view-lines,
+html[data-lc-theme] .margin-view-overlays {
+  background-color: var(--bg-layer-2) !important;
+}
+
+html[data-lc-theme] .monaco-editor .current-line {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Status-bar footer alignment */
+html[data-lc-theme] .bg-lc-layer-01,
+html[data-lc-theme] .dark\:bg-dark-lc-layer-01,
+html[data-lc-theme] div[class*="bg-lc-layer-01"] {
+  background-color: var(--bg-layer-1) !important;
+}
+html[data-lc-theme] .border-lc-fill-01,
+html[data-lc-theme] .dark\:border-dark-lc-fill-01,
+html[data-lc-theme] div[class*="border-lc-fill-01"] {
+  border-color: var(--border-primary) !important;
+}
+
+/* Scroll fades overlay styling */
+html[data-lc-theme] .bg-gradient-to-l,
+html[data-lc-theme] div[class*="bg-gradient-to-l"] {
+  background-image: linear-gradient(to left, var(--bg-layer-bg), transparent) !important;
+}
+html[data-lc-theme] .bg-gradient-to-r,
+html[data-lc-theme] div[class*="bg-gradient-to-r"] {
+  background-image: linear-gradient(to right, var(--bg-layer-bg), transparent) !important;
+}
+
+/* Active highlights */
+html[data-lc-theme] .border-brand-orange,
+html[data-lc-theme] .text-brand-orange {
+  border-color: var(--brand-orange) !important;
+  color: var(--brand-orange) !important;
+}
+html[data-lc-theme] button[class*="brand-orange"] {
+  background-color: var(--brand-orange) !important;
+}
+
+/* Dynamic SVG colors compatibility mapping */
+html[data-lc-theme] svg {
+  fill: currentColor;
+}
+
+/* ----------------------------------------------------
+   NEW SELECTOR HOOKS FOR SPLIT PANES & DISCUSS
+---------------------------------------------------- */
+
+/* Vertical panel split dividers: class="flexlayout__splitter" */
+html[data-lc-theme] .flexlayout__splitter,
+html[data-lc-theme] div[class*="flexlayout__splitter"] {
+  background-color: var(--bg-layer-bg) !important;
+  border-left: 1px solid var(--border-primary) !important;
+  border-right: 1px solid var(--border-primary) !important;
+}
+
+/* Panel toolbars / headers: class="flex h-9 items-center justify-between px-3 py-2" */
+html[data-lc-theme] div[class*="h-9"][class*="items-center"][class*="justify-between"] {
+  background-color: var(--bg-layer-1) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+}
+
+/* Main inner containers overflow blocks wrapper alignment */
+html[data-lc-theme] div[class*="flex-col"][class*="overflow-hidden"][class*="pb-2"] {
+  background-color: transparent !important;
+}
+
+/* Sticky top filter rows on the Discuss page using hardcoded dark values */
+html[data-lc-theme] div[class*="bg-[#fafafa]"],
+html[data-lc-theme] div[class*="dark:bg-[#1a1a1a]"] {
+  background-color: var(--bg-layer-bg) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+}
+
+/* Category card sidebar groups on the Discuss page */
+html[data-lc-theme] div[class*="flex-col"][class*="gap-4"][class*="rounded-lg"] {
+  background-color: var(--bg-layer-1) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* ----------------------------------------------------
+   SPECIFIC HOOKS FOR UN-THEMED NAV & PANEL HEADERS/FOOTERS
+---------------------------------------------------- */
+
+/* Top global navigation wrapper: class="z-nav-1" / class="h-[50px]" / class="h-[48px]" */
+html[data-lc-theme] div[class*="z-nav-1"],
+html[data-lc-theme] div[class*="h-[50px]"],
+html[data-lc-theme] div[class*="h-[48px]"],
+html[data-lc-theme] div[class*="z-nav-1"] div,
+html[data-lc-theme] div[class*="z-nav-1"] header,
+html[data-lc-theme] div[class*="z-nav-1"] nav {
+  background-color: var(--bg-layer-1) !important;
+  background-image: none !important;
+}
+
+/* Workspace subheaders, code-pane toolbars and panel footers */
+html[data-lc-theme] div[class*="h-9"][class*="items-center"],
+html[data-lc-theme] div[class*="h-10"][class*="items-center"],
+html[data-lc-theme] div[class*="h-11"][class*="items-center"],
+html[data-lc-theme] div[class*="h-8"][class*="items-center"] {
+  background-color: var(--bg-layer-1) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* ----------------------------------------------------
+   USER TARGETED CLASSES (SPECIFIC PROBLEM PAGE FIXES)
+---------------------------------------------------- */
+
+/* Top navigation and sub-toolbar panel: class="flex w-full items-center justify-between gap-2 p-1 bg-layer-01 dark:bg-layer-01" */
+html[data-lc-theme] .flex.w-full.items-center.justify-between.gap-2.p-1.bg-layer-01.dark\:bg-layer-01,
+html[data-lc-theme] [class*="bg-layer-01"][class*="dark:bg-layer-01"],
+html[data-lc-theme] .bg-layer-01,
+html[data-lc-theme] .dark\:bg-layer-01,
+html[data-lc-theme] div[class*="items-center"][class*="justify-between"][class*="bg-layer-01"] {
+  background-color: var(--bg-layer-1) !important;
+}
+
+/* Left structural layout containers: class="flex-none" */
+html[data-lc-theme] .flex-none[class*="bg-"],
+html[data-lc-theme] div[class*="flex-none"][class*="bg-"] {
+  background-color: var(--bg-layer-1) !important;
+}
+
+/* ----------------------------------------------------
+   SLIM SCROLLBAR — DESCRIPTION PANEL
+---------------------------------------------------- */
+
+/* Slim all non-Monaco scrollbars site-wide */
+html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar-thumb {
+  background: var(--border-primary) !important;
+  border-radius: 4px;
+}
+
+html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-layer-3) !important;
+}
+
