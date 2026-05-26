@@ -300,7 +300,6 @@ html[data-lc-theme] div[class*="bg-fill-3"],
 html[data-lc-theme] div[class*="bg-fill-4"],
 html[data-lc-theme] [class*="bg-dark-fill-"] {
   background-color: var(--bg-layer-3) !important;
-  /* border: 1px solid var(--border-primary) !important; */
 }
 
 /* Active tab state buttons mapping */
@@ -318,7 +317,6 @@ html[data-lc-theme] div[class*="bg-neutral-"][class*="rounded"],
 html[data-lc-theme] div[class*="bg-zinc-"][class*="rounded"],
 html[data-lc-theme] code {
   background-color: var(--bg-layer-2) !important;
-  /* border: 1px solid var(--border-primary) !important; */
 }
 
 /* Reset default transparent layers */
@@ -386,7 +384,12 @@ html[data-lc-theme] .text-brand-orange {
   border-color: var(--brand-orange) !important;
   color: var(--brand-orange) !important;
 }
-html[data-lc-theme] button[class*="brand-orange"] {
+
+/* FIX: Refined button background selector targeting only actual background classes to prevent matching native Store buttons using .text-brand-orange */
+html[data-lc-theme] button[class*="bg-brand-orange"],
+html[data-lc-theme] button[class*="bg-fill-brand-orange"],
+html[data-lc-theme] button[class*="bg-dark-fill-brand-orange"],
+html[data-lc-theme] button[class*="bg-dark-brand-orange"] {
   background-color: var(--brand-orange) !important;
 }
 
@@ -497,3 +500,44 @@ html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollba
   background: var(--bg-layer-3) !important;
 }
 
+/* ----------------------------------------------------
+   EXCLUDE STORE NAVBAR LINK & DROPDOWN FROM THEME OVERRIDES
+---------------------------------------------------- */
+
+/* Reset Store links, dropdown triggers, and parent elements to LeetCode's default gold/orange colors */
+html[data-lc-theme] a[href*="/store/"],
+html[data-lc-theme] a[href*="/store/"] *,
+html[data-lc-theme] button:has(a[href*="/store/"]),
+html[data-lc-theme] [class*="text-brand-orange"][href*="/store/"],
+html[data-lc-theme] [class*="text-brand-orange"]:has(a[href*="/store/"]),
+html[data-lc-theme] li:has(a[href*="/store/"]) button,
+html[data-lc-theme] li:has(a[href*="/store/"]) span,
+html[data-lc-theme] [id*="headlessui-menu-button"]:has(~ * a[href*="/store/"]) {
+  color: #ffa116 !important; /* Standard LeetCode Brand Orange/Gold */
+  border-color: #ffa116 !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Prevent dynamic SVG color inheritance for icons inside the store dropdown */
+html[data-lc-theme] a[href*="/store/"] svg,
+html[data-lc-theme] button:has(a[href*="/store/"]) svg,
+html[data-lc-theme] li:has(a[href*="/store/"]) svg,
+html[data-lc-theme] [id*="headlessui-menu-button"]:has(~ * a[href*="/store/"]) svg {
+  color: #ffa116 !important;
+  fill: #ffa116 !important;
+}
+
+/* ----------------------------------------------------
+   EXCLUDE SOLVED/SUCCESS STATUS ICONS FROM THEME OVERRIDES
+---------------------------------------------------- */
+
+/* FIX: Revert custom SVG fill values on Solved labels and checkmarks to native/un-themed styling */
+html[data-lc-theme] [class*="success"] svg,
+html[data-lc-theme] [class*="success"] svg *,
+html[data-lc-theme] [class*="Solved"] svg,
+html[data-lc-theme] [class*="Solved"] svg *,
+html[data-lc-theme] svg[class*="success"],
+html[data-lc-theme] svg[class*="success"] * {
+  fill: revert !important;
+}
