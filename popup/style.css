@@ -89,7 +89,6 @@ header {
   border: 1px solid var(--rule);
   border-radius: 99px;
   background: var(--paper-raised);
-  transition: color .18s, border-color .18s, background .18s;
 }
 
 .website-link:hover {
@@ -135,7 +134,6 @@ main {
   background: var(--red-dim);
   border: 1px solid var(--red-border);
   border-radius: 9px;
-  transition: background .18s;
 }
 
 .shortcut-row:hover { background: var(--red-dim-hover); }
@@ -209,7 +207,7 @@ main {
   padding: 2px 1px;
 }
 
-/* Each dot is a single colour circle with tooltip */
+/* Base dot styling - transitions removed */
 .dot {
   position: relative;
   width: 22px;
@@ -217,7 +215,6 @@ main {
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: transform .18s, border-color .18s, box-shadow .18s;
   flex-shrink: 0;
   outline: none;
   background-clip: padding-box;
@@ -229,24 +226,24 @@ main {
   inset: -3px;
   border-radius: 50%;
   border: 2px solid transparent;
-  transition: border-color .18s;
 }
 
+/* Removed transition and scaling on hover */
 .dot:hover {
-  transform: scale(1.22);
   z-index: 5;
 }
 
+/* Active selection border styling */
 .dot.active {
   box-shadow: 0 0 0 2px var(--paper-raised), 0 0 0 4px currentColor;
 }
 
-/* Tooltip */
+/* Tooltip - animations removed, displays instantly */
 .dot .tip {
   position: absolute;
   bottom: calc(100% + 7px);
   left: 50%;
-  transform: translateX(-50%) translateY(4px);
+  transform: translateX(-50%);
   background: var(--ink);
   color: #fff;
   font-family: 'DM Mono', monospace;
@@ -256,8 +253,7 @@ main {
   padding: 3px 7px;
   border-radius: 5px;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity .15s, transform .15s;
+  display: none;
   z-index: 20;
   letter-spacing: 0.04em;
 }
@@ -273,8 +269,7 @@ main {
 }
 
 .dot:hover .tip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  display: block;
 }
 
 /* ── Features ── */
@@ -292,13 +287,11 @@ main {
   background: var(--paper-raised);
   border: 1px solid var(--rule);
   border-radius: 9px;
-  transition: border-color .18s, background .18s, transform .18s, box-shadow .18s;
 }
 
 .feature-item:hover {
   border-color: var(--red-border-hover);
   background: var(--red-dim);
-  transform: translateY(-1px);
   box-shadow: 0 3px 10px rgba(205,92,92,0.07);
 }
 
@@ -362,18 +355,15 @@ footer {
   text-decoration: none;
   letter-spacing: 0.01em;
   box-shadow: 0 3px 10px rgba(205,92,92,0.25);
-  transition: background .2s, transform .18s, box-shadow .18s;
   cursor: pointer;
   border: none;
 }
 
 .btn-donate:hover {
   background: var(--red-hover);
-  transform: translateY(-1px);
   box-shadow: 0 5px 14px rgba(205,92,92,0.35);
 }
 
 .btn-donate:active {
-  transform: translateY(0);
   box-shadow: 0 2px 6px rgba(205,92,92,0.22);
 }

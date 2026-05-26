@@ -46,35 +46,48 @@
         </div>
       </div>
 
-      <!--
-        Each .dot carries:
-          data-theme   = storage key
-          data-display = human-readable name (shown in tooltip + active pill)
-          style        = background: <accent colour>
-          color        = same accent colour (used for active ring via currentColor)
-      -->
       <div class="palette-grid" id="palette-grid">
 
-        <button class="dot" data-theme="default"    data-display="Default Gray"    style="background:#737373; color:#737373"    title=""><span class="tip">Default Gray</span></button>
-        <button class="dot" data-theme="amethyst"   data-display="Amethyst Nebula" style="background:#9d4edd; color:#9d4edd"   title=""><span class="tip">Amethyst Nebula</span></button>
-        <button class="dot" data-theme="forest"     data-display="Emerald Aurora"  style="background:#10b981; color:#10b981"   title=""><span class="tip">Emerald Aurora</span></button>
-        <button class="dot" data-theme="sunset"     data-display="Sunset Horizon"  style="background:#ff6b6b; color:#ff6b6b"   title=""><span class="tip">Sunset Horizon</span></button>
-        <button class="dot" data-theme="space"      data-display="Midnight Abyss"  style="background:#3b82f6; color:#3b82f6"   title=""><span class="tip">Midnight Abyss</span></button>
-        <button class="dot" data-theme="cyberpunk"  data-display="Cyber Neon"      style="background:#ff007f; color:#ff007f"   title=""><span class="tip">Cyber Neon</span></button>
-        <button class="dot" data-theme="obsidian"   data-display="Obsidian Onyx"   style="background:#d4d4d4; color:#d4d4d4"   title=""><span class="tip">Obsidian Onyx</span></button>
-        <button class="dot" data-theme="dracula"    data-display="Dracula Grave"   style="background:#ff79c6; color:#ff79c6"   title=""><span class="tip">Dracula Grave</span></button>
-        <button class="dot" data-theme="nord"       data-display="Nordic Frost"    style="background:#88c0d0; color:#88c0d0"   title=""><span class="tip">Nordic Frost</span></button>
-        <button class="dot" data-theme="gruvbox"    data-display="Gruvbox Dark"    style="background:#fe8019; color:#fe8019"   title=""><span class="tip">Gruvbox Dark</span></button>
-        <button class="dot" data-theme="solarflare" data-display="Solar Flare"     style="background:#ffb000; color:#ffb000"   title=""><span class="tip">Solar Flare</span></button>
-        <button class="dot" data-theme="monokai"    data-display="Monokai Carbon"  style="background:#a6e22e; color:#a6e22e"   title=""><span class="tip">Monokai Carbon</span></button>
-        <button class="dot" data-theme="plum"       data-display="Plum Eclipse"    style="background:#ec4899; color:#ec4899"   title=""><span class="tip">Plum Eclipse</span></button>
-        <button class="dot" data-theme="ocean"      data-display="Ocean Trench"    style="background:#06b6d4; color:#06b6d4"   title=""><span class="tip">Ocean Trench</span></button>
-        <button class="dot" data-theme="toxic"      data-display="Toxic Slime"     style="background:#39ff14; color:#39ff14"   title=""><span class="tip">Toxic Slime</span></button>
-        <button class="dot" data-theme="rosegold"   data-display="Rose Gold Dark"  style="background:#f43f5e; color:#f43f5e"   title=""><span class="tip">Rose Gold Dark</span></button>
-        <button class="dot" data-theme="aurora"     data-display="Aurora Green"    style="background:#2dd4bf; color:#2dd4bf"   title=""><span class="tip">Aurora Green</span></button>
-        <button class="dot" data-theme="cyber2077"  data-display="Cyberpunk 2077"  style="background:#f3e600; color:#f3e600"   title=""><span class="tip">Cyberpunk 2077</span></button>
-        <button class="dot" data-theme="royal"      data-display="Royal Velvet"    style="background:#6366f1; color:#6366f1"   title=""><span class="tip">Royal Velvet</span></button>
-        <button class="dot" data-theme="vampire"    data-display="Vampire Gothic"  style="background:#ef4444; color:#ef4444"   title=""><span class="tip">Vampire Gothic</span></button>
+        <button class="dot" data-theme="default"          data-display="Default Gray"        style="background:#737373; color:#737373" title=""><span class="tip">Default Gray</span></button>
+        <button class="dot" data-theme="amethyst"         data-display="Amethyst Nebula"     style="background:#9d4edd; color:#9d4edd" title=""><span class="tip">Amethyst Nebula</span></button>
+        <button class="dot" data-theme="forest"           data-display="Emerald Aurora"      style="background:#10b981; color:#10b981" title=""><span class="tip">Emerald Aurora</span></button>
+        <button class="dot" data-theme="sunset"           data-display="Sunset Horizon"      style="background:#ff6b6b; color:#ff6b6b" title=""><span class="tip">Sunset Horizon</span></button>
+        <button class="dot" data-theme="space"            data-display="Midnight Abyss"      style="background:#3b82f6; color:#3b82f6" title=""><span class="tip">Midnight Abyss</span></button>
+        <button class="dot" data-theme="cyberpunk"        data-display="Cyber Neon"          style="background:#ff007f; color:#ff007f" title=""><span class="tip">Cyber Neon</span></button>
+        <button class="dot" data-theme="obsidian"         data-display="Obsidian Onyx"       style="background:#e5e5e5; color:#e5e5e5" title=""><span class="tip">Obsidian Onyx</span></button>
+        <button class="dot" data-theme="dracula"          data-display="Dracula Grave"       style="background:#ff79c6; color:#ff79c6" title=""><span class="tip">Dracula Grave</span></button>
+        <button class="dot" data-theme="nord"             data-display="Polar Nord"          style="background:#88c0d0; color:#88c0d0" title=""><span class="tip">Polar Nord</span></button>
+        <button class="dot" data-theme="gruvbox"          data-display="Gruvbox Dark"        style="background:#fe8019; color:#fe8019" title=""><span class="tip">Gruvbox Dark</span></button>
+        <button class="dot" data-theme="solarflare"       data-display="Solar Flare"         style="background:#ffb000; color:#ffb000" title=""><span class="tip">Solar Flare</span></button>
+        <button class="dot" data-theme="monokai"          data-display="Monokai Carbon"      style="background:#a6e22e; color:#a6e22e" title=""><span class="tip">Monokai Carbon</span></button>
+        <button class="dot" data-theme="plum"             data-display="Plum Eclipse"        style="background:#ec4899; color:#ec4899" title=""><span class="tip">Plum Eclipse</span></button>
+        <button class="dot" data-theme="ocean"            data-display="Ocean Trench"        style="background:#06b6d4; color:#06b6d4" title=""><span class="tip">Ocean Trench</span></button>
+        <button class="dot" data-theme="toxic"            data-display="Toxic Slime"         style="background:#39ff14; color:#39ff14" title=""><span class="tip">Toxic Slime</span></button>
+        <button class="dot" data-theme="rosegold"         data-display="Rose Gold Dark"      style="background:#f43f5e; color:#f43f5e" title=""><span class="tip">Rose Gold Dark</span></button>
+        <button class="dot" data-theme="aurora"           data-display="Aurora Green"        style="background:#2dd4bf; color:#2dd4bf" title=""><span class="tip">Aurora Green</span></button>
+        <button class="dot" data-theme="cyber2077"        data-display="Cyberpunk 2077"      style="background:#f3e600; color:#f3e600" title=""><span class="tip">Cyberpunk 2077</span></button>
+        <button class="dot" data-theme="royal"            data-display="Royal Velvet"        style="background:#6366f1; color:#6366f1" title=""><span class="tip">Royal Velvet</span></button>
+        <button class="dot" data-theme="vampire"          data-display="Vampire Gothic"      style="background:#ef4444; color:#ef4444" title=""><span class="tip">Vampire Gothic</span></button>
+        <button class="dot" data-theme="abyssal"          data-display="Abyssal Ice"         style="background:#00d4ff; color:#00d4ff" title=""><span class="tip">Abyssal Ice</span></button>
+        <button class="dot" data-theme="void-orchid"      data-display="Void Orchid"         style="background:#bf5fff; color:#bf5fff" title=""><span class="tip">Void Orchid</span></button>
+        <button class="dot" data-theme="phosphor"         data-display="Phosphor Matrix"     style="background:#7fff00; color:#7fff00" title=""><span class="tip">Phosphor Matrix</span></button>
+        <button class="dot" data-theme="gilded"           data-display="Gilded Carbon"       style="background:#c8a96e; color:#c8a96e" title=""><span class="tip">Gilded Carbon</span></button>
+        <button class="dot" data-theme="sakura"           data-display="Neon Sakura"         style="background:#ff4d8f; color:#ff4d8f" title=""><span class="tip">Neon Sakura</span></button>
+        <button class="dot" data-theme="deep-horizon"     data-display="Deep Horizon"        style="background:#4fc3f7; color:#4fc3f7" title=""><span class="tip">Deep Horizon</span></button>
+        <button class="dot" data-theme="starfield"        data-display="Starfield Lavender"  style="background:#a78bfa; color:#a78bfa" title=""><span class="tip">Starfield Lavender</span></button>
+        <button class="dot" data-theme="ember"            data-display="Ember Forge"         style="background:#ff6a00; color:#ff6a00" title=""><span class="tip">Ember Forge</span></button>
+        <button class="dot" data-theme="cryo"             data-display="Cryogenic Depths"    style="background:#00e5ff; color:#00e5ff" title=""><span class="tip">Cryogenic Depths</span></button>
+        <button class="dot" data-theme="onyx-gold"        data-display="Matte Onyx Gold"     style="background:#d4af37; color:#d4af37" title=""><span class="tip">Matte Onyx Gold</span></button>
+        <button class="dot" data-theme="jade"             data-display="Jade Terminal"       style="background:#14f0b0; color:#14f0b0" title=""><span class="tip">Jade Terminal</span></button>
+        <button class="dot" data-theme="crimson-mist"     data-display="Crimson Mist"        style="background:#ff8fab; color:#ff8fab" title=""><span class="tip">Crimson Mist</span></button>
+        <button class="dot" data-theme="phantom-reef"     data-display="Phantom Reef"        style="background:#56cfe1; color:#56cfe1" title=""><span class="tip">Phantom Reef</span></button>
+        <button class="dot" data-theme="ancient"          data-display="Ancient Scroll"      style="background:#e8c84a; color:#e8c84a" title=""><span class="tip">Ancient Scroll</span></button>
+        <button class="dot" data-theme="indigo-fog"       data-display="Indigo Fog"          style="background:#818cf8; color:#818cf8" title=""><span class="tip">Indigo Fog</span></button>
+        <button class="dot" data-theme="pure-void"        data-display="Pure Void"           style="background:#f0f0f0; color:#f0f0f0" title=""><span class="tip">Pure Void</span></button>
+        <button class="dot" data-theme="bioluminescence"  data-display="Bioluminescence"     style="background:#00ff9f; color:#00ff9f" title=""><span class="tip">Bioluminescence</span></button>
+        <button class="dot" data-theme="arcane"           data-display="Arcane Rift"         style="background:#e879f9; color:#e879f9" title=""><span class="tip">Arcane Rift</span></button>
+        <button class="dot" data-theme="polar-dawn"       data-display="Polar Dawn"          style="background:#38bdf8; color:#38bdf8" title=""><span class="tip">Polar Dawn</span></button>
+        <button class="dot" data-theme="rad-moss"         data-display="Radioactive Moss"    style="background:#b5e853; color:#b5e853" title=""><span class="tip">Radioactive Moss</span></button>
 
       </div>
     </div>
