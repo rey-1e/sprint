@@ -226,6 +226,245 @@ html[data-lc-theme="vampire"] {
   --bg-gradient: linear-gradient(135deg, #080101 0%, #260505 100%) !important;
 }
 
+/* 20. Abyssal Ice */
+html[data-lc-theme="abyssal"] {
+  --bg-layer-bg: #04080f !important;
+  --bg-layer-1: #080e1c !important;
+  --bg-layer-2: #0d1629 !important;
+  --bg-layer-3: #121e38 !important;
+  --bg-layer-card: #172548 !important;
+  --border-primary: #111d35 !important;
+  --brand-orange: #00d4ff !important;
+  --bg-gradient: linear-gradient(135deg, #04080f 0%, #0c1a30 100%) !important;
+}
+
+/* 21. Void Orchid */
+html[data-lc-theme="void-orchid"] {
+  --bg-layer-bg: #0a0005 !important;
+  --bg-layer-1: #150a1a !important;
+  --bg-layer-2: #200f27 !important;
+  --bg-layer-3: #2b1434 !important;
+  --bg-layer-card: #361941 !important;
+  --border-primary: #1f0e2e !important;
+  --brand-orange: #bf5fff !important;
+  --bg-gradient: linear-gradient(135deg, #0a0005 0%, #1e0d2c 100%) !important;
+}
+
+/* 22. Phosphor Matrix */
+html[data-lc-theme="phosphor"] {
+  --bg-layer-bg: #070c06 !important;
+  --bg-layer-1: #0e1a0c !important;
+  --bg-layer-2: #152712 !important;
+  --bg-layer-3: #1c3418 !important;
+  --bg-layer-card: #23411e !important;
+  --border-primary: #132010 !important;
+  --brand-orange: #7fff00 !important;
+  --bg-gradient: linear-gradient(135deg, #070c06 0%, #152811 100%) !important;
+}
+
+/* 23. Gilded Carbon */
+html[data-lc-theme="gilded"] {
+  --bg-layer-bg: #080a10 !important;
+  --bg-layer-1: #10141e !important;
+  --bg-layer-2: #181d2c !important;
+  --bg-layer-3: #20263a !important;
+  --bg-layer-card: #283048 !important;
+  --border-primary: #181f34 !important;
+  --brand-orange: #c8a96e !important;
+  --bg-gradient: linear-gradient(135deg, #080a10 0%, #181e2e 100%) !important;
+}
+
+/* 24. Neon Sakura */
+html[data-lc-theme="sakura"] {
+  --bg-layer-bg: #0a0608 !important;
+  --bg-layer-1: #160c12 !important;
+  --bg-layer-2: #21111b !important;
+  --bg-layer-3: #2c1624 !important;
+  --bg-layer-card: #371b2d !important;
+  --border-primary: #1f0f19 !important;
+  --brand-orange: #ff4d8f !important;
+  --bg-gradient: linear-gradient(135deg, #0a0608 0%, #22101a 100%) !important;
+}
+
+/* 25. Deep Horizon */
+html[data-lc-theme="deep-horizon"] {
+  --bg-layer-bg: #060811 !important;
+  --bg-layer-1: #0b1120 !important;
+  --bg-layer-2: #101b33 !important;
+  --bg-layer-3: #162446 !important;
+  --bg-layer-card: #1c2d59 !important;
+  --border-primary: #0f1e40 !important;
+  --brand-orange: #4fc3f7 !important;
+  --bg-gradient: linear-gradient(135deg, #060811 0%, #101d3a 100%) !important;
+}
+
+/* 26. Starfield Lavender */
+html[data-lc-theme="starfield"] {
+  --bg-layer-bg: #09070e !important;
+  --bg-layer-1: #130e1e !important;
+  --bg-layer-2: #1d162e !important;
+  --bg-layer-3: #271e3e !important;
+  --bg-layer-card: #31264e !important;
+  --border-primary: #1c1535 !important;
+  --brand-orange: #a78bfa !important;
+  --bg-gradient: linear-gradient(135deg, #09070e 0%, #1c1330 100%) !important;
+}
+
+/* 27. Ember Forge */
+html[data-lc-theme="ember"] {
+  --bg-layer-bg: #080505 !important;
+  --bg-layer-1: #140b09 !important;
+  --bg-layer-2: #1f110d !important;
+  --bg-layer-3: #2a1711 !important;
+  --bg-layer-card: #351d15 !important;
+  --border-primary: #1e0f0b !important;
+  --brand-orange: #ff6a00 !important;
+  --bg-gradient: linear-gradient(135deg, #080505 0%, #251410 100%) !important;
+}
+
+/* 28. Cryogenic Depths */
+html[data-lc-theme="cryo"] {
+  --bg-layer-bg: #030810 !important;
+  --bg-layer-1: #061221 !important;
+  --bg-layer-2: #091c34 !important;
+  --bg-layer-3: #0d2647 !important;
+  --bg-layer-card: #11305a !important;
+  --border-primary: #082040 !important;
+  --brand-orange: #00e5ff !important;
+  --bg-gradient: linear-gradient(135deg, #030810 0%, #0c2240 100%) !important;
+}
+
+/* 29. Matte Onyx Gold */
+html[data-lc-theme="onyx-gold"] {
+  --bg-layer-bg: #0b0b0b !important;
+  --bg-layer-1: #141414 !important;
+  --bg-layer-2: #1e1e1e !important;
+  --bg-layer-3: #272727 !important;
+  --bg-layer-card: #303030 !important;
+  --border-primary: #1a1a1a !important;
+  --brand-orange: #d4af37 !important;
+}
+
+/* 30. Jade Terminal */
+html[data-lc-theme="jade"] {
+  --bg-layer-bg: #060a0a !important;
+  --bg-layer-1: #0c1616 !important;
+  --bg-layer-2: #122222 !important;
+  --bg-layer-3: #182e2e !important;
+  --bg-layer-card: #1e3a3a !important;
+  --border-primary: #0f2525 !important;
+  --brand-orange: #14f0b0 !important;
+  --bg-gradient: linear-gradient(135deg, #060a0a 0%, #112424 100%) !important;
+}
+
+/* 31. Crimson Mist */
+html[data-lc-theme="crimson-mist"] {
+  --bg-layer-bg: #0d070a !important;
+  --bg-layer-1: #1a0f12 !important;
+  --bg-layer-2: #26161b !important;
+  --bg-layer-3: #321d24 !important;
+  --bg-layer-card: #3e242d !important;
+  --border-primary: #231019 !important;
+  --brand-orange: #ff8fab !important;
+  --bg-gradient: linear-gradient(135deg, #0d070a 0%, #271419 100%) !important;
+}
+
+/* 32. Phantom Reef */
+html[data-lc-theme="phantom-reef"] {
+  --bg-layer-bg: #070a0d !important;
+  --bg-layer-1: #0e1520 !important;
+  --bg-layer-2: #162033 !important;
+  --bg-layer-3: #1e2b46 !important;
+  --bg-layer-card: #253659 !important;
+  --border-primary: #152641 !important;
+  --brand-orange: #56cfe1 !important;
+  --bg-gradient: linear-gradient(135deg, #070a0d 0%, #152336 100%) !important;
+}
+
+/* 33. Ancient Scroll */
+html[data-lc-theme="ancient"] {
+  --bg-layer-bg: #0c0a07 !important;
+  --bg-layer-1: #1a160d !important;
+  --bg-layer-2: #282213 !important;
+  --bg-layer-3: #352d19 !important;
+  --bg-layer-card: #42381f !important;
+  --border-primary: #251f10 !important;
+  --brand-orange: #e8c84a !important;
+  --bg-gradient: linear-gradient(135deg, #0c0a07 0%, #2a2211 100%) !important;
+}
+
+/* 34. Indigo Fog */
+html[data-lc-theme="indigo-fog"] {
+  --bg-layer-bg: #06060a !important;
+  --bg-layer-1: #0d0d17 !important;
+  --bg-layer-2: #141425 !important;
+  --bg-layer-3: #1b1b33 !important;
+  --bg-layer-card: #222241 !important;
+  --border-primary: #10102a !important;
+  --brand-orange: #818cf8 !important;
+  --bg-gradient: linear-gradient(135deg, #06060a 0%, #131328 100%) !important;
+}
+
+/* 35. Pure Void */
+html[data-lc-theme="pure-void"] {
+  --bg-layer-bg: #090909 !important;
+  --bg-layer-1: #131313 !important;
+  --bg-layer-2: #1d1d1d !important;
+  --bg-layer-3: #252525 !important;
+  --bg-layer-card: #2e2e2e !important;
+  --border-primary: #181818 !important;
+  --brand-orange: #f0f0f0 !important;
+}
+
+/* 36. Bioluminescence */
+html[data-lc-theme="bioluminescence"] {
+  --bg-layer-bg: #050a08 !important;
+  --bg-layer-1: #0b1812 !important;
+  --bg-layer-2: #12271c !important;
+  --bg-layer-3: #193626 !important;
+  --bg-layer-card: #204530 !important;
+  --border-primary: #0e2319 !important;
+  --brand-orange: #00ff9f !important;
+  --bg-gradient: linear-gradient(135deg, #050a08 0%, #122a1d 100%) !important;
+}
+
+/* 37. Arcane Rift */
+html[data-lc-theme="arcane"] {
+  --bg-layer-bg: #0b080d !important;
+  --bg-layer-1: #17101c !important;
+  --bg-layer-2: #23182b !important;
+  --bg-layer-3: #2f203a !important;
+  --bg-layer-card: #3b2849 !important;
+  --border-primary: #1e1228 !important;
+  --brand-orange: #e879f9 !important;
+  --bg-gradient: linear-gradient(135deg, #0b080d 0%, #211529 100%) !important;
+}
+
+/* 38. Polar Dawn */
+html[data-lc-theme="polar-dawn"] {
+  --bg-layer-bg: #06090c !important;
+  --bg-layer-1: #0c1219 !important;
+  --bg-layer-2: #111b26 !important;
+  --bg-layer-3: #172433 !important;
+  --bg-layer-card: #1d2d40 !important;
+  --border-primary: #0e1e30 !important;
+  --brand-orange: #38bdf8 !important;
+  --bg-gradient: linear-gradient(135deg, #06090c 0%, #111d2e 100%) !important;
+}
+
+/* 39. Radioactive Moss */
+html[data-lc-theme="rad-moss"] {
+  --bg-layer-bg: #090a06 !important;
+  --bg-layer-1: #14160c !important;
+  --bg-layer-2: #1e2212 !important;
+  --bg-layer-3: #282e18 !important;
+  --bg-layer-card: #323a1e !important;
+  --border-primary: #1a1f0e !important;
+  --brand-orange: #b5e853 !important;
+  --bg-gradient: linear-gradient(135deg, #090a06 0%, #1e2412 100%) !important;
+}
+
+
 /* ----------------------------------------------------
    SUBSTRING COUPLING ALIGNMENT (BUILT FOR TAILWIND)
 ---------------------------------------------------- */

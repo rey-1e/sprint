@@ -381,11 +381,25 @@ function triggerWhereAmIWrong() {
             feedbackEl.style.textAlign = 'left';
 
             if (response && response.success) {
-                titleEl.textContent = 'Issue Found';
-                feedbackEl.textContent = response.data.feedback || "Something is wrong, but AI didn't specify.";
-                feedbackEl.className = 'sprint-text-error';
+                const feedbackText = (response.data.feedback || "").trim();
+                
+                // Compare letters-only, case-insensitively to securely match "There are no errors"
+                const isClean = feedbackText.toLowerCase().replace(/[^a-z]/g, '') === "therearenoerrors";
+
+                if (isClean) {
+                    titleEl.textContent = 'No Issues Found';
+                    titleEl.style.color = '#6eda30'; // Dynamic success green color
+                    feedbackEl.textContent = 'There are no errors.';
+                    feedbackEl.className = 'sprint-text-success';
+                } else {
+                    titleEl.textContent = 'Issue Found';
+                    titleEl.style.color = '#b56363'; // Reset to default Indian Red title style
+                    feedbackEl.textContent = feedbackText || "Something is wrong, but AI didn't specify.";
+                    feedbackEl.className = 'sprint-text-error';
+                }
             } else {
                 titleEl.textContent = 'Analysis Failed';
+                titleEl.style.color = '#f87171'; // Error color
                 feedbackEl.textContent = response?.error || "Could not reach the server.";
                 feedbackEl.className = 'sprint-text-error';
             }
