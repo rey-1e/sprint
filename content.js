@@ -320,10 +320,10 @@ function showWhereAmIWrongPopup() {
             </button>
         </div>
         
-        <div class="sprint-modal-body">
-            <h2 id="wrong-title" class="sprint-modal-section-title">Analyzing Code Logic...</h2>
-            <div class="sprint-modal-text-container">
-                <p id="wrong-feedback">Consulting AI model to scan for anomalies...</p>
+        <div class="sprint-modal-body" style="text-align: left !important; width: 100%;">
+            <h2 id="wrong-title" class="sprint-modal-section-title" style="text-align: left !important; margin-bottom: 12px;">Analyzing Code Logic...</h2>
+            <div class="sprint-modal-text-container" style="text-align: left !important; width: 100%;">
+                <p id="wrong-feedback" style="white-space: pre-line !important; text-align: left !important; margin: 0; line-height: 1.6; font-size: 14px; padding-left: 4px;">Consulting AI model to scan for anomalies...</p>
             </div>
         </div>
     `;
@@ -374,15 +374,32 @@ function triggerWhereAmIWrong() {
             let titleEl = document.getElementById('wrong-title');
             let feedbackEl = document.getElementById('wrong-feedback');
 
-
             if (!feedbackEl) return;
 
+            // Enforce proper alignment and newline rendering programmatically
+            feedbackEl.style.whiteSpace = 'pre-line';
+            feedbackEl.style.textAlign = 'left';
+
             if (response && response.success) {
-                titleEl.textContent = 'Issue Found';
-                feedbackEl.textContent = response.data.feedback || "Something is wrong, but AI didn't specify.";
-                feedbackEl.className = 'sprint-text-error';
+                const feedbackText = (response.data.feedback || "").trim();
+                
+                // Compare letters-only, case-insensitively to securely match "There are no errors"
+                const isClean = feedbackText.toLowerCase().replace(/[^a-z]/g, '') === "therearenoerrors";
+
+                if (isClean) {
+                    titleEl.textContent = 'No Issues Found';
+                    titleEl.style.color = '#6eda30'; // Dynamic success green color
+                    feedbackEl.textContent = 'There are no errors.';
+                    feedbackEl.className = 'sprint-text-success';
+                } else {
+                    titleEl.textContent = 'Issue Found';
+                    titleEl.style.color = '#b56363'; // Reset to default Indian Red title style
+                    feedbackEl.textContent = feedbackText || "Something is wrong, but AI didn't specify.";
+                    feedbackEl.className = 'sprint-text-error';
+                }
             } else {
                 titleEl.textContent = 'Analysis Failed';
+                titleEl.style.color = '#f87171'; // Error color
                 feedbackEl.textContent = response?.error || "Could not reach the server.";
                 feedbackEl.className = 'sprint-text-error';
             }
