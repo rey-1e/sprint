@@ -574,7 +574,8 @@ html[data-lc-theme] .h-full.overflow-auto,
 html[data-lc-theme] .relative.flex.flex-1.justify-center,
 html[data-lc-theme] .flex.w-full.flex-1.overflow-hidden,
 html[data-lc-theme] div[class*="flex w-full flex-1 overflow-hidden"],
-html[data-lc-theme] div[class*="max-w-[1000px]"] {
+html[data-lc-theme] div[class*="max-w-[1000px]"],
+html[data-lc-theme] .view-lines {
   background-color: transparent !important;
 }
 
@@ -584,7 +585,6 @@ html[data-lc-theme] div[class*="max-w-[1000px]"] {
 html[data-lc-theme] .monaco-editor,
 html[data-lc-theme] .monaco-editor-background,
 html[data-lc-theme] .monaco-editor .margin,
-html[data-lc-theme] .view-lines,
 html[data-lc-theme] .margin-view-overlays {
   background-color: var(--bg-layer-2) !important;
 }
