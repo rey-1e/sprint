@@ -26,7 +26,7 @@ async function injectTags() {
 
         const companyDataRes = await fetch(chrome.runtime.getURL('data.json'));
         const companyData = await companyDataRes.json();
-        const companies = companyData[questionId] ||[];
+        const companies = companyData[questionId] || [];
 
         let eloRating = null;
         try {
@@ -42,8 +42,15 @@ async function injectTags() {
 
         let targetElement = document.querySelector('[class*="text-difficulty-"]');
         if (!targetElement) {
-            const allDivs = Array.from(document.querySelectorAll('div'));
-            targetElement = allDivs.find(el => /^(Easy|Medium|Hard)$/i.test(el.innerText?.trim()));
+            // Optimized query: Look only inside metadata layout elements instead of checking every single div on the page
+            const possibleMetadata = document.querySelectorAll('div.flex.items-center.space-x-4 div, div[class*="gap-"] > div');
+            for (let el of possibleMetadata) {
+                const text = el.textContent?.trim();
+                if (/^(Easy|Medium|Hard)$/i.test(text)) {
+                    targetElement = el;
+                    break;
+                }
+            }
         }
 
         if (!targetElement) return;
@@ -164,7 +171,8 @@ function injectSubmissionAnalysisUI() {
     let targetDiv = null;
     
     for (let div of targetContainers) {
-        if (div.innerText.includes('Runtime') || div.innerText.includes('Memory') || div.innerText.includes('Beats')) {
+        const text = div.textContent;
+        if (text.includes('Runtime') || text.includes('Memory') || text.includes('Beats')) {
             targetDiv = div;
             break;
         }
@@ -354,7 +362,7 @@ function triggerWhereAmIWrong() {
 
     const descElement = document.querySelector('[data-track-load="description_content"]') || document.querySelector('meta[name="description"]');
     if (descElement) {
-        problemContext = descElement.innerText || descElement.content;
+        problemContext = descElement.textContent || descElement.content;
     } else {
         const urlParts = window.location.pathname.split('/');
         const pIndex = urlParts.indexOf('problems');
@@ -417,7 +425,8 @@ function injectWhereAmIWrongButton() {
     let codeTabButton = null;
 
     for (let btn of tabButtons) {
-        if (btn.textContent && btn.textContent.includes('Code')) {
+        const text = btn.textContent;
+        if (text && text.includes('Code')) {
             codeTabButton = btn;
             break;
         }
@@ -516,12 +525,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
 });
 
-const observer = new MutationObserver(() => {
-    if (!document.getElementById('custom-company-tags')) injectTags();
-    if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
-    if (!document.getElementById('sprint-submission-analysis')) injectSubmissionAnalysisUI();
-    if (!document.getElementById('sprint-wrong-btn')) injectWhereAmIWrongButton();
+// Run an initial payload render once immediately upon script execution to avoid layout delays
+setTimeout(() => {
+    injectTags();
+    injectComplexityUI();
+    injectSubmissionAnalysisUI();
+    injectWhereAmIWrongButton();
     injectRedirectPills();
+}, 50);
+
+// Use a debouncer on the mutation observer to completely decouple keystrokes and heavy DOM checks
+let mutationDebounceTimer = null;
+const observer = new MutationObserver(() => {
+    if (mutationDebounceTimer) clearTimeout(mutationDebounceTimer);
+    mutationDebounceTimer = setTimeout(() => {
+        if (!document.getElementById('custom-company-tags')) injectTags();
+        if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
+        if (!document.getElementById('sprint-submission-analysis')) injectSubmissionAnalysisUI();
+        if (!document.getElementById('sprint-wrong-btn')) injectWhereAmIWrongButton();
+        injectRedirectPills();
+    }, 150);
 });
 
 observer.observe(document.body, { childList: true, subtree: true });

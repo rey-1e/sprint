@@ -506,7 +506,7 @@ html[data-lc-theme] div[class*="navigation"] {
   background-color: var(--bg-layer-2) !important;
 }
 
-/* Layer 3 / Card Overrides (dropdown menus, floating blocks, hover states) */
+/* Layer 3 / Card Overrides (dropdown menus, floating blocks, hover states, cards) */
 html[data-lc-theme] [class*="bg-dark-layer-3"],
 html[data-lc-theme] [class*="bg-dark-layer-card"],
 html[data-lc-theme] [class*="bg-zinc-700"],
@@ -516,7 +516,9 @@ html[data-lc-theme] [class*="bg-dark-overlay-3"],
 html[data-lc-theme] tr:hover,
 html[data-lc-theme] div[role="row"]:hover,
 html[data-lc-theme] .bg-neutral-100,
-html[data-lc-theme] .dark\:bg-neutral-800 {
+html[data-lc-theme] .dark\:bg-neutral-800,
+html[data-lc-theme] .bg-sd-card,
+html[data-lc-theme] [class*="bg-sd-card"] {
   background-color: var(--bg-layer-card) !important;
 }
 
@@ -565,14 +567,10 @@ html[data-lc-theme] tbody,
 html[data-lc-theme] tr,
 html[data-lc-theme] th,
 html[data-lc-theme] td,
-html[data-lc-theme] .border-sd-border,
-html[data-lc-theme] div[class*="border-sd-border"],
 html[data-lc-theme] div[class*="components_no-scrollbar"],
 html[data-lc-theme] .w-full.flex-1.overflow-y-auto,
 html[data-lc-theme] .flex-1.overflow-y-auto,
 html[data-lc-theme] .h-full.overflow-auto,
-html[data-lc-theme] div[class*="overflow-y-auto"],
-html[data-lc-theme] div[class*="overflow-auto"],
 html[data-lc-theme] .relative.flex.flex-1.justify-center,
 html[data-lc-theme] .flex.w-full.flex-1.overflow-hidden,
 html[data-lc-theme] div[class*="flex w-full flex-1 overflow-hidden"],
@@ -593,6 +591,22 @@ html[data-lc-theme] .margin-view-overlays {
 
 html[data-lc-theme] .monaco-editor .current-line {
   background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* High-specificity Monaco and browser text selection highlights matched to theme */
+html[data-lc-theme] .monaco-editor .selected-text,
+html[data-lc-theme] .monaco-editor .focused .selected-text,
+html[data-lc-theme] .monaco-editor .view-overlays .selected-text,
+html[data-lc-theme] div.monaco-editor div.view-overlays div.selected-text {
+  background-color: rgba(255, 255, 255, 0.28) !important;
+  background-color: color-mix(in srgb, var(--brand-orange) 50%, rgba(255, 255, 255, 0.15)) !important;
+}
+
+html[data-lc-theme] ::selection,
+html[data-lc-theme] *::selection {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  background-color: color-mix(in srgb, var(--brand-orange) 50%, rgba(255, 255, 255, 0.15)) !important;
+  color: #ffffff !important;
 }
 
 /* Status-bar footer alignment */
@@ -635,6 +649,22 @@ html[data-lc-theme] button[class*="bg-dark-brand-orange"] {
 /* Dynamic SVG colors compatibility mapping */
 html[data-lc-theme] svg {
   fill: currentColor;
+}
+
+/* Disable default transparent/fade-out hover mechanics on button labels and action texts */
+html[data-lc-theme] button:hover,
+html[data-lc-theme] button:hover *,
+html[data-lc-theme] [role="button"]:hover,
+html[data-lc-theme] [role="button"]:hover *,
+html[data-lc-theme] a:hover,
+html[data-lc-theme] a:hover * {
+  opacity: 1 !important;
+}
+
+/* Ensure opaque structures for submission cards/menus/popups and native SD constructs */
+html[data-lc-theme] [class*="bg-sd-"] {
+  background-color: var(--bg-layer-card) !important;
+  opacity: 1 !important;
 }
 
 /* ----------------------------------------------------
@@ -779,4 +809,19 @@ html[data-lc-theme] [class*="Solved"] svg *,
 html[data-lc-theme] svg[class*="success"],
 html[data-lc-theme] svg[class*="success"] * {
   fill: revert !important;
+}
+
+/* ----------------------------------------------------
+   EXPLICIT FIX FOR OVERLAY BACKDROPS & OVERRIDES
+---------------------------------------------------- */
+
+/* Ensure overlay backdrops and fixed Radix dialog backdrops remain transparent-dark instead of solid themes */
+html[data-lc-theme] [class*="fixed"][class*="inset-0"],
+html[data-lc-theme] [class*="fixed"][class*="inset-0"] div,
+html[data-lc-theme] [class*="bg-neutral-950/50"],
+html[data-lc-theme] [class*="bg-zinc-950/50"],
+html[data-lc-theme] [class*="bg-black/"],
+html[data-lc-theme] [class*="bg-opacity-"] {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  background-image: none !important;
 }
