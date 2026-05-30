@@ -1548,9 +1548,12 @@ html[data-lc-theme] .margin-view-overlays {
   background-color: var(--bg-layer-2) !important;
 }
 
-html[data-lc-theme] .monaco-editor .current-line {
+html[data-lc-theme] .monaco-editor .current-line,
+html[data-lc-theme] .monaco-editor .view-overlays .current-line,
+html[data-lc-theme] .monaco-editor .margin-view-overlays .current-line-margin {
   background-color: transparent !important;
   border: none !important;
+  outline: none !important;
 }
 
 /* Monaco text selection highlights */

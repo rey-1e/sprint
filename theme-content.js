@@ -367,20 +367,24 @@
       document.documentElement.removeAttribute('data-lc-theme');
     } else {
       document.documentElement.setAttribute('data-lc-theme', theme);
+      if (!document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.add('dark');
+      }
     }
   }
 
   function observeTheme() {
     const themeObserver = new MutationObserver(() => {
       const currentTheme = document.documentElement.getAttribute('data-lc-theme') || 'default';
-      if (currentTheme !== savedTheme) {
+      const hasDark = document.documentElement.classList.contains('dark');
+      if (currentTheme !== savedTheme || (savedTheme !== 'default' && !hasDark)) {
         themeObserver.disconnect();
         applyTheme(savedTheme);
-        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme'] });
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
       }
     });
     
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme'] });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
   }
 
   // Initial startup execution
