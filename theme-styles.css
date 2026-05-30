@@ -1629,17 +1629,6 @@ html[data-lc-theme] [id*="headlessui-menu-button"]:has(~ * a[href*="/store/"]) s
   fill: #ffa116 !important;
 }
 
-/* ====================================================
-   EXCLUDE SOLVED/SUCCESS STATUS ICONS FROM OVERRIDES
-==================================================== */
-html[data-lc-theme] [class*="success"] svg,
-html[data-lc-theme] [class*="success"] svg *,
-html[data-lc-theme] [class*="Solved"] svg,
-html[data-lc-theme] [class*="Solved"] svg *,
-html[data-lc-theme] svg[class*="success"],
-html[data-lc-theme] svg[class*="success"] * {
-  fill: revert !important;
-}
 
 /* ====================================================
    OVERLAY BACKDROPS — Keep dark overlays intact
