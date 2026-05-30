@@ -1558,10 +1558,6 @@ html[data-lc-theme] button[class*="bg-dark-brand-orange"] {
   background-color: var(--brand-orange) !important;
 }
 
-/* SVG color compatibility */
-html[data-lc-theme] svg {
-  fill: currentColor;
-}
 
 /* ====================================================
    SCROLL FADE GRADIENTS
