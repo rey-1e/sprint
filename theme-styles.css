@@ -825,3 +825,41 @@ html[data-lc-theme] [class*="bg-opacity-"] {
   background-color: rgba(0, 0, 0, 0.45) !important;
   background-image: none !important;
 }
+
+/* ----------------------------------------------------
+   THEME EXTRA OVERRIDES - HOVER/VISIBILITY COUPLERS
+---------------------------------------------------- */
+
+.add-bg-light_leetcode-enhancer {
+  background-color: #a1ffa522 !important; /* Low transparency highlights */
+  border-left: 3px solid #10b981 !important;
+}
+
+.add-bg-dark_leetcode-enhancer {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-left: 3px solid var(--brand-orange, #9d4edd) !important;
+}
+
+.hide_leetcode-enhancer {
+  display: none !important;
+}
+
+.visible_leetcode-enhancer {
+  display: block !important;
+}
+
+.remove_diff_color_leetcode-enhancer {
+  color: #71717a !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.color-alfa0 {
+  color: rgba(0, 0, 0, 0) !important;
+}
+
+.blur {
+  border-color: gray !important;
+  color: gray !important;
+  background-color: white !important;
+}

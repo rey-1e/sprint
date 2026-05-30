@@ -12,14 +12,17 @@
       <img src="../icon.png" alt="Sprint icon" onerror="this.style.display='none'" />
       <span class="ext-name">leetCode <span>Sprint.</span></span>
     </div>
-    <a href="https://getsprint.me" class="website-link" id="website-link" title="Visit getsprint.me">
-      getsprint.me
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-        <polyline points="15 3 21 3 21 9"/>
-        <line x1="10" y1="14" x2="21" y2="3"/>
-      </svg>
-    </a>
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <a href="https://getsprint.me" class="website-link" id="website-link" title="Visit getsprint.me">
+        getsprint.me
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </a>
+      <a href="https://google.com" class="info-question-link" id="info-question-link" title="Help">?</a>
+    </div>
   </header>
 
   <main>
@@ -47,7 +50,6 @@
       </div>
 
       <div class="palette-grid" id="palette-grid">
-
         <button class="dot" data-theme="default"          data-display="Default Gray"        style="background:#737373; color:#737373" title=""><span class="tip">Default Gray</span></button>
         <button class="dot" data-theme="amethyst"         data-display="Amethyst Nebula"     style="background:#9d4edd; color:#9d4edd" title=""><span class="tip">Amethyst Nebula</span></button>
         <button class="dot" data-theme="forest"           data-display="Emerald Aurora"      style="background:#10b981; color:#10b981" title=""><span class="tip">Emerald Aurora</span></button>
@@ -88,7 +90,6 @@
         <button class="dot" data-theme="arcane"           data-display="Arcane Rift"         style="background:#e879f9; color:#e879f9" title=""><span class="tip">Arcane Rift</span></button>
         <button class="dot" data-theme="polar-dawn"       data-display="Polar Dawn"          style="background:#38bdf8; color:#38bdf8" title=""><span class="tip">Polar Dawn</span></button>
         <button class="dot" data-theme="rad-moss"         data-display="Radioactive Moss"    style="background:#b5e853; color:#b5e853" title=""><span class="tip">Radioactive Moss</span></button>
-
       </div>
     </div>
 
@@ -111,63 +112,77 @@
       </div>
     </div>
 
-    <!-- Features -->
+    <!-- Visibility Settings -->
     <div class="section">
-      <p class="section-label">Features</p>
-      <div class="feature-list">
-
-        <div class="feature-item">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </div>
-          <span class="feature-text"><strong>Complexity Analysis</strong> — select code → right-click → Analyse</span>
+      <p class="section-label">Visibility Settings</p>
+      <div class="shortcut-group">
+        
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Locked Problems</span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="locked" checked>
+            <span class="sprint-slider"></span>
+          </label>
         </div>
 
-        <div class="feature-item">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </div>
-          <span class="feature-text"><strong>Submission Analysis</strong> — AI reviews approach, efficiency &amp; style</span>
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Highlight Solved</span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="highlight">
+            <span class="sprint-slider"></span>
+          </label>
         </div>
 
-        <div class="feature-item">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-              <path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/>
-            </svg>
-          </div>
-          <span class="feature-text"><strong>AI Debugger</strong> — pinpoints logical flaws before you submit</span>
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Solved Problems</span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="solved" checked>
+            <span class="sprint-slider"></span>
+          </label>
         </div>
 
-        <div class="feature-item">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-              <line x1="7" y1="7" x2="7.01" y2="7"/>
-            </svg>
-          </div>
-          <span class="feature-text"><strong>Company Tags</strong> — top companies per problem, injected live</span>
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Show Status <small>(table/editor)</small></span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="status" checked>
+            <span class="sprint-slider"></span>
+          </label>
         </div>
 
-        <div class="feature-item">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-              <polyline points="17 6 23 6 23 12"/>
-            </svg>
-          </div>
-          <span class="feature-text"><strong>ELO Rating</strong> — true difficulty score alongside standard ratings</span>
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Show Acceptance Rate</span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="acceptance" checked>
+            <span class="sprint-slider"></span>
+          </label>
+        </div>
+
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Show Difficulty</span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="difficulty" checked>
+            <span class="sprint-slider"></span>
+          </label>
+        </div>
+
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Show Frequency</span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="frequency" checked>
+            <span class="sprint-slider"></span>
+          </label>
+        </div>
+
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Show Save Button</span>
+          <label class="sprint-switch">
+            <input type="checkbox" id="save" checked>
+            <span class="sprint-slider"></span>
+          </label>
         </div>
 
       </div>
     </div>
-
-    <p class="section-label coming-soon-note">✦ More features coming soon…</p>
 
   </main>
 
