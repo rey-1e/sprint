@@ -1416,48 +1416,20 @@ html[data-lc-theme] #__next {
   background-image: var(--bg-gradient, none) !important;
 }
 
-/* Tailwind hardcoded background class overrides — Layer BG */
+/* Core structural container backgrounds */
 html[data-lc-theme] [class*="bg-dark-layer-bg"],
-html[data-lc-theme] [class*="bg-zinc-950"],
-html[data-lc-theme] [class*="bg-neutral-950"] {
+html[data-lc-theme] div[class*="bg-zinc-950"],
+html[data-lc-theme] div[class*="bg-neutral-950"],
+html[data-lc-theme] main[class*="bg-zinc-950"],
+html[data-lc-theme] main[class*="bg-neutral-950"] {
   background-color: var(--bg-layer-bg) !important;
 }
 
-/* Tailwind hardcoded background class overrides — Layer 1 */
-html[data-lc-theme] [class*="bg-dark-layer-1"],
-html[data-lc-theme] [class*="bg-zinc-900"],
-html[data-lc-theme] [class*="bg-neutral-900"],
-html[data-lc-theme] [class*="bg-dark-lc-layer-01"] {
-  background-color: var(--bg-layer-1) !important;
-}
-
-/* Tailwind hardcoded background class overrides — Layer 2 */
-html[data-lc-theme] [class*="bg-dark-layer-2"],
-html[data-lc-theme] [class*="bg-zinc-800"],
-html[data-lc-theme] [class*="bg-neutral-800"] {
-  background-color: var(--bg-layer-2) !important;
-}
-
-/* Tailwind hardcoded background class overrides — Layer 3 / Card */
-html[data-lc-theme] [class*="bg-dark-layer-3"],
-html[data-lc-theme] [class*="bg-dark-layer-card"],
-html[data-lc-theme] [class*="bg-zinc-700"],
-html[data-lc-theme] [class*="bg-neutral-700"],
-html[data-lc-theme] [class*="bg-overlay-3"],
-html[data-lc-theme] [class*="bg-dark-overlay-3"] {
-  background-color: var(--bg-layer-card) !important;
-}
-
-/* Tailwind hardcoded fill class overrides */
-html[data-lc-theme] [class*="bg-dark-fill-"],
-html[data-lc-theme] div[class*="bg-fill-3"],
-html[data-lc-theme] div[class*="bg-fill-4"] {
-  background-color: var(--bg-layer-3) !important;
-}
-
-/* Nav and header elements (often use hardcoded Tailwind bg classes) */
+/* Layout Wrappers — Level 1 structures (Navigation, Top Bar, and Main Header) */
 html[data-lc-theme] nav,
-html[data-lc-theme] header {
+html[data-lc-theme] header,
+html[data-lc-theme] [class*="bg-dark-layer-1"],
+html[data-lc-theme] [class*="bg-dark-lc-layer-01"] {
   background-color: var(--bg-layer-1) !important;
 }
 
@@ -1477,13 +1449,11 @@ html[data-lc-theme] {
 /* Text inputs, textareas, and code blocks */
 html[data-lc-theme] textarea,
 html[data-lc-theme] input,
-html[data-lc-theme] div[class*="bg-neutral-"][class*="rounded"],
-html[data-lc-theme] div[class*="bg-zinc-"][class*="rounded"],
 html[data-lc-theme] code {
   background-color: var(--bg-layer-2) !important;
 }
 
-/* Reset transparent containers — prevent background bleed */
+/* Reset transparent containers — prevent background bleed and preserve layout depth */
 html[data-lc-theme] table,
 html[data-lc-theme] thead,
 html[data-lc-theme] tbody,
@@ -1561,13 +1531,12 @@ html[data-lc-theme] .monaco-editor .selected-text,
 html[data-lc-theme] .monaco-editor .focused .selected-text,
 html[data-lc-theme] .monaco-editor .view-overlays .selected-text,
 html[data-lc-theme] div.monaco-editor div.view-overlays div.selected-text {
-  background-color: color-mix(in srgb, var(--brand-orange) 50%, rgba(255, 255, 255, 0.15)) !important;
+  background-color: color-mix(in srgb, var(--brand-orange) 30%, rgba(255, 255, 255, 0.1)) !important;
 }
 
 html[data-lc-theme] ::selection,
 html[data-lc-theme] *::selection {
-  background-color: color-mix(in srgb, var(--brand-orange) 50%, rgba(255, 255, 255, 0.15)) !important;
-  color: #ffffff !important;
+  background-color: color-mix(in srgb, var(--brand-orange) 30%, rgba(255, 255, 255, 0.1)) !important;
 }
 
 /* ====================================================
@@ -1690,13 +1659,13 @@ html[data-lc-theme] [class*="bg-opacity-"] {
 ==================================================== */
 
 .add-bg-light_leetcode-enhancer {
-  background-color: #a1ffa522 !important;
-  border-left: 3px solid #10b981 !important;
+  background-color: color-mix(in srgb, var(--brand-orange) 8%, transparent) !important;
+  border-left: 3px solid var(--brand-orange) !important;
 }
 
 .add-bg-dark_leetcode-enhancer {
-  background-color: rgba(255, 255, 255, 0.08) !important;
-  border-left: 3px solid var(--brand-orange, #9d4edd) !important;
+  background-color: color-mix(in srgb, var(--brand-orange) 8%, transparent) !important;
+  border-left: 3px solid var(--brand-orange) !important;
 }
 
 .hide_leetcode-enhancer {
