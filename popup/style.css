@@ -207,7 +207,6 @@ main {
   padding: 2px 1px;
 }
 
-/* Base dot styling - transitions removed */
 .dot {
   position: relative;
   width: 22px;
@@ -228,17 +227,14 @@ main {
   border: 2px solid transparent;
 }
 
-/* Removed transition and scaling on hover */
 .dot:hover {
   z-index: 5;
 }
 
-/* Active selection border styling */
 .dot.active {
   box-shadow: 0 0 0 2px var(--paper-raised), 0 0 0 4px currentColor;
 }
 
-/* Tooltip - animations removed, displays instantly */
 .dot .tip {
   position: absolute;
   bottom: calc(100% + 7px);
@@ -323,14 +319,6 @@ main {
 .feature-text strong {
   color: var(--ink);
   font-weight: 700;
-}
-
-.coming-soon-note {
-  color: var(--red);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  opacity: 0.85;
-  margin-bottom: 2px;
 }
 
 /* ── Footer ── */

@@ -457,24 +457,12 @@ html[data-lc-theme] *::selection {
 
 /* Chrome, Edge, and Safari */
 html[data-lc-theme] ::-webkit-scrollbar {
-  width: 2px !important; /* Ultra-thin (values below 2px often fail to render or target on standard displays) */
-  height: 2px !important;
-}
-html[data-lc-theme] ::-webkit-scrollbar-track {
-  background: transparent !important; /* Blends seamlessly without blocks or borders */
-}
-html[data-lc-theme] ::-webkit-scrollbar-thumb {
-  /* High transparency makes it almost invisible on your dark backgrounds */
-  background-color: color-mix(in srgb, var(--brand-accent) 12%, transparent) !important; 
-  border-radius: 99px !important;
-}
-html[data-lc-theme] ::-webkit-scrollbar-thumb:hover {
-  /* Highlights slightly when actively hovered so you can still find it if needed */
-  background-color: color-mix(in srgb, var(--brand-accent) 60%, transparent) !important; 
+  width: 0px !important;
+  height: 0px !important;
+  display: none !important;
 }
 
 /* Firefox */
 html[data-lc-theme] {
-  scrollbar-color: color-mix(in srgb, var(--brand-accent) 12%, transparent) transparent !important;
-  scrollbar-width: thin !important;
+  scrollbar-width: none !important;
 }
