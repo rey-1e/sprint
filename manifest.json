@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Sprint",
-  "version": "2.7",
+  "version": "2.8",
   "description": "Company-tags, Reviews, Complexities, Elo ratings, AI Debugging, and Custom Themes.",
   "icons": {
     "128": "icon.png",
@@ -12,11 +12,11 @@
     "default_popup": "popup/popup.html",
     "default_title": "LeetCode Super-tools"
   },
-  "permissions":[
+  "permissions": [
     "storage",
     "contextMenus"
   ],
-  "host_permissions":[
+  "host_permissions": [
     "https://leetcode.com/*",
     "https://leetcode.cn/*",
     "https://*.a.run.app/*"
@@ -24,9 +24,9 @@
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts":[
+  "content_scripts": [
     {
-      "matches":[
+      "matches": [
         "https://leetcode.com/*",
         "https://leetcode.cn/*"
       ],
@@ -39,11 +39,11 @@
       "run_at": "document_start"
     },
     {
-      "matches":[
+      "matches": [
         "https://leetcode.com/problems/*",
         "https://leetcode.com/submissions/*"
       ],
-      "js":[
+      "js": [
         "content.js"
       ],
       "css": [
@@ -53,11 +53,11 @@
   ],
   "web_accessible_resources": [
     {
-      "resources":[
+      "resources": [
         "data.json",
         "ratings.json"
       ],
-      "matches":[
+      "matches": [
         "https://leetcode.com/*"
       ]
     }
