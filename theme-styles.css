@@ -1461,22 +1461,17 @@ html[data-lc-theme] header {
   background-color: var(--bg-layer-1) !important;
 }
 
-/* Split pane child panels and workspace containers */
-html[data-lc-theme] div[class*="split-pane"] > div,
-html[data-lc-theme] div[class*="workspace-"] > div,
-html[data-lc-theme] div[class*="pane-"] > div,
-html[data-lc-theme] div[data-key="description-content"],
-html[data-lc-theme] div[class*="main-layout"] {
-  background-color: var(--bg-layer-1) !important;
-}
-
-/* FlexLayout tab bodies */
-html[data-lc-theme] .flexlayout__tab,
-html[data-lc-theme] div[class*="flexlayout__tab"],
-html[data-lc-theme] div[class*="tab-header"],
-html[data-lc-theme] div[class*="tabs-"],
-html[data-lc-theme] div[class*="navigation"] {
-  background-color: var(--bg-layer-2) !important;
+/* React-Flexlayout variables — inherit dynamically from our theme CSS variables */
+html[data-lc-theme] {
+  --color-tabset-background: var(--bg-layer-bg) !important;
+  --color-splitter: var(--bg-layer-bg) !important;
+  --color-tab-selected-background: var(--bg-layer-2) !important;
+  --color-tab-hover-background: var(--bg-layer-3) !important;
+  --color-tabset-tabbar-background: var(--bg-layer-1) !important;
+  --color-tabset-tabbar-background-fixed: var(--bg-layer-1) !important;
+  --color-tab-selected: #ffffff !important;
+  --color-tab-unselected: rgba(255, 255, 255, 0.5) !important;
+  --color-tab-hover: #ffffff !important;
 }
 
 /* Text inputs, textareas, and code blocks */
@@ -1554,7 +1549,8 @@ html[data-lc-theme] .margin-view-overlays {
 }
 
 html[data-lc-theme] .monaco-editor .current-line {
-  background-color: rgba(255, 255, 255, 0.05) !important;
+  background-color: transparent !important;
+  border: none !important;
 }
 
 /* Monaco text selection highlights */
