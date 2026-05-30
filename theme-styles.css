@@ -1,6 +1,6 @@
-/* ----------------------------------------------------
-   SECTION 1: THE 39 THEME CONFIGURATIONS (4 CORE COLORS EACH)
----------------------------------------------------- */
+/* ==========================================================================
+   SECTION 1: THE 39 CORE PREMIUM WORKSPACES (4 VARIABLES PER THEME)
+   ========================================================================== */
 
 /* 1. Amethyst Nebula */
 html[data-lc-theme="amethyst"] {
@@ -316,29 +316,28 @@ html[data-lc-theme="rad-moss"] {
 
 
 /* ====================================================
-   SECTION 2: GLOBAL MAPPING (NATIVE VARIABLE SYSTEM OVERRIDES)
-   This maps LeetCode's multi-layered variable system directly 
-   to your 4 core colors without breaking native layouts.
+   SECTION 2: GLOBAL VARIABLES OVERRIDES
+   Injects theme colors back into LeetCode's system.
 ==================================================== */
 html[data-lc-theme] {
-  /* 1. Base / Canvas level elements */
+  /* 1. Base / Canvas Backdrop colors */
   --layer-bg-pure: var(--bg-base) !important;
   --layer-bg-gray: var(--bg-base) !important;
   --fill-pure: var(--bg-base) !important;
   --dark-gray-10: var(--bg-base) !important;
   --gray-10: var(--bg-base) !important;
-  --layer-01: var(--bg-base) !important;
-  --gray-20: var(--bg-base) !important;
 
-  /* 2. Surface / Panel level elements (Workspace panels, Monaco background, description columns) */
+  /* 2. Window Panels (Keeps Left, Middle, and Right columns perfectly unified) */
+  --layer-01: var(--bg-surface) !important;
   --layer-02: var(--bg-surface) !important;
   --layer-03: var(--bg-surface) !important;
   --dark-gray-20: var(--bg-surface) !important;
   --dark-gray-30: var(--bg-surface) !important;
   --dark-gray-40: var(--bg-surface) !important;
+  --gray-20: var(--bg-surface) !important;
   --gray-40: var(--bg-surface) !important;
 
-  /* 3. Accents and Highlights */
+  /* 3. Global Action Highlights */
   --brand-orange: var(--brand-accent) !important;
   --dark-brand-orange: var(--brand-accent) !important;
   --light-brand-orange: var(--brand-accent) !important;
@@ -346,12 +345,10 @@ html[data-lc-theme] {
 
 
 /* ====================================================
-   SECTION 3: COMPONENT CLASS OVERRIDES (DIRECT HEX FALLBACK)
-   Safely replaces hardcoded grey/black backgrounds with 
-   flat theme colors without breaking HSL formatting.
+   SECTION 3: LAYOUT AND PANEL OVERRIDES
 ==================================================== */
 
-/* Unifies the backdrop of both standard coding and Discuss page templates */
+/* Canvas wrapper backgrounds */
 html[data-lc-theme] body,
 html[data-lc-theme] #__next,
 html[data-lc-theme] [class*="bg-dark-layer-bg"],
@@ -364,7 +361,7 @@ html[data-lc-theme] div[class*="dark:bg-[#1a1a1a]"] {
   background-image: none !important;
 }
 
-/* Core Navigation & Header containers */
+/* Navbars & Top headers */
 html[data-lc-theme] nav,
 html[data-lc-theme] header,
 html[data-lc-theme] [class*="bg-dark-layer-1"],
@@ -372,7 +369,7 @@ html[data-lc-theme] [class*="bg-lc-layer-01"] {
   background-color: var(--bg-base) !important;
 }
 
-/* React-Flexlayout Workspace splitter background */
+/* Unified React-Flexlayout split-pane windows */
 html[data-lc-theme] {
   --color-tabset-background: var(--bg-base) !important;
   --color-splitter: var(--bg-base) !important;
@@ -383,15 +380,7 @@ html[data-lc-theme] {
   --color-tab-unselected: rgba(255, 255, 255, 0.45) !important;
 }
 
-/* Monaco Code Editor container background overrides */
-html[data-lc-theme] .monaco-editor,
-html[data-lc-theme] .monaco-editor-background,
-html[data-lc-theme] .monaco-editor .margin,
-html[data-lc-theme] .margin-view-overlays {
-  background-color: var(--bg-surface) !important;
-}
-
-/* Overriding LeetCode's modern dynamic Shadcn layout elements directly */
+/* Shadcn dynamically loaded workspace backgrounds */
 html[data-lc-theme] .bg-sd-background,
 html[data-lc-theme] .bg-sd-background-gray,
 html[data-lc-theme] .bg-sd-gray-950 {
@@ -406,7 +395,7 @@ html[data-lc-theme] .bg-sd-gray-800 {
   background-color: var(--bg-surface) !important;
 }
 
-/* Direct mappings for structural borders and grid separators */
+/* Panel divider borders */
 html[data-lc-theme] .border-sd-border,
 html[data-lc-theme] .border-sd-divider,
 html[data-lc-theme] .border-sd-separator-nonopaque,
@@ -414,7 +403,7 @@ html[data-lc-theme] .border-sd-gray-700 {
   border-color: var(--border-color) !important;
 }
 
-/* Transparent fallbacks to prevent light layouts from bleeding into custom themes */
+/* Avoid container overlay bleed */
 html[data-lc-theme] table,
 html[data-lc-theme] thead,
 html[data-lc-theme] tbody,
@@ -424,4 +413,68 @@ html[data-lc-theme] td,
 html[data-lc-theme] [class*="no-scrollbar"],
 html[data-lc-theme] .view-lines {
   background-color: transparent !important;
+}
+
+
+/* ====================================================
+   SECTION 4: MONACO CODE EDITOR OVERRIDES
+==================================================== */
+
+/* Align Editor window colors with other surfaces */
+html[data-lc-theme] .monaco-editor,
+html[data-lc-theme] .monaco-editor-background,
+html[data-lc-theme] .monaco-editor .margin,
+html[data-lc-theme] .margin-view-overlays {
+  background-color: var(--bg-surface) !important;
+}
+
+/* REMOVE ACTIVE LINE HIGHLIGHT (Removes grey/black focus borders and frames) */
+html[data-lc-theme] .monaco-editor .current-line,
+html[data-lc-theme] .monaco-editor .view-overlays .current-line,
+html[data-lc-theme] .monaco-editor .margin-view-overlays .current-line-margin {
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Highlight selections using subtle theme accents */
+html[data-lc-theme] .monaco-editor .selected-text,
+html[data-lc-theme] .monaco-editor .focused .selected-text,
+html[data-lc-theme] .monaco-editor .view-overlays .selected-text,
+html[data-lc-theme] div.monaco-editor div.view-overlays div.selected-text,
+html[data-lc-theme] ::selection,
+html[data-lc-theme] *::selection {
+  background-color: color-mix(in srgb, var(--brand-accent) 25%, transparent) !important;
+}
+
+
+/* ====================================================
+   SECTION 5: SCROLLBAR DESIGN Overrides
+   Ultra-thin, semi-invisible scrollbars. 
+   Tracks are fully transparent to blend seamlessly into layouts.
+==================================================== */
+
+/* Chrome, Edge, and Safari */
+html[data-lc-theme] ::-webkit-scrollbar {
+  width: 2px !important; /* Ultra-thin (values below 2px often fail to render or target on standard displays) */
+  height: 2px !important;
+}
+html[data-lc-theme] ::-webkit-scrollbar-track {
+  background: transparent !important; /* Blends seamlessly without blocks or borders */
+}
+html[data-lc-theme] ::-webkit-scrollbar-thumb {
+  /* High transparency makes it almost invisible on your dark backgrounds */
+  background-color: color-mix(in srgb, var(--brand-accent) 12%, transparent) !important; 
+  border-radius: 99px !important;
+}
+html[data-lc-theme] ::-webkit-scrollbar-thumb:hover {
+  /* Highlights slightly when actively hovered so you can still find it if needed */
+  background-color: color-mix(in srgb, var(--brand-accent) 60%, transparent) !important; 
+}
+
+/* Firefox */
+html[data-lc-theme] {
+  scrollbar-color: color-mix(in srgb, var(--brand-accent) 12%, transparent) transparent !important;
+  scrollbar-width: thin !important;
 }
