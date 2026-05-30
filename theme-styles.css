@@ -1,1678 +1,427 @@
 /* ----------------------------------------------------
-   THEME CONFIGURATIONS (39 PREMIUM DARK WORKSPACES)
-   Strategy: Override LeetCode native CSS variables at root
-   level for seamless color adaptation without breaking
-   structural styling (borders, outlines, spacing).
+   SECTION 1: THE 39 THEME CONFIGURATIONS (4 CORE COLORS EACH)
 ---------------------------------------------------- */
 
 /* 1. Amethyst Nebula */
 html[data-lc-theme="amethyst"] {
-  --bg-layer-bg: #0d0b18 !important;
-  --bg-layer-1: #131124 !important;
-  --bg-layer-2: #1a1631 !important;
-  --bg-layer-3: #231e42 !important;
-  --bg-layer-card: #29244d !important;
-  --brand-orange: #9d4edd !important;
-  --bg-gradient: linear-gradient(135deg, #0d0b18 0%, #17112a 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0d0b18 !important;
-  --layer-bg-gray: #0d0b18 !important;
-  --layer-01: #131124 !important;
-  --layer-02: #1a1631 !important;
-  --layer-03: #231e42 !important;
-  --dark-brand-orange: #9d4edd !important;
-  --light-brand-orange: #9d4edd !important;
-  --dark-gray-10: #0d0b18 !important;
-  --dark-gray-20: #131124 !important;
-  --dark-gray-30: #1a1631 !important;
-  --dark-gray-40: #231e42 !important;
-  --gray-10: #0d0b18 !important;
-  --gray-20: #131124 !important;
-  --gray-40: #231e42 !important;
-  --fill-pure: #0d0b18 !important;
-  --sd-background: 249 37% 7% !important;
-  --sd-background-gray: 249 37% 7% !important;
-  --sd-card: 247 36% 22% !important;
-  --sd-popover: 246 26% 28% !important;
-  --sd-separator-nonopaque: 249,38%,14%,0.65 !important;
-  --sd-gray-950: 249 37% 7% !important;
-  --sd-gray-900: 246 36% 10% !important;
-  --sd-gray-800: 249 38% 14% !important;
-  --sd-gray-700: 248 38% 19% !important;
+  --bg-base: #0d0b18;
+  --bg-surface: #1a1631;
+  --border-color: #231e42;
+  --brand-accent: #9d4edd;
 }
 
 /* 2. Emerald Aurora */
 html[data-lc-theme="forest"] {
-  --bg-layer-bg: #07100b !important;
-  --bg-layer-1: #0c1b12 !important;
-  --bg-layer-2: #12271a !important;
-  --bg-layer-3: #1a3625 !important;
-  --bg-layer-card: #224831 !important;
-  --brand-orange: #10b981 !important;
-  --bg-gradient: linear-gradient(135deg, #07100b 0%, #0e2015 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #07100b !important;
-  --layer-bg-gray: #07100b !important;
-  --layer-01: #0c1b12 !important;
-  --layer-02: #12271a !important;
-  --layer-03: #1a3625 !important;
-  --dark-brand-orange: #10b981 !important;
-  --light-brand-orange: #10b981 !important;
-  --dark-gray-10: #07100b !important;
-  --dark-gray-20: #0c1b12 !important;
-  --dark-gray-30: #12271a !important;
-  --dark-gray-40: #1a3625 !important;
-  --gray-10: #07100b !important;
-  --gray-20: #0c1b12 !important;
-  --gray-40: #1a3625 !important;
-  --fill-pure: #07100b !important;
-  --sd-background: 147 39% 5% !important;
-  --sd-background-gray: 147 39% 5% !important;
-  --sd-card: 144 36% 21% !important;
-  --sd-popover: 142 25% 27% !important;
-  --sd-separator-nonopaque: 143,37%,11%,0.65 !important;
-  --sd-gray-950: 147 39% 5% !important;
-  --sd-gray-900: 144 38% 8% !important;
-  --sd-gray-800: 143 37% 11% !important;
-  --sd-gray-700: 144 35% 16% !important;
+  --bg-base: #07100b;
+  --bg-surface: #12271a;
+  --border-color: #1a3625;
+  --brand-accent: #10b981;
 }
 
 /* 3. Sunset Horizon */
 html[data-lc-theme="sunset"] {
-  --bg-layer-bg: #120d0d !important;
-  --bg-layer-1: #1c1414 !important;
-  --bg-layer-2: #281d1d !important;
-  --bg-layer-3: #342525 !important;
-  --bg-layer-card: #453131 !important;
-  --brand-orange: #ff6b6b !important;
-  --bg-gradient: linear-gradient(135deg, #120d0d 0%, #261717 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #120d0d !important;
-  --layer-bg-gray: #120d0d !important;
-  --layer-01: #1c1414 !important;
-  --layer-02: #281d1d !important;
-  --layer-03: #342525 !important;
-  --dark-brand-orange: #ff6b6b !important;
-  --light-brand-orange: #ff6b6b !important;
-  --dark-gray-10: #120d0d !important;
-  --dark-gray-20: #1c1414 !important;
-  --dark-gray-30: #281d1d !important;
-  --dark-gray-40: #342525 !important;
-  --gray-10: #120d0d !important;
-  --gray-20: #1c1414 !important;
-  --gray-40: #342525 !important;
-  --fill-pure: #120d0d !important;
-  --sd-background: 0 16% 6% !important;
-  --sd-background-gray: 0 16% 6% !important;
-  --sd-card: 0 17% 23% !important;
-  --sd-popover: 0 13% 29% !important;
-  --sd-separator-nonopaque: 0,16%,14%,0.65 !important;
-  --sd-gray-950: 0 16% 6% !important;
-  --sd-gray-900: 0 17% 9% !important;
-  --sd-gray-800: 0 16% 14% !important;
-  --sd-gray-700: 0 17% 17% !important;
+  --bg-base: #120d0d;
+  --bg-surface: #281d1d;
+  --border-color: #342525;
+  --brand-accent: #ff6b6b;
 }
 
 /* 4. Midnight Abyss */
 html[data-lc-theme="space"] {
-  --bg-layer-bg: #050a12 !important;
-  --bg-layer-1: #0a1120 !important;
-  --bg-layer-2: #0f1a30 !important;
-  --bg-layer-3: #162545 !important;
-  --bg-layer-card: #1e315b !important;
-  --brand-orange: #3b82f6 !important;
-  --bg-gradient: linear-gradient(135deg, #050a12 0%, #0c192f 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #050a12 !important;
-  --layer-bg-gray: #050a12 !important;
-  --layer-01: #0a1120 !important;
-  --layer-02: #0f1a30 !important;
-  --layer-03: #162545 !important;
-  --dark-brand-orange: #3b82f6 !important;
-  --light-brand-orange: #3b82f6 !important;
-  --dark-gray-10: #050a12 !important;
-  --dark-gray-20: #0a1120 !important;
-  --dark-gray-30: #0f1a30 !important;
-  --dark-gray-40: #162545 !important;
-  --gray-10: #050a12 !important;
-  --gray-20: #0a1120 !important;
-  --gray-40: #162545 !important;
-  --fill-pure: #050a12 !important;
-  --sd-background: 217 57% 5% !important;
-  --sd-background-gray: 217 57% 5% !important;
-  --sd-card: 221 50% 24% !important;
-  --sd-popover: 222 37% 30% !important;
-  --sd-separator-nonopaque: 220,52%,12%,0.65 !important;
-  --sd-gray-950: 217 57% 5% !important;
-  --sd-gray-900: 221 52% 8% !important;
-  --sd-gray-800: 220 52% 12% !important;
-  --sd-gray-700: 221 52% 18% !important;
+  --bg-base: #050a12;
+  --bg-surface: #0f1a30;
+  --border-color: #162545;
+  --brand-accent: #3b82f6;
 }
 
 /* 5. Cyber Neon */
 html[data-lc-theme="cyberpunk"] {
-  --bg-layer-bg: #04040a !important;
-  --bg-layer-1: #0c0c16 !important;
-  --bg-layer-2: #161628 !important;
-  --bg-layer-3: #22223a !important;
-  --bg-layer-card: #2d2d4c !important;
-  --brand-orange: #ff007f !important;
-  --bg-gradient: linear-gradient(135deg, #04040a 0%, #111124 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #04040a !important;
-  --layer-bg-gray: #04040a !important;
-  --layer-01: #0c0c16 !important;
-  --layer-02: #161628 !important;
-  --layer-03: #22223a !important;
-  --dark-brand-orange: #ff007f !important;
-  --light-brand-orange: #ff007f !important;
-  --dark-gray-10: #04040a !important;
-  --dark-gray-20: #0c0c16 !important;
-  --dark-gray-30: #161628 !important;
-  --dark-gray-40: #22223a !important;
-  --gray-10: #04040a !important;
-  --gray-20: #0c0c16 !important;
-  --gray-40: #22223a !important;
-  --fill-pure: #04040a !important;
-  --sd-background: 240 43% 3% !important;
-  --sd-background-gray: 240 43% 3% !important;
-  --sd-card: 240 26% 24% !important;
-  --sd-popover: 240 18% 30% !important;
-  --sd-separator-nonopaque: 240,29%,12%,0.65 !important;
-  --sd-gray-950: 240 43% 3% !important;
-  --sd-gray-900: 240 29% 7% !important;
-  --sd-gray-800: 240 29% 12% !important;
-  --sd-gray-700: 240 26% 18% !important;
+  --bg-base: #04040a;
+  --bg-surface: #161628;
+  --border-color: #22223a;
+  --brand-accent: #ff007f;
 }
 
 /* 6. Obsidian Onyx */
 html[data-lc-theme="obsidian"] {
-  --bg-layer-bg: #050505 !important;
-  --bg-layer-1: #0c0c0c !important;
-  --bg-layer-2: #141414 !important;
-  --bg-layer-3: #1c1c1c !important;
-  --bg-layer-card: #242424 !important;
-  --brand-orange: #e5e5e5 !important;
-  --bg-gradient: linear-gradient(135deg, #050505 0%, #161616 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #050505 !important;
-  --layer-bg-gray: #050505 !important;
-  --layer-01: #0c0c0c !important;
-  --layer-02: #141414 !important;
-  --layer-03: #1c1c1c !important;
-  --dark-brand-orange: #e5e5e5 !important;
-  --light-brand-orange: #e5e5e5 !important;
-  --dark-gray-10: #050505 !important;
-  --dark-gray-20: #0c0c0c !important;
-  --dark-gray-30: #141414 !important;
-  --dark-gray-40: #1c1c1c !important;
-  --gray-10: #050505 !important;
-  --gray-20: #0c0c0c !important;
-  --gray-40: #1c1c1c !important;
-  --fill-pure: #050505 !important;
-  --sd-background: 0 0% 2% !important;
-  --sd-background-gray: 0 0% 2% !important;
-  --sd-card: 0 0% 14% !important;
-  --sd-popover: 0 0% 21% !important;
-  --sd-separator-nonopaque: 0,0%,8%,0.65 !important;
-  --sd-gray-950: 0 0% 2% !important;
-  --sd-gray-900: 0 0% 5% !important;
-  --sd-gray-800: 0 0% 8% !important;
-  --sd-gray-700: 0 0% 11% !important;
+  --bg-base: #050505;
+  --bg-surface: #141414;
+  --border-color: #1c1c1c;
+  --brand-accent: #e5e5e5;
 }
 
 /* 7. Dracula Grave */
 html[data-lc-theme="dracula"] {
-  --bg-layer-bg: #1e1f29 !important;
-  --bg-layer-1: #282a36 !important;
-  --bg-layer-2: #343746 !important;
-  --bg-layer-3: #3e4254 !important;
-  --bg-layer-card: #44475a !important;
-  --brand-orange: #ff79c6 !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #1e1f29 !important;
-  --layer-bg-gray: #1e1f29 !important;
-  --layer-01: #282a36 !important;
-  --layer-02: #343746 !important;
-  --layer-03: #3e4254 !important;
-  --dark-brand-orange: #ff79c6 !important;
-  --light-brand-orange: #ff79c6 !important;
-  --dark-gray-10: #1e1f29 !important;
-  --dark-gray-20: #282a36 !important;
-  --dark-gray-30: #343746 !important;
-  --dark-gray-40: #3e4254 !important;
-  --gray-10: #1e1f29 !important;
-  --gray-20: #282a36 !important;
-  --gray-40: #3e4254 !important;
-  --fill-pure: #1e1f29 !important;
-  --sd-background: 235 15% 14% !important;
-  --sd-background-gray: 235 15% 14% !important;
-  --sd-card: 232 14% 31% !important;
-  --sd-popover: 231 11% 36% !important;
-  --sd-separator-nonopaque: 230,15%,24%,0.65 !important;
-  --sd-gray-950: 235 15% 14% !important;
-  --sd-gray-900: 231 15% 18% !important;
-  --sd-gray-800: 230 15% 24% !important;
-  --sd-gray-700: 229 15% 29% !important;
+  --bg-base: #1e1f29;
+  --bg-surface: #343746;
+  --border-color: #3e4254;
+  --brand-accent: #ff79c6;
 }
 
 /* 8. Polar Nord */
 html[data-lc-theme="nord"] {
-  --bg-layer-bg: #1e222b !important;
-  --bg-layer-1: #2e3440 !important;
-  --bg-layer-2: #3b4252 !important;
-  --bg-layer-3: #434c5e !important;
-  --bg-layer-card: #4c566a !important;
-  --brand-orange: #88c0d0 !important;
-  --bg-gradient: linear-gradient(135deg, #1e222b 0%, #2f3644 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #1e222b !important;
-  --layer-bg-gray: #1e222b !important;
-  --layer-01: #2e3440 !important;
-  --layer-02: #3b4252 !important;
-  --layer-03: #434c5e !important;
-  --dark-brand-orange: #88c0d0 !important;
-  --light-brand-orange: #88c0d0 !important;
-  --dark-gray-10: #1e222b !important;
-  --dark-gray-20: #2e3440 !important;
-  --dark-gray-30: #3b4252 !important;
-  --dark-gray-40: #434c5e !important;
-  --gray-10: #1e222b !important;
-  --gray-20: #2e3440 !important;
-  --gray-40: #434c5e !important;
-  --fill-pure: #1e222b !important;
-  --sd-background: 222 18% 14% !important;
-  --sd-background-gray: 222 18% 14% !important;
-  --sd-card: 220 16% 36% !important;
-  --sd-popover: 219 13% 41% !important;
-  --sd-separator-nonopaque: 222,16%,28%,0.65 !important;
-  --sd-gray-950: 222 18% 14% !important;
-  --sd-gray-900: 220 16% 22% !important;
-  --sd-gray-800: 222 16% 28% !important;
-  --sd-gray-700: 220 17% 32% !important;
+  --bg-base: #1e222b;
+  --bg-surface: #3b4252;
+  --border-color: #434c5e;
+  --brand-accent: #88c0d0;
 }
 
 /* 9. Gruvbox Dark */
 html[data-lc-theme="gruvbox"] {
-  --bg-layer-bg: #1d2021 !important;
-  --bg-layer-1: #282828 !important;
-  --bg-layer-2: #3c3836 !important;
-  --bg-layer-3: #504945 !important;
-  --bg-layer-card: #665c54 !important;
-  --brand-orange: #fe8019 !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #1d2021 !important;
-  --layer-bg-gray: #1d2021 !important;
-  --layer-01: #282828 !important;
-  --layer-02: #3c3836 !important;
-  --layer-03: #504945 !important;
-  --dark-brand-orange: #fe8019 !important;
-  --light-brand-orange: #fe8019 !important;
-  --dark-gray-10: #1d2021 !important;
-  --dark-gray-20: #282828 !important;
-  --dark-gray-30: #3c3836 !important;
-  --dark-gray-40: #504945 !important;
-  --gray-10: #1d2021 !important;
-  --gray-20: #282828 !important;
-  --gray-40: #504945 !important;
-  --fill-pure: #1d2021 !important;
-  --sd-background: 195 6% 12% !important;
-  --sd-background-gray: 195 6% 12% !important;
-  --sd-card: 27 10% 36% !important;
-  --sd-popover: 26 8% 42% !important;
-  --sd-separator-nonopaque: 20,5%,22%,0.65 !important;
-  --sd-gray-950: 195 6% 12% !important;
-  --sd-gray-900: 0 0% 16% !important;
-  --sd-gray-800: 20 5% 22% !important;
-  --sd-gray-700: 22 7% 29% !important;
+  --bg-base: #1d2021;
+  --bg-surface: #3c3836;
+  --border-color: #504945;
+  --brand-accent: #fe8019;
 }
 
 /* 10. Solar Flare */
 html[data-lc-theme="solarflare"] {
-  --bg-layer-bg: #100606 !important;
-  --bg-layer-1: #1a0a0a !important;
-  --bg-layer-2: #240e0e !important;
-  --bg-layer-3: #2f1313 !important;
-  --bg-layer-card: #3a1717 !important;
-  --brand-orange: #ffb000 !important;
-  --bg-gradient: linear-gradient(135deg, #100606 0%, #291111 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #100606 !important;
-  --layer-bg-gray: #100606 !important;
-  --layer-01: #1a0a0a !important;
-  --layer-02: #240e0e !important;
-  --layer-03: #2f1313 !important;
-  --dark-brand-orange: #ffb000 !important;
-  --light-brand-orange: #ffb000 !important;
-  --dark-gray-10: #100606 !important;
-  --dark-gray-20: #1a0a0a !important;
-  --dark-gray-30: #240e0e !important;
-  --dark-gray-40: #2f1313 !important;
-  --gray-10: #100606 !important;
-  --gray-20: #1a0a0a !important;
-  --gray-40: #2f1313 !important;
-  --fill-pure: #100606 !important;
-  --sd-background: 0 45% 4% !important;
-  --sd-background-gray: 0 45% 4% !important;
-  --sd-card: 0 43% 16% !important;
-  --sd-popover: 0 28% 23% !important;
-  --sd-separator-nonopaque: 0,44%,10%,0.65 !important;
-  --sd-gray-950: 0 45% 4% !important;
-  --sd-gray-900: 0 44% 7% !important;
-  --sd-gray-800: 0 44% 10% !important;
-  --sd-gray-700: 0 42% 13% !important;
+  --bg-base: #100606;
+  --bg-surface: #240e0e;
+  --border-color: #2f1313;
+  --brand-accent: #ffb000;
 }
 
 /* 11. Monokai Carbon */
 html[data-lc-theme="monokai"] {
-  --bg-layer-bg: #121212 !important;
-  --bg-layer-1: #1e1e1e !important;
-  --bg-layer-2: #272727 !important;
-  --bg-layer-3: #333333 !important;
-  --bg-layer-card: #3e3e3e !important;
-  --brand-orange: #a6e22e !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #121212 !important;
-  --layer-bg-gray: #121212 !important;
-  --layer-01: #1e1e1e !important;
-  --layer-02: #272727 !important;
-  --layer-03: #333333 !important;
-  --dark-brand-orange: #a6e22e !important;
-  --light-brand-orange: #a6e22e !important;
-  --dark-gray-10: #121212 !important;
-  --dark-gray-20: #1e1e1e !important;
-  --dark-gray-30: #272727 !important;
-  --dark-gray-40: #333333 !important;
-  --gray-10: #121212 !important;
-  --gray-20: #1e1e1e !important;
-  --gray-40: #333333 !important;
-  --fill-pure: #121212 !important;
-  --sd-background: 0 0% 7% !important;
-  --sd-background-gray: 0 0% 7% !important;
-  --sd-card: 0 0% 24% !important;
-  --sd-popover: 0 0% 30% !important;
-  --sd-separator-nonopaque: 0,0%,15%,0.65 !important;
-  --sd-gray-950: 0 0% 7% !important;
-  --sd-gray-900: 0 0% 12% !important;
-  --sd-gray-800: 0 0% 15% !important;
-  --sd-gray-700: 0 0% 20% !important;
+  --bg-base: #121212;
+  --bg-surface: #272727;
+  --border-color: #333333;
+  --brand-accent: #a6e22e;
 }
 
 /* 12. Plum Eclipse */
 html[data-lc-theme="plum"] {
-  --bg-layer-bg: #0c060c !important;
-  --bg-layer-1: #140b14 !important;
-  --bg-layer-2: #1e101e !important;
-  --bg-layer-3: #281628 !important;
-  --bg-layer-card: #321c32 !important;
-  --brand-orange: #ec4899 !important;
-  --bg-gradient: linear-gradient(135deg, #0c060c 0%, #201120 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0c060c !important;
-  --layer-bg-gray: #0c060c !important;
-  --layer-01: #140b14 !important;
-  --layer-02: #1e101e !important;
-  --layer-03: #281628 !important;
-  --dark-brand-orange: #ec4899 !important;
-  --light-brand-orange: #ec4899 !important;
-  --dark-gray-10: #0c060c !important;
-  --dark-gray-20: #140b14 !important;
-  --dark-gray-30: #1e101e !important;
-  --dark-gray-40: #281628 !important;
-  --gray-10: #0c060c !important;
-  --gray-20: #140b14 !important;
-  --gray-40: #281628 !important;
-  --fill-pure: #0c060c !important;
-  --sd-background: 300 33% 4% !important;
-  --sd-background-gray: 300 33% 4% !important;
-  --sd-card: 300 28% 15% !important;
-  --sd-popover: 300 18% 22% !important;
-  --sd-separator-nonopaque: 300,30%,9%,0.65 !important;
-  --sd-gray-950: 300 33% 4% !important;
-  --sd-gray-900: 300 29% 6% !important;
-  --sd-gray-800: 300 30% 9% !important;
-  --sd-gray-700: 300 29% 12% !important;
+  --bg-base: #0c060c;
+  --bg-surface: #1e101e;
+  --border-color: #281628;
+  --brand-accent: #ec4899;
 }
 
 /* 13. Ocean Trench */
 html[data-lc-theme="ocean"] {
-  --bg-layer-bg: #02090c !important;
-  --bg-layer-1: #05151c !important;
-  --bg-layer-2: #08212c !important;
-  --bg-layer-3: #0c2d3c !important;
-  --bg-layer-card: #10394c !important;
-  --brand-orange: #06b6d4 !important;
-  --bg-gradient: linear-gradient(135deg, #02090c 0%, #0b2f3f 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #02090c !important;
-  --layer-bg-gray: #02090c !important;
-  --layer-01: #05151c !important;
-  --layer-02: #08212c !important;
-  --layer-03: #0c2d3c !important;
-  --dark-brand-orange: #06b6d4 !important;
-  --light-brand-orange: #06b6d4 !important;
-  --dark-gray-10: #02090c !important;
-  --dark-gray-20: #05151c !important;
-  --dark-gray-30: #08212c !important;
-  --dark-gray-40: #0c2d3c !important;
-  --gray-10: #02090c !important;
-  --gray-20: #05151c !important;
-  --gray-40: #0c2d3c !important;
-  --fill-pure: #02090c !important;
-  --sd-background: 198 71% 3% !important;
-  --sd-background-gray: 198 71% 3% !important;
-  --sd-card: 199 65% 18% !important;
-  --sd-popover: 199 44% 25% !important;
-  --sd-separator-nonopaque: 198,69%,10%,0.65 !important;
-  --sd-gray-950: 198 71% 3% !important;
-  --sd-gray-900: 198 70% 6% !important;
-  --sd-gray-800: 198 69% 10% !important;
-  --sd-gray-700: 199 67% 14% !important;
+  --bg-base: #02090c;
+  --bg-surface: #08212c;
+  --border-color: #0c2d3c;
+  --brand-accent: #06b6d4;
 }
 
 /* 14. Toxic Slime */
 html[data-lc-theme="toxic"] {
-  --bg-layer-bg: #070907 !important;
-  --bg-layer-1: #0d120d !important;
-  --bg-layer-2: #141b14 !important;
-  --bg-layer-3: #1a241a !important;
-  --bg-layer-card: #212d21 !important;
-  --brand-orange: #39ff14 !important;
-  --bg-gradient: linear-gradient(135deg, #070907 0%, #151e15 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #070907 !important;
-  --layer-bg-gray: #070907 !important;
-  --layer-01: #0d120d !important;
-  --layer-02: #141b14 !important;
-  --layer-03: #1a241a !important;
-  --dark-brand-orange: #39ff14 !important;
-  --light-brand-orange: #39ff14 !important;
-  --dark-gray-10: #070907 !important;
-  --dark-gray-20: #0d120d !important;
-  --dark-gray-30: #141b14 !important;
-  --dark-gray-40: #1a241a !important;
-  --gray-10: #070907 !important;
-  --gray-20: #0d120d !important;
-  --gray-40: #1a241a !important;
-  --fill-pure: #070907 !important;
-  --sd-background: 120 13% 3% !important;
-  --sd-background-gray: 120 13% 3% !important;
-  --sd-card: 120 15% 15% !important;
-  --sd-popover: 120 10% 22% !important;
-  --sd-separator-nonopaque: 120,15%,9%,0.65 !important;
-  --sd-gray-950: 120 13% 3% !important;
-  --sd-gray-900: 120 16% 6% !important;
-  --sd-gray-800: 120 15% 9% !important;
-  --sd-gray-700: 120 16% 12% !important;
+  --bg-base: #070907;
+  --bg-surface: #141b14;
+  --border-color: #1a241a;
+  --brand-accent: #39ff14;
 }
 
 /* 15. Rose Gold Dark */
 html[data-lc-theme="rosegold"] {
-  --bg-layer-bg: #0d090a !important;
-  --bg-layer-1: #171012 !important;
-  --bg-layer-2: #21171a !important;
-  --bg-layer-3: #2b1f22 !important;
-  --bg-layer-card: #35262a !important;
-  --brand-orange: #f43f5e !important;
-  --bg-gradient: linear-gradient(135deg, #0d090a 0%, #26191d 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0d090a !important;
-  --layer-bg-gray: #0d090a !important;
-  --layer-01: #171012 !important;
-  --layer-02: #21171a !important;
-  --layer-03: #2b1f22 !important;
-  --dark-brand-orange: #f43f5e !important;
-  --light-brand-orange: #f43f5e !important;
-  --dark-gray-10: #0d090a !important;
-  --dark-gray-20: #171012 !important;
-  --dark-gray-30: #21171a !important;
-  --dark-gray-40: #2b1f22 !important;
-  --gray-10: #0d090a !important;
-  --gray-20: #171012 !important;
-  --gray-40: #2b1f22 !important;
-  --fill-pure: #0d090a !important;
-  --sd-background: 345 18% 4% !important;
-  --sd-background-gray: 345 18% 4% !important;
-  --sd-card: 344 16% 18% !important;
-  --sd-popover: 343 11% 24% !important;
-  --sd-separator-nonopaque: 342,18%,11%,0.65 !important;
-  --sd-gray-950: 345 18% 4% !important;
-  --sd-gray-900: 343 18% 8% !important;
-  --sd-gray-800: 342 18% 11% !important;
-  --sd-gray-700: 345 16% 15% !important;
+  --bg-base: #0d090a;
+  --bg-surface: #21171a;
+  --border-color: #2b1f22;
+  --brand-accent: #f43f5e;
 }
 
 /* 16. Aurora Green */
 html[data-lc-theme="aurora"] {
-  --bg-layer-bg: #030a0a !important;
-  --bg-layer-1: #061515 !important;
-  --bg-layer-2: #0a2020 !important;
-  --bg-layer-3: #0d2b2b !important;
-  --bg-layer-card: #113636 !important;
-  --brand-orange: #2dd4bf !important;
-  --bg-gradient: linear-gradient(135deg, #030a0a 0%, #0d2e2e 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #030a0a !important;
-  --layer-bg-gray: #030a0a !important;
-  --layer-01: #061515 !important;
-  --layer-02: #0a2020 !important;
-  --layer-03: #0d2b2b !important;
-  --dark-brand-orange: #2dd4bf !important;
-  --light-brand-orange: #2dd4bf !important;
-  --dark-gray-10: #030a0a !important;
-  --dark-gray-20: #061515 !important;
-  --dark-gray-30: #0a2020 !important;
-  --dark-gray-40: #0d2b2b !important;
-  --gray-10: #030a0a !important;
-  --gray-20: #061515 !important;
-  --gray-40: #0d2b2b !important;
-  --fill-pure: #030a0a !important;
-  --sd-background: 180 54% 3% !important;
-  --sd-background-gray: 180 54% 3% !important;
-  --sd-card: 180 52% 14% !important;
-  --sd-popover: 180 32% 21% !important;
-  --sd-separator-nonopaque: 180,52%,8%,0.65 !important;
-  --sd-gray-950: 180 54% 3% !important;
-  --sd-gray-900: 180 56% 5% !important;
-  --sd-gray-800: 180 52% 8% !important;
-  --sd-gray-700: 180 54% 11% !important;
+  --bg-base: #030a0a;
+  --bg-surface: #0a2020;
+  --border-color: #0d2b2b;
+  --brand-accent: #2dd4bf;
 }
 
 /* 17. Cyberpunk 2077 */
 html[data-lc-theme="cyber2077"] {
-  --bg-layer-bg: #0a0a0c !important;
-  --bg-layer-1: #121217 !important;
-  --bg-layer-2: #1b1b22 !important;
-  --bg-layer-3: #24242d !important;
-  --bg-layer-card: #2d2d38 !important;
-  --brand-orange: #f3e600 !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0a0a0c !important;
-  --layer-bg-gray: #0a0a0c !important;
-  --layer-01: #121217 !important;
-  --layer-02: #1b1b22 !important;
-  --layer-03: #24242d !important;
-  --dark-brand-orange: #f3e600 !important;
-  --light-brand-orange: #f3e600 !important;
-  --dark-gray-10: #0a0a0c !important;
-  --dark-gray-20: #121217 !important;
-  --dark-gray-30: #1b1b22 !important;
-  --dark-gray-40: #24242d !important;
-  --gray-10: #0a0a0c !important;
-  --gray-20: #121217 !important;
-  --gray-40: #24242d !important;
-  --fill-pure: #0a0a0c !important;
-  --sd-background: 240 9% 4% !important;
-  --sd-background-gray: 240 9% 4% !important;
-  --sd-card: 240 11% 20% !important;
-  --sd-popover: 240 7% 26% !important;
-  --sd-separator-nonopaque: 240,11%,12%,0.65 !important;
-  --sd-gray-950: 240 9% 4% !important;
-  --sd-gray-900: 240 12% 8% !important;
-  --sd-gray-800: 240 11% 12% !important;
-  --sd-gray-700: 240 11% 16% !important;
+  --bg-base: #0a0a0c;
+  --bg-surface: #1b1b22;
+  --border-color: #24242d;
+  --brand-accent: #f3e600;
 }
 
 /* 18. Royal Velvet */
 html[data-lc-theme="royal"] {
-  --bg-layer-bg: #060514 !important;
-  --bg-layer-1: #0d0a27 !important;
-  --bg-layer-2: #130f3a !important;
-  --bg-layer-3: #1a144d !important;
-  --bg-layer-card: #201a61 !important;
-  --brand-orange: #6366f1 !important;
-  --bg-gradient: linear-gradient(135deg, #060514 0%, #151040 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #060514 !important;
-  --layer-bg-gray: #060514 !important;
-  --layer-01: #0d0a27 !important;
-  --layer-02: #130f3a !important;
-  --layer-03: #1a144d !important;
-  --dark-brand-orange: #6366f1 !important;
-  --light-brand-orange: #6366f1 !important;
-  --dark-gray-10: #060514 !important;
-  --dark-gray-20: #0d0a27 !important;
-  --dark-gray-30: #130f3a !important;
-  --dark-gray-40: #1a144d !important;
-  --gray-10: #060514 !important;
-  --gray-20: #0d0a27 !important;
-  --gray-40: #1a144d !important;
-  --fill-pure: #060514 !important;
-  --sd-background: 244 60% 5% !important;
-  --sd-background-gray: 244 60% 5% !important;
-  --sd-card: 245 58% 24% !important;
-  --sd-popover: 245 43% 30% !important;
-  --sd-separator-nonopaque: 246,59%,14%,0.65 !important;
-  --sd-gray-950: 244 60% 5% !important;
-  --sd-gray-900: 246 59% 10% !important;
-  --sd-gray-800: 246 59% 14% !important;
-  --sd-gray-700: 246 59% 19% !important;
+  --bg-base: #060514;
+  --bg-surface: #130f3a;
+  --border-color: #1a144d;
+  --brand-accent: #6366f1;
 }
 
 /* 19. Vampire Gothic */
 html[data-lc-theme="vampire"] {
-  --bg-layer-bg: #080101 !important;
-  --bg-layer-1: #100202 !important;
-  --bg-layer-2: #180303 !important;
-  --bg-layer-3: #210404 !important;
-  --bg-layer-card: #2a0505 !important;
-  --brand-orange: #ef4444 !important;
-  --bg-gradient: linear-gradient(135deg, #080101 0%, #260505 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #080101 !important;
-  --layer-bg-gray: #080101 !important;
-  --layer-01: #100202 !important;
-  --layer-02: #180303 !important;
-  --layer-03: #210404 !important;
-  --dark-brand-orange: #ef4444 !important;
-  --light-brand-orange: #ef4444 !important;
-  --dark-gray-10: #080101 !important;
-  --dark-gray-20: #100202 !important;
-  --dark-gray-30: #180303 !important;
-  --dark-gray-40: #210404 !important;
-  --gray-10: #080101 !important;
-  --gray-20: #100202 !important;
-  --gray-40: #210404 !important;
-  --fill-pure: #080101 !important;
-  --sd-background: 0 78% 2% !important;
-  --sd-background-gray: 0 78% 2% !important;
-  --sd-card: 0 79% 9% !important;
-  --sd-popover: 0 40% 16% !important;
-  --sd-separator-nonopaque: 0,78%,5%,0.65 !important;
-  --sd-gray-950: 0 78% 2% !important;
-  --sd-gray-900: 0 78% 4% !important;
-  --sd-gray-800: 0 78% 5% !important;
-  --sd-gray-700: 0 78% 7% !important;
+  --bg-base: #080101;
+  --bg-surface: #180303;
+  --border-color: #210404;
+  --brand-accent: #ef4444;
 }
 
 /* 20. Abyssal Ice */
 html[data-lc-theme="abyssal"] {
-  --bg-layer-bg: #04080f !important;
-  --bg-layer-1: #080e1c !important;
-  --bg-layer-2: #0d1629 !important;
-  --bg-layer-3: #121e38 !important;
-  --bg-layer-card: #172548 !important;
-  --brand-orange: #00d4ff !important;
-  --bg-gradient: linear-gradient(135deg, #04080f 0%, #0c1a30 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #04080f !important;
-  --layer-bg-gray: #04080f !important;
-  --layer-01: #080e1c !important;
-  --layer-02: #0d1629 !important;
-  --layer-03: #121e38 !important;
-  --dark-brand-orange: #00d4ff !important;
-  --light-brand-orange: #00d4ff !important;
-  --dark-gray-10: #04080f !important;
-  --dark-gray-20: #080e1c !important;
-  --dark-gray-30: #0d1629 !important;
-  --dark-gray-40: #121e38 !important;
-  --gray-10: #04080f !important;
-  --gray-20: #080e1c !important;
-  --gray-40: #121e38 !important;
-  --fill-pure: #04080f !important;
-  --sd-background: 218 58% 4% !important;
-  --sd-background-gray: 218 58% 4% !important;
-  --sd-card: 223 52% 19% !important;
-  --sd-popover: 224 35% 25% !important;
-  --sd-separator-nonopaque: 221,52%,11%,0.65 !important;
-  --sd-gray-950: 218 58% 4% !important;
-  --sd-gray-900: 222 56% 7% !important;
-  --sd-gray-800: 221 52% 11% !important;
-  --sd-gray-700: 221 51% 15% !important;
+  --bg-base: #04080f;
+  --bg-surface: #0d1629;
+  --border-color: #121e38;
+  --brand-accent: #00d4ff;
 }
 
 /* 21. Void Orchid */
 html[data-lc-theme="void-orchid"] {
-  --bg-layer-bg: #0a0005 !important;
-  --bg-layer-1: #150a1a !important;
-  --bg-layer-2: #200f27 !important;
-  --bg-layer-3: #2b1434 !important;
-  --bg-layer-card: #361941 !important;
-  --brand-orange: #bf5fff !important;
-  --bg-gradient: linear-gradient(135deg, #0a0005 0%, #1e0d2c 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0a0005 !important;
-  --layer-bg-gray: #0a0005 !important;
-  --layer-01: #150a1a !important;
-  --layer-02: #200f27 !important;
-  --layer-03: #2b1434 !important;
-  --dark-brand-orange: #bf5fff !important;
-  --light-brand-orange: #bf5fff !important;
-  --dark-gray-10: #0a0005 !important;
-  --dark-gray-20: #150a1a !important;
-  --dark-gray-30: #200f27 !important;
-  --dark-gray-40: #2b1434 !important;
-  --gray-10: #0a0005 !important;
-  --gray-20: #150a1a !important;
-  --gray-40: #2b1434 !important;
-  --fill-pure: #0a0005 !important;
-  --sd-background: 330 100% 2% !important;
-  --sd-background-gray: 330 100% 2% !important;
-  --sd-card: 284 44% 18% !important;
-  --sd-popover: 284 30% 24% !important;
-  --sd-separator-nonopaque: 283,44%,11%,0.65 !important;
-  --sd-gray-950: 330 100% 2% !important;
-  --sd-gray-900: 281 44% 7% !important;
-  --sd-gray-800: 283 44% 11% !important;
-  --sd-gray-700: 283 44% 14% !important;
+  --bg-base: #0a0005;
+  --bg-surface: #200f27;
+  --border-color: #2b1434;
+  --brand-accent: #bf5fff;
 }
 
 /* 22. Phosphor Matrix */
 html[data-lc-theme="phosphor"] {
-  --bg-layer-bg: #070c06 !important;
-  --bg-layer-1: #0e1a0c !important;
-  --bg-layer-2: #152712 !important;
-  --bg-layer-3: #1c3418 !important;
-  --bg-layer-card: #23411e !important;
-  --brand-orange: #7fff00 !important;
-  --bg-gradient: linear-gradient(135deg, #070c06 0%, #152811 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #070c06 !important;
-  --layer-bg-gray: #070c06 !important;
-  --layer-01: #0e1a0c !important;
-  --layer-02: #152712 !important;
-  --layer-03: #1c3418 !important;
-  --dark-brand-orange: #7fff00 !important;
-  --light-brand-orange: #7fff00 !important;
-  --dark-gray-10: #070c06 !important;
-  --dark-gray-20: #0e1a0c !important;
-  --dark-gray-30: #152712 !important;
-  --dark-gray-40: #1c3418 !important;
-  --gray-10: #070c06 !important;
-  --gray-20: #0e1a0c !important;
-  --gray-40: #1c3418 !important;
-  --fill-pure: #070c06 !important;
-  --sd-background: 110 33% 4% !important;
-  --sd-background-gray: 110 33% 4% !important;
-  --sd-card: 111 37% 19% !important;
-  --sd-popover: 111 25% 25% !important;
-  --sd-separator-nonopaque: 111,37%,11%,0.65 !important;
-  --sd-gray-950: 110 33% 4% !important;
-  --sd-gray-900: 111 37% 7% !important;
-  --sd-gray-800: 111 37% 11% !important;
-  --sd-gray-700: 111 37% 15% !important;
+  --bg-base: #070c06;
+  --bg-surface: #152712;
+  --border-color: #1c3418;
+  --brand-accent: #7fff00;
 }
 
 /* 23. Gilded Carbon */
 html[data-lc-theme="gilded"] {
-  --bg-layer-bg: #080a10 !important;
-  --bg-layer-1: #10141e !important;
-  --bg-layer-2: #181d2c !important;
-  --bg-layer-3: #20263a !important;
-  --bg-layer-card: #283048 !important;
-  --brand-orange: #c8a96e !important;
-  --bg-gradient: linear-gradient(135deg, #080a10 0%, #181e2e 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #080a10 !important;
-  --layer-bg-gray: #080a10 !important;
-  --layer-01: #10141e !important;
-  --layer-02: #181d2c !important;
-  --layer-03: #20263a !important;
-  --dark-brand-orange: #c8a96e !important;
-  --light-brand-orange: #c8a96e !important;
-  --dark-gray-10: #080a10 !important;
-  --dark-gray-20: #10141e !important;
-  --dark-gray-30: #181d2c !important;
-  --dark-gray-40: #20263a !important;
-  --gray-10: #080a10 !important;
-  --gray-20: #10141e !important;
-  --gray-40: #20263a !important;
-  --fill-pure: #080a10 !important;
-  --sd-background: 225 33% 5% !important;
-  --sd-background-gray: 225 33% 5% !important;
-  --sd-card: 225 29% 22% !important;
-  --sd-popover: 224 21% 28% !important;
-  --sd-separator-nonopaque: 225,29%,13%,0.65 !important;
-  --sd-gray-950: 225 33% 5% !important;
-  --sd-gray-900: 223 30% 9% !important;
-  --sd-gray-800: 225 29% 13% !important;
-  --sd-gray-700: 226 29% 18% !important;
+  --bg-base: #080a10;
+  --bg-surface: #181d2c;
+  --border-color: #20263a;
+  --brand-accent: #c8a96e;
 }
 
 /* 24. Neon Sakura */
 html[data-lc-theme="sakura"] {
-  --bg-layer-bg: #0a0608 !important;
-  --bg-layer-1: #160c12 !important;
-  --bg-layer-2: #21111b !important;
-  --bg-layer-3: #2c1624 !important;
-  --bg-layer-card: #371b2d !important;
-  --brand-orange: #ff4d8f !important;
-  --bg-gradient: linear-gradient(135deg, #0a0608 0%, #22101a 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0a0608 !important;
-  --layer-bg-gray: #0a0608 !important;
-  --layer-01: #160c12 !important;
-  --layer-02: #21111b !important;
-  --layer-03: #2c1624 !important;
-  --dark-brand-orange: #ff4d8f !important;
-  --light-brand-orange: #ff4d8f !important;
-  --dark-gray-10: #0a0608 !important;
-  --dark-gray-20: #160c12 !important;
-  --dark-gray-30: #21111b !important;
-  --dark-gray-40: #2c1624 !important;
-  --gray-10: #0a0608 !important;
-  --gray-20: #160c12 !important;
-  --gray-40: #2c1624 !important;
-  --fill-pure: #0a0608 !important;
-  --sd-background: 330 25% 3% !important;
-  --sd-background-gray: 330 25% 3% !important;
-  --sd-card: 321 34% 16% !important;
-  --sd-popover: 321 22% 23% !important;
-  --sd-separator-nonopaque: 323,32%,10%,0.65 !important;
-  --sd-gray-950: 330 25% 3% !important;
-  --sd-gray-900: 324 29% 7% !important;
-  --sd-gray-800: 323 32% 10% !important;
-  --sd-gray-700: 322 33% 13% !important;
+  --bg-base: #0a0608;
+  --bg-surface: #21111b;
+  --border-color: #2c1624;
+  --brand-accent: #ff4d8f;
 }
 
 /* 25. Deep Horizon */
 html[data-lc-theme="deep-horizon"] {
-  --bg-layer-bg: #060811 !important;
-  --bg-layer-1: #0b1120 !important;
-  --bg-layer-2: #101b33 !important;
-  --bg-layer-3: #162446 !important;
-  --bg-layer-card: #1c2d59 !important;
-  --brand-orange: #4fc3f7 !important;
-  --bg-gradient: linear-gradient(135deg, #060811 0%, #101d3a 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #060811 !important;
-  --layer-bg-gray: #060811 !important;
-  --layer-01: #0b1120 !important;
-  --layer-02: #101b33 !important;
-  --layer-03: #162446 !important;
-  --dark-brand-orange: #4fc3f7 !important;
-  --light-brand-orange: #4fc3f7 !important;
-  --dark-gray-10: #060811 !important;
-  --dark-gray-20: #0b1120 !important;
-  --dark-gray-30: #101b33 !important;
-  --dark-gray-40: #162446 !important;
-  --gray-10: #060811 !important;
-  --gray-20: #0b1120 !important;
-  --gray-40: #162446 !important;
-  --fill-pure: #060811 !important;
-  --sd-background: 229 48% 5% !important;
-  --sd-background-gray: 229 48% 5% !important;
-  --sd-card: 223 52% 23% !important;
-  --sd-popover: 223 38% 29% !important;
-  --sd-separator-nonopaque: 221,52%,13%,0.65 !important;
-  --sd-gray-950: 229 48% 5% !important;
-  --sd-gray-900: 223 49% 8% !important;
-  --sd-gray-800: 221 52% 13% !important;
-  --sd-gray-700: 223 52% 18% !important;
+  --bg-base: #060811;
+  --bg-surface: #101b33;
+  --border-color: #162446;
+  --brand-accent: #4fc3f7;
 }
 
 /* 26. Starfield Lavender */
 html[data-lc-theme="starfield"] {
-  --bg-layer-bg: #09070e !important;
-  --bg-layer-1: #130e1e !important;
-  --bg-layer-2: #1d162e !important;
-  --bg-layer-3: #271e3e !important;
-  --bg-layer-card: #31264e !important;
-  --brand-orange: #a78bfa !important;
-  --bg-gradient: linear-gradient(135deg, #09070e 0%, #1c1330 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #09070e !important;
-  --layer-bg-gray: #09070e !important;
-  --layer-01: #130e1e !important;
-  --layer-02: #1d162e !important;
-  --layer-03: #271e3e !important;
-  --dark-brand-orange: #a78bfa !important;
-  --light-brand-orange: #a78bfa !important;
-  --dark-gray-10: #09070e !important;
-  --dark-gray-20: #130e1e !important;
-  --dark-gray-30: #1d162e !important;
-  --dark-gray-40: #271e3e !important;
-  --gray-10: #09070e !important;
-  --gray-20: #130e1e !important;
-  --gray-40: #271e3e !important;
-  --fill-pure: #09070e !important;
-  --sd-background: 257 33% 4% !important;
-  --sd-background-gray: 257 33% 4% !important;
-  --sd-card: 257 34% 23% !important;
-  --sd-popover: 256 25% 29% !important;
-  --sd-separator-nonopaque: 258,35%,13%,0.65 !important;
-  --sd-gray-950: 257 33% 4% !important;
-  --sd-gray-900: 259 36% 9% !important;
-  --sd-gray-800: 258 35% 13% !important;
-  --sd-gray-700: 257 35% 18% !important;
+  --bg-base: #09070e;
+  --bg-surface: #1d162e;
+  --border-color: #271e3e;
+  --brand-accent: #a78bfa;
 }
 
 /* 27. Ember Forge */
 html[data-lc-theme="ember"] {
-  --bg-layer-bg: #080505 !important;
-  --bg-layer-1: #140b09 !important;
-  --bg-layer-2: #1f110d !important;
-  --bg-layer-3: #2a1711 !important;
-  --bg-layer-card: #351d15 !important;
-  --brand-orange: #ff6a00 !important;
-  --bg-gradient: linear-gradient(135deg, #080505 0%, #251410 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #080505 !important;
-  --layer-bg-gray: #080505 !important;
-  --layer-01: #140b09 !important;
-  --layer-02: #1f110d !important;
-  --layer-03: #2a1711 !important;
-  --dark-brand-orange: #ff6a00 !important;
-  --light-brand-orange: #ff6a00 !important;
-  --dark-gray-10: #080505 !important;
-  --dark-gray-20: #140b09 !important;
-  --dark-gray-30: #1f110d !important;
-  --dark-gray-40: #2a1711 !important;
-  --gray-10: #080505 !important;
-  --gray-20: #140b09 !important;
-  --gray-40: #2a1711 !important;
-  --fill-pure: #080505 !important;
-  --sd-background: 0 23% 3% !important;
-  --sd-background-gray: 0 23% 3% !important;
-  --sd-card: 15 43% 15% !important;
-  --sd-popover: 14 27% 21% !important;
-  --sd-separator-nonopaque: 13,41%,9%,0.65 !important;
-  --sd-gray-950: 0 23% 3% !important;
-  --sd-gray-900: 11 38% 6% !important;
-  --sd-gray-800: 13 41% 9% !important;
-  --sd-gray-700: 14 42% 12% !important;
+  --bg-base: #080505;
+  --bg-surface: #1f110d;
+  --border-color: #2a1711;
+  --brand-accent: #ff6a00;
 }
 
 /* 28. Cryogenic Depths */
 html[data-lc-theme="cryo"] {
-  --bg-layer-bg: #030810 !important;
-  --bg-layer-1: #061221 !important;
-  --bg-layer-2: #091c34 !important;
-  --bg-layer-3: #0d2647 !important;
-  --bg-layer-card: #11305a !important;
-  --brand-orange: #00e5ff !important;
-  --bg-gradient: linear-gradient(135deg, #030810 0%, #0c2240 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #030810 !important;
-  --layer-bg-gray: #030810 !important;
-  --layer-01: #061221 !important;
-  --layer-02: #091c34 !important;
-  --layer-03: #0d2647 !important;
-  --dark-brand-orange: #00e5ff !important;
-  --light-brand-orange: #00e5ff !important;
-  --dark-gray-10: #030810 !important;
-  --dark-gray-20: #061221 !important;
-  --dark-gray-30: #091c34 !important;
-  --dark-gray-40: #0d2647 !important;
-  --gray-10: #030810 !important;
-  --gray-20: #061221 !important;
-  --gray-40: #0d2647 !important;
-  --fill-pure: #030810 !important;
-  --sd-background: 217 68% 4% !important;
-  --sd-background-gray: 217 68% 4% !important;
-  --sd-card: 215 68% 21% !important;
-  --sd-popover: 214 48% 27% !important;
-  --sd-separator-nonopaque: 213,70%,12%,0.65 !important;
-  --sd-gray-950: 217 68% 4% !important;
-  --sd-gray-900: 213 69% 8% !important;
-  --sd-gray-800: 213 70% 12% !important;
-  --sd-gray-700: 214 69% 16% !important;
+  --bg-base: #030810;
+  --bg-surface: #091c34;
+  --border-color: #0d2647;
+  --brand-accent: #00e5ff;
 }
 
 /* 29. Matte Onyx Gold */
 html[data-lc-theme="onyx-gold"] {
-  --bg-layer-bg: #0b0b0b !important;
-  --bg-layer-1: #141414 !important;
-  --bg-layer-2: #1e1e1e !important;
-  --bg-layer-3: #272727 !important;
-  --bg-layer-card: #303030 !important;
-  --brand-orange: #d4af37 !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0b0b0b !important;
-  --layer-bg-gray: #0b0b0b !important;
-  --layer-01: #141414 !important;
-  --layer-02: #1e1e1e !important;
-  --layer-03: #272727 !important;
-  --dark-brand-orange: #d4af37 !important;
-  --light-brand-orange: #d4af37 !important;
-  --dark-gray-10: #0b0b0b !important;
-  --dark-gray-20: #141414 !important;
-  --dark-gray-30: #1e1e1e !important;
-  --dark-gray-40: #272727 !important;
-  --gray-10: #0b0b0b !important;
-  --gray-20: #141414 !important;
-  --gray-40: #272727 !important;
-  --fill-pure: #0b0b0b !important;
-  --sd-background: 0 0% 4% !important;
-  --sd-background-gray: 0 0% 4% !important;
-  --sd-card: 0 0% 19% !important;
-  --sd-popover: 0 0% 25% !important;
-  --sd-separator-nonopaque: 0,0%,12%,0.65 !important;
-  --sd-gray-950: 0 0% 4% !important;
-  --sd-gray-900: 0 0% 8% !important;
-  --sd-gray-800: 0 0% 12% !important;
-  --sd-gray-700: 0 0% 15% !important;
+  --bg-base: #0b0b0b;
+  --bg-surface: #1e1e1e;
+  --border-color: #272727;
+  --brand-accent: #d4af37;
 }
 
 /* 30. Jade Terminal */
 html[data-lc-theme="jade"] {
-  --bg-layer-bg: #060a0a !important;
-  --bg-layer-1: #0c1616 !important;
-  --bg-layer-2: #122222 !important;
-  --bg-layer-3: #182e2e !important;
-  --bg-layer-card: #1e3a3a !important;
-  --brand-orange: #14f0b0 !important;
-  --bg-gradient: linear-gradient(135deg, #060a0a 0%, #112424 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #060a0a !important;
-  --layer-bg-gray: #060a0a !important;
-  --layer-01: #0c1616 !important;
-  --layer-02: #122222 !important;
-  --layer-03: #182e2e !important;
-  --dark-brand-orange: #14f0b0 !important;
-  --light-brand-orange: #14f0b0 !important;
-  --dark-gray-10: #060a0a !important;
-  --dark-gray-20: #0c1616 !important;
-  --dark-gray-30: #122222 !important;
-  --dark-gray-40: #182e2e !important;
-  --gray-10: #060a0a !important;
-  --gray-20: #0c1616 !important;
-  --gray-40: #182e2e !important;
-  --fill-pure: #060a0a !important;
-  --sd-background: 180 25% 3% !important;
-  --sd-background-gray: 180 25% 3% !important;
-  --sd-card: 180 32% 17% !important;
-  --sd-popover: 180 21% 24% !important;
-  --sd-separator-nonopaque: 180,31%,10%,0.65 !important;
-  --sd-gray-950: 180 25% 3% !important;
-  --sd-gray-900: 180 29% 7% !important;
-  --sd-gray-800: 180 31% 10% !important;
-  --sd-gray-700: 180 31% 14% !important;
+  --bg-base: #060a0a;
+  --bg-surface: #122222;
+  --border-color: #182e2e;
+  --brand-accent: #14f0b0;
 }
 
 /* 31. Crimson Mist */
 html[data-lc-theme="crimson-mist"] {
-  --bg-layer-bg: #0d070a !important;
-  --bg-layer-1: #1a0f12 !important;
-  --bg-layer-2: #26161b !important;
-  --bg-layer-3: #321d24 !important;
-  --bg-layer-card: #3e242d !important;
-  --brand-orange: #ff8fab !important;
-  --bg-gradient: linear-gradient(135deg, #0d070a 0%, #271419 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0d070a !important;
-  --layer-bg-gray: #0d070a !important;
-  --layer-01: #1a0f12 !important;
-  --layer-02: #26161b !important;
-  --layer-03: #321d24 !important;
-  --dark-brand-orange: #ff8fab !important;
-  --light-brand-orange: #ff8fab !important;
-  --dark-gray-10: #0d070a !important;
-  --dark-gray-20: #1a0f12 !important;
-  --dark-gray-30: #26161b !important;
-  --dark-gray-40: #321d24 !important;
-  --gray-10: #0d070a !important;
-  --gray-20: #1a0f12 !important;
-  --gray-40: #321d24 !important;
-  --fill-pure: #0d070a !important;
-  --sd-background: 330 30% 4% !important;
-  --sd-background-gray: 330 30% 4% !important;
-  --sd-card: 339 27% 19% !important;
-  --sd-popover: 339 18% 26% !important;
-  --sd-separator-nonopaque: 341,27%,12%,0.65 !important;
-  --sd-gray-950: 330 30% 4% !important;
-  --sd-gray-900: 344 27% 8% !important;
-  --sd-gray-800: 341 27% 12% !important;
-  --sd-gray-700: 340 27% 15% !important;
+  --bg-base: #0d070a;
+  --bg-surface: #26161b;
+  --border-color: #321d24;
+  --brand-accent: #ff8fab;
 }
 
 /* 32. Phantom Reef */
 html[data-lc-theme="phantom-reef"] {
-  --bg-layer-bg: #070a0d !important;
-  --bg-layer-1: #0e1520 !important;
-  --bg-layer-2: #162033 !important;
-  --bg-layer-3: #1e2b46 !important;
-  --bg-layer-card: #253659 !important;
-  --brand-orange: #56cfe1 !important;
-  --bg-gradient: linear-gradient(135deg, #070a0d 0%, #152336 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #070a0d !important;
-  --layer-bg-gray: #070a0d !important;
-  --layer-01: #0e1520 !important;
-  --layer-02: #162033 !important;
-  --layer-03: #1e2b46 !important;
-  --dark-brand-orange: #56cfe1 !important;
-  --light-brand-orange: #56cfe1 !important;
-  --dark-gray-10: #070a0d !important;
-  --dark-gray-20: #0e1520 !important;
-  --dark-gray-30: #162033 !important;
-  --dark-gray-40: #1e2b46 !important;
-  --gray-10: #070a0d !important;
-  --gray-20: #0e1520 !important;
-  --gray-40: #1e2b46 !important;
-  --fill-pure: #070a0d !important;
-  --sd-background: 210 30% 4% !important;
-  --sd-background-gray: 210 30% 4% !important;
-  --sd-card: 220 41% 25% !important;
-  --sd-popover: 220 31% 31% !important;
-  --sd-separator-nonopaque: 219,40%,14%,0.65 !important;
-  --sd-gray-950: 210 30% 4% !important;
-  --sd-gray-900: 217 39% 9% !important;
-  --sd-gray-800: 219 40% 14% !important;
-  --sd-gray-700: 220 40% 20% !important;
+  --bg-base: #070a0d;
+  --bg-surface: #162033;
+  --border-color: #1e2b46;
+  --brand-accent: #56cfe1;
 }
 
 /* 33. Ancient Scroll */
 html[data-lc-theme="ancient"] {
-  --bg-layer-bg: #0c0a07 !important;
-  --bg-layer-1: #1a160d !important;
-  --bg-layer-2: #282213 !important;
-  --bg-layer-3: #352d19 !important;
-  --bg-layer-card: #42381f !important;
-  --brand-orange: #e8c84a !important;
-  --bg-gradient: linear-gradient(135deg, #0c0a07 0%, #2a2211 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0c0a07 !important;
-  --layer-bg-gray: #0c0a07 !important;
-  --layer-01: #1a160d !important;
-  --layer-02: #282213 !important;
-  --layer-03: #352d19 !important;
-  --dark-brand-orange: #e8c84a !important;
-  --light-brand-orange: #e8c84a !important;
-  --dark-gray-10: #0c0a07 !important;
-  --dark-gray-20: #1a160d !important;
-  --dark-gray-30: #282213 !important;
-  --dark-gray-40: #352d19 !important;
-  --gray-10: #0c0a07 !important;
-  --gray-20: #1a160d !important;
-  --gray-40: #352d19 !important;
-  --fill-pure: #0c0a07 !important;
-  --sd-background: 36 26% 4% !important;
-  --sd-background-gray: 36 26% 4% !important;
-  --sd-card: 43 36% 19% !important;
-  --sd-popover: 43 25% 25% !important;
-  --sd-separator-nonopaque: 43,36%,12%,0.65 !important;
-  --sd-gray-950: 36 26% 4% !important;
-  --sd-gray-900: 42 33% 8% !important;
-  --sd-gray-800: 43 36% 12% !important;
-  --sd-gray-700: 43 36% 15% !important;
+  --bg-base: #0c0a07;
+  --bg-surface: #282213;
+  --border-color: #352d19;
+  --brand-accent: #e8c84a;
 }
 
 /* 34. Indigo Fog */
 html[data-lc-theme="indigo-fog"] {
-  --bg-layer-bg: #06060a !important;
-  --bg-layer-1: #0d0d17 !important;
-  --bg-layer-2: #141425 !important;
-  --bg-layer-3: #1b1b33 !important;
-  --bg-layer-card: #222241 !important;
-  --brand-orange: #818cf8 !important;
-  --bg-gradient: linear-gradient(135deg, #06060a 0%, #131328 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #06060a !important;
-  --layer-bg-gray: #06060a !important;
-  --layer-01: #0d0d17 !important;
-  --layer-02: #141425 !important;
-  --layer-03: #1b1b33 !important;
-  --dark-brand-orange: #818cf8 !important;
-  --light-brand-orange: #818cf8 !important;
-  --dark-gray-10: #06060a !important;
-  --dark-gray-20: #0d0d17 !important;
-  --dark-gray-30: #141425 !important;
-  --dark-gray-40: #1b1b33 !important;
-  --gray-10: #06060a !important;
-  --gray-20: #0d0d17 !important;
-  --gray-40: #1b1b33 !important;
-  --fill-pure: #06060a !important;
-  --sd-background: 240 25% 3% !important;
-  --sd-background-gray: 240 25% 3% !important;
-  --sd-card: 240 31% 19% !important;
-  --sd-popover: 240 21% 26% !important;
-  --sd-separator-nonopaque: 240,30%,11%,0.65 !important;
-  --sd-gray-950: 240 25% 3% !important;
-  --sd-gray-900: 240 28% 7% !important;
-  --sd-gray-800: 240 30% 11% !important;
-  --sd-gray-700: 240 31% 15% !important;
+  --bg-base: #06060a;
+  --bg-surface: #141425;
+  --border-color: #1b1b33;
+  --brand-accent: #818cf8;
 }
 
 /* 35. Pure Void */
 html[data-lc-theme="pure-void"] {
-  --bg-layer-bg: #090909 !important;
-  --bg-layer-1: #131313 !important;
-  --bg-layer-2: #1d1d1d !important;
-  --bg-layer-3: #252525 !important;
-  --bg-layer-card: #2e2e2e !important;
-  --brand-orange: #f0f0f0 !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #090909 !important;
-  --layer-bg-gray: #090909 !important;
-  --layer-01: #131313 !important;
-  --layer-02: #1d1d1d !important;
-  --layer-03: #252525 !important;
-  --dark-brand-orange: #f0f0f0 !important;
-  --light-brand-orange: #f0f0f0 !important;
-  --dark-gray-10: #090909 !important;
-  --dark-gray-20: #131313 !important;
-  --dark-gray-30: #1d1d1d !important;
-  --dark-gray-40: #252525 !important;
-  --gray-10: #090909 !important;
-  --gray-20: #131313 !important;
-  --gray-40: #252525 !important;
-  --fill-pure: #090909 !important;
-  --sd-background: 0 0% 4% !important;
-  --sd-background-gray: 0 0% 4% !important;
-  --sd-card: 0 0% 18% !important;
-  --sd-popover: 0 0% 25% !important;
-  --sd-separator-nonopaque: 0,0%,11%,0.65 !important;
-  --sd-gray-950: 0 0% 4% !important;
-  --sd-gray-900: 0 0% 7% !important;
-  --sd-gray-800: 0 0% 11% !important;
-  --sd-gray-700: 0 0% 15% !important;
+  --bg-base: #090909;
+  --bg-surface: #1d1d1d;
+  --border-color: #252525;
+  --brand-accent: #f0f0f0;
 }
 
 /* 36. Bioluminescence */
 html[data-lc-theme="bioluminescence"] {
-  --bg-layer-bg: #050a08 !important;
-  --bg-layer-1: #0b1812 !important;
-  --bg-layer-2: #12271c !important;
-  --bg-layer-3: #193626 !important;
-  --bg-layer-card: #204530 !important;
-  --brand-orange: #00ff9f !important;
-  --bg-gradient: linear-gradient(135deg, #050a08 0%, #122a1d 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #050a08 !important;
-  --layer-bg-gray: #050a08 !important;
-  --layer-01: #0b1812 !important;
-  --layer-02: #12271c !important;
-  --layer-03: #193626 !important;
-  --dark-brand-orange: #00ff9f !important;
-  --light-brand-orange: #00ff9f !important;
-  --dark-gray-10: #050a08 !important;
-  --dark-gray-20: #0b1812 !important;
-  --dark-gray-30: #12271c !important;
-  --dark-gray-40: #193626 !important;
-  --gray-10: #050a08 !important;
-  --gray-20: #0b1812 !important;
-  --gray-40: #193626 !important;
-  --fill-pure: #050a08 !important;
-  --sd-background: 156 33% 3% !important;
-  --sd-background-gray: 156 33% 3% !important;
-  --sd-card: 146 37% 20% !important;
-  --sd-popover: 146 25% 26% !important;
-  --sd-separator-nonopaque: 149,37%,11%,0.65 !important;
-  --sd-gray-950: 156 33% 3% !important;
-  --sd-gray-900: 152 37% 7% !important;
-  --sd-gray-800: 149 37% 11% !important;
-  --sd-gray-700: 147 37% 15% !important;
+  --bg-base: #050a08;
+  --bg-surface: #12271c;
+  --border-color: #193626;
+  --brand-accent: #00ff9f;
 }
 
 /* 37. Arcane Rift */
 html[data-lc-theme="arcane"] {
-  --bg-layer-bg: #0b080d !important;
-  --bg-layer-1: #17101c !important;
-  --bg-layer-2: #23182b !important;
-  --bg-layer-3: #2f203a !important;
-  --bg-layer-card: #3b2849 !important;
-  --brand-orange: #e879f9 !important;
-  --bg-gradient: linear-gradient(135deg, #0b080d 0%, #211529 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #0b080d !important;
-  --layer-bg-gray: #0b080d !important;
-  --layer-01: #17101c !important;
-  --layer-02: #23182b !important;
-  --layer-03: #2f203a !important;
-  --dark-brand-orange: #e879f9 !important;
-  --light-brand-orange: #e879f9 !important;
-  --dark-gray-10: #0b080d !important;
-  --dark-gray-20: #17101c !important;
-  --dark-gray-30: #23182b !important;
-  --dark-gray-40: #2f203a !important;
-  --gray-10: #0b080d !important;
-  --gray-20: #17101c !important;
-  --gray-40: #2f203a !important;
-  --fill-pure: #0b080d !important;
-  --sd-background: 276 24% 4% !important;
-  --sd-background-gray: 276 24% 4% !important;
-  --sd-card: 275 29% 22% !important;
-  --sd-popover: 275 21% 28% !important;
-  --sd-separator-nonopaque: 275,28%,13%,0.65 !important;
-  --sd-gray-950: 276 24% 4% !important;
-  --sd-gray-900: 275 27% 9% !important;
-  --sd-gray-800: 275 28% 13% !important;
-  --sd-gray-700: 275 29% 18% !important;
+  --bg-base: #0b080d;
+  --bg-surface: #23182b;
+  --border-color: #2f203a;
+  --brand-accent: #e879f9;
 }
 
 /* 38. Polar Dawn */
 html[data-lc-theme="polar-dawn"] {
-  --bg-layer-bg: #06090c !important;
-  --bg-layer-1: #0c1219 !important;
-  --bg-layer-2: #111b26 !important;
-  --bg-layer-3: #172433 !important;
-  --bg-layer-card: #1d2d40 !important;
-  --brand-orange: #38bdf8 !important;
-  --bg-gradient: linear-gradient(135deg, #06090c 0%, #111d2e 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #06090c !important;
-  --layer-bg-gray: #06090c !important;
-  --layer-01: #0c1219 !important;
-  --layer-02: #111b26 !important;
-  --layer-03: #172433 !important;
-  --dark-brand-orange: #38bdf8 !important;
-  --light-brand-orange: #38bdf8 !important;
-  --dark-gray-10: #06090c !important;
-  --dark-gray-20: #0c1219 !important;
-  --dark-gray-30: #111b26 !important;
-  --dark-gray-40: #172433 !important;
-  --gray-10: #06090c !important;
-  --gray-20: #0c1219 !important;
-  --gray-40: #172433 !important;
-  --fill-pure: #06090c !important;
-  --sd-background: 210 33% 4% !important;
-  --sd-background-gray: 210 33% 4% !important;
-  --sd-card: 213 38% 18% !important;
-  --sd-popover: 212 25% 25% !important;
-  --sd-separator-nonopaque: 211,38%,11%,0.65 !important;
-  --sd-gray-950: 210 33% 4% !important;
-  --sd-gray-900: 212 35% 7% !important;
-  --sd-gray-800: 211 38% 11% !important;
-  --sd-gray-700: 212 38% 15% !important;
+  --bg-base: #06090c;
+  --bg-surface: #111b26;
+  --border-color: #172433;
+  --brand-accent: #38bdf8;
 }
 
 /* 39. Radioactive Moss */
 html[data-lc-theme="rad-moss"] {
-  --bg-layer-bg: #090a06 !important;
-  --bg-layer-1: #14160c !important;
-  --bg-layer-2: #1e2212 !important;
-  --bg-layer-3: #282e18 !important;
-  --bg-layer-card: #323a1e !important;
-  --brand-orange: #b5e853 !important;
-  --bg-gradient: linear-gradient(135deg, #090a06 0%, #1e2412 100%) !important;
-  /* Native LeetCode overrides */
-  --layer-bg-pure: #090a06 !important;
-  --layer-bg-gray: #090a06 !important;
-  --layer-01: #14160c !important;
-  --layer-02: #1e2212 !important;
-  --layer-03: #282e18 !important;
-  --dark-brand-orange: #b5e853 !important;
-  --light-brand-orange: #b5e853 !important;
-  --dark-gray-10: #090a06 !important;
-  --dark-gray-20: #14160c !important;
-  --dark-gray-30: #1e2212 !important;
-  --dark-gray-40: #282e18 !important;
-  --gray-10: #090a06 !important;
-  --gray-20: #14160c !important;
-  --gray-40: #282e18 !important;
-  --fill-pure: #090a06 !important;
-  --sd-background: 75 25% 3% !important;
-  --sd-background-gray: 75 25% 3% !important;
-  --sd-card: 77 32% 17% !important;
-  --sd-popover: 78 21% 24% !important;
-  --sd-separator-nonopaque: 75,31%,10%,0.65 !important;
-  --sd-gray-950: 75 25% 3% !important;
-  --sd-gray-900: 72 29% 7% !important;
-  --sd-gray-800: 75 31% 10% !important;
-  --sd-gray-700: 76 31% 14% !important;
+  --bg-base: #090a06;
+  --bg-surface: #1e2212;
+  --border-color: #282e18;
+  --brand-accent: #b5e853;
 }
 
 
 /* ====================================================
-   ELEMENT-LEVEL OVERRIDES
-   Only for elements using hardcoded values (not CSS vars)
+   SECTION 2: GLOBAL MAPPING (NATIVE VARIABLE SYSTEM OVERRIDES)
+   This maps LeetCode's multi-layered variable system directly 
+   to your 4 core colors without breaking native layouts.
+==================================================== */
+html[data-lc-theme] {
+  /* 1. Base / Canvas level elements */
+  --layer-bg-pure: var(--bg-base) !important;
+  --layer-bg-gray: var(--bg-base) !important;
+  --fill-pure: var(--bg-base) !important;
+  --dark-gray-10: var(--bg-base) !important;
+  --gray-10: var(--bg-base) !important;
+  --layer-01: var(--bg-base) !important;
+  --gray-20: var(--bg-base) !important;
+
+  /* 2. Surface / Panel level elements (Workspace panels, Monaco background, description columns) */
+  --layer-02: var(--bg-surface) !important;
+  --layer-03: var(--bg-surface) !important;
+  --dark-gray-20: var(--bg-surface) !important;
+  --dark-gray-30: var(--bg-surface) !important;
+  --dark-gray-40: var(--bg-surface) !important;
+  --gray-40: var(--bg-surface) !important;
+
+  /* 3. Accents and Highlights */
+  --brand-orange: var(--brand-accent) !important;
+  --dark-brand-orange: var(--brand-accent) !important;
+  --light-brand-orange: var(--brand-accent) !important;
+}
+
+
+/* ====================================================
+   SECTION 3: COMPONENT CLASS OVERRIDES (DIRECT HEX FALLBACK)
+   Safely replaces hardcoded grey/black backgrounds with 
+   flat theme colors without breaking HSL formatting.
 ==================================================== */
 
-/* Body & root containers that use hardcoded Tailwind background classes */
+/* Unifies the backdrop of both standard coding and Discuss page templates */
 html[data-lc-theme] body,
-html[data-lc-theme] #__next {
-  background-color: var(--bg-layer-bg) !important;
-  background-image: var(--bg-gradient, none) !important;
-}
-
-/* Core structural container backgrounds */
+html[data-lc-theme] #__next,
 html[data-lc-theme] [class*="bg-dark-layer-bg"],
+html[data-lc-theme] [class*="bg-layer-bg"],
 html[data-lc-theme] div[class*="bg-zinc-950"],
 html[data-lc-theme] div[class*="bg-neutral-950"],
-html[data-lc-theme] main[class*="bg-zinc-950"],
-html[data-lc-theme] main[class*="bg-neutral-950"] {
-  background-color: var(--bg-layer-bg) !important;
+html[data-lc-theme] div[class*="bg-[#1a1a1a]"],
+html[data-lc-theme] div[class*="dark:bg-[#1a1a1a]"] {
+  background-color: var(--bg-base) !important;
+  background-image: none !important;
 }
 
-/* Layout Wrappers — Level 1 structures (Navigation, Top Bar, and Main Header) */
+/* Core Navigation & Header containers */
 html[data-lc-theme] nav,
 html[data-lc-theme] header,
 html[data-lc-theme] [class*="bg-dark-layer-1"],
-html[data-lc-theme] [class*="bg-dark-lc-layer-01"] {
-  background-color: var(--bg-layer-1) !important;
+html[data-lc-theme] [class*="bg-lc-layer-01"] {
+  background-color: var(--bg-base) !important;
 }
 
-/* React-Flexlayout variables — inherit dynamically from our theme CSS variables */
+/* React-Flexlayout Workspace splitter background */
 html[data-lc-theme] {
-  --color-tabset-background: var(--bg-layer-bg) !important;
-  --color-splitter: var(--bg-layer-bg) !important;
-  --color-tab-selected-background: var(--bg-layer-2) !important;
-  --color-tab-hover-background: var(--bg-layer-3) !important;
-  --color-tabset-tabbar-background: var(--bg-layer-1) !important;
-  --color-tabset-tabbar-background-fixed: var(--bg-layer-1) !important;
+  --color-tabset-background: var(--bg-base) !important;
+  --color-splitter: var(--bg-base) !important;
+  --color-tab-selected-background: var(--bg-surface) !important;
+  --color-tab-hover-background: var(--bg-surface) !important;
+  --color-tabset-tabbar-background: var(--bg-base) !important;
   --color-tab-selected: #ffffff !important;
-  --color-tab-unselected: rgba(255, 255, 255, 0.5) !important;
-  --color-tab-hover: #ffffff !important;
+  --color-tab-unselected: rgba(255, 255, 255, 0.45) !important;
 }
 
-/* Text inputs, textareas, and code blocks */
-html[data-lc-theme] textarea,
-html[data-lc-theme] input,
-html[data-lc-theme] code {
-  background-color: var(--bg-layer-2) !important;
+/* Monaco Code Editor container background overrides */
+html[data-lc-theme] .monaco-editor,
+html[data-lc-theme] .monaco-editor-background,
+html[data-lc-theme] .monaco-editor .margin,
+html[data-lc-theme] .margin-view-overlays {
+  background-color: var(--bg-surface) !important;
 }
 
-/* Reset transparent containers — prevent background bleed and preserve layout depth */
+/* Overriding LeetCode's modern dynamic Shadcn layout elements directly */
+html[data-lc-theme] .bg-sd-background,
+html[data-lc-theme] .bg-sd-background-gray,
+html[data-lc-theme] .bg-sd-gray-950 {
+  background-color: var(--bg-base) !important;
+}
+
+html[data-lc-theme] .bg-sd-card,
+html[data-lc-theme] .bg-sd-popover,
+html[data-lc-theme] .bg-sd-muted,
+html[data-lc-theme] .bg-sd-gray-900,
+html[data-lc-theme] .bg-sd-gray-800 {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Direct mappings for structural borders and grid separators */
+html[data-lc-theme] .border-sd-border,
+html[data-lc-theme] .border-sd-divider,
+html[data-lc-theme] .border-sd-separator-nonopaque,
+html[data-lc-theme] .border-sd-gray-700 {
+  border-color: var(--border-color) !important;
+}
+
+/* Transparent fallbacks to prevent light layouts from bleeding into custom themes */
 html[data-lc-theme] table,
 html[data-lc-theme] thead,
 html[data-lc-theme] tbody,
 html[data-lc-theme] tr,
 html[data-lc-theme] th,
 html[data-lc-theme] td,
-html[data-lc-theme] div[class*="components_no-scrollbar"],
-html[data-lc-theme] .w-full.flex-1.overflow-y-auto,
-html[data-lc-theme] .flex-1.overflow-y-auto,
-html[data-lc-theme] .h-full.overflow-auto,
-html[data-lc-theme] .relative.flex.flex-1.justify-center,
-html[data-lc-theme] .flex.w-full.flex-1.overflow-hidden,
-html[data-lc-theme] div[class*="flex w-full flex-1 overflow-hidden"],
-html[data-lc-theme] div[class*="max-w-[1000px]"],
+html[data-lc-theme] [class*="no-scrollbar"],
 html[data-lc-theme] .view-lines {
   background-color: transparent !important;
-}
-
-/* Inner flex-col overflow wrapper alignment */
-html[data-lc-theme] div[class*="flex-col"][class*="overflow-hidden"][class*="pb-2"] {
-  background-color: transparent !important;
-}
-
-/* Disable hover fade-out mechanics on interactive elements */
-html[data-lc-theme] button:hover,
-html[data-lc-theme] button:hover *,
-html[data-lc-theme] [role="button"]:hover,
-html[data-lc-theme] [role="button"]:hover *,
-html[data-lc-theme] a:hover,
-html[data-lc-theme] a:hover * {
-  opacity: 1 !important;
-}
-
-/* Status bar / layer-01 Tailwind class overrides */
-html[data-lc-theme] .bg-lc-layer-01,
-html[data-lc-theme] .dark\:bg-dark-lc-layer-01,
-html[data-lc-theme] div[class*="bg-lc-layer-01"],
-html[data-lc-theme] .bg-layer-01,
-html[data-lc-theme] .dark\:bg-layer-01 {
-  background-color: var(--bg-layer-1) !important;
-}
-
-/* Hardcoded Discuss page backgrounds */
-html[data-lc-theme] div[class*="bg-[#fafafa]"],
-html[data-lc-theme] div[class*="dark:bg-[#1a1a1a]"] {
-  background-color: var(--bg-layer-bg) !important;
-}
-
-/* SD card class overrides */
-html[data-lc-theme] [class*="bg-sd-"] {
-  background-color: var(--bg-layer-card) !important;
-  opacity: 1 !important;
-}
-
-/* ====================================================
-   MONACO EDITOR OVERRIDES (uses its own style system)
-==================================================== */
-html[data-lc-theme] .monaco-editor,
-html[data-lc-theme] .monaco-editor-background,
-html[data-lc-theme] .monaco-editor .margin,
-html[data-lc-theme] .margin-view-overlays {
-  background-color: var(--bg-layer-2) !important;
-}
-
-html[data-lc-theme] .monaco-editor .current-line,
-html[data-lc-theme] .monaco-editor .view-overlays .current-line,
-html[data-lc-theme] .monaco-editor .margin-view-overlays .current-line-margin {
-  background-color: transparent !important;
-  border: none !important;
-  outline: none !important;
-}
-
-/* Monaco text selection highlights */
-html[data-lc-theme] .monaco-editor .selected-text,
-html[data-lc-theme] .monaco-editor .focused .selected-text,
-html[data-lc-theme] .monaco-editor .view-overlays .selected-text,
-html[data-lc-theme] div.monaco-editor div.view-overlays div.selected-text {
-  background-color: color-mix(in srgb, var(--brand-orange) 30%, rgba(255, 255, 255, 0.1)) !important;
-}
-
-html[data-lc-theme] ::selection,
-html[data-lc-theme] *::selection {
-  background-color: color-mix(in srgb, var(--brand-orange) 30%, rgba(255, 255, 255, 0.1)) !important;
-}
-
-/* ====================================================
-   BRAND ACCENT OVERRIDES
-==================================================== */
-
-/* Active tab/link accent color */
-html[data-lc-theme] .border-brand-orange,
-html[data-lc-theme] .text-brand-orange {
-  border-color: var(--brand-orange) !important;
-  color: var(--brand-orange) !important;
-}
-
-/* Button backgrounds using brand accent */
-html[data-lc-theme] button[class*="bg-brand-orange"],
-html[data-lc-theme] button[class*="bg-fill-brand-orange"],
-html[data-lc-theme] button[class*="bg-dark-fill-brand-orange"],
-html[data-lc-theme] button[class*="bg-dark-brand-orange"] {
-  background-color: var(--brand-orange) !important;
-}
-
-
-/* ====================================================
-   SCROLL FADE GRADIENTS
-==================================================== */
-html[data-lc-theme] .bg-gradient-to-l,
-html[data-lc-theme] div[class*="bg-gradient-to-l"] {
-  background-image: linear-gradient(to left, var(--bg-layer-bg), transparent) !important;
-}
-html[data-lc-theme] .bg-gradient-to-r,
-html[data-lc-theme] div[class*="bg-gradient-to-r"] {
-  background-image: linear-gradient(to right, var(--bg-layer-bg), transparent) !important;
-}
-
-/* ====================================================
-   FLEXLAYOUT SPLITTER — Minimal, non-destructive
-==================================================== */
-html[data-lc-theme] .flexlayout__splitter,
-html[data-lc-theme] div[class*="flexlayout__splitter"] {
-  background-color: var(--bg-layer-bg) !important;
-}
-
-/* ====================================================
-   SLIM SCROLLBAR — NON-MONACO
-==================================================== */
-html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-
-html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-
-html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-radius: 4px;
-}
-
-html[data-lc-theme] :not(.monaco-editor):not(.monaco-editor *)::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35) !important;
-}
-
-/* ====================================================
-   EXCLUDE STORE NAVBAR FROM THEME OVERRIDES
-==================================================== */
-html[data-lc-theme] a[href*="/store/"],
-html[data-lc-theme] a[href*="/store/"] *,
-html[data-lc-theme] button:has(a[href*="/store/"]),
-html[data-lc-theme] [class*="text-brand-orange"][href*="/store/"],
-html[data-lc-theme] [class*="text-brand-orange"]:has(a[href*="/store/"]),
-html[data-lc-theme] li:has(a[href*="/store/"]) button,
-html[data-lc-theme] li:has(a[href*="/store/"]) span,
-html[data-lc-theme] [id*="headlessui-menu-button"]:has(~ * a[href*="/store/"]) {
-  color: #ffa116 !important;
-  border-color: #ffa116 !important;
-  background-color: transparent !important;
-  background-image: none !important;
-}
-
-html[data-lc-theme] a[href*="/store/"] svg,
-html[data-lc-theme] button:has(a[href*="/store/"]) svg,
-html[data-lc-theme] li:has(a[href*="/store/"]) svg,
-html[data-lc-theme] [id*="headlessui-menu-button"]:has(~ * a[href*="/store/"]) svg {
-  color: #ffa116 !important;
-  fill: #ffa116 !important;
-}
-
-
-/* ====================================================
-   OVERLAY BACKDROPS — Keep dark overlays intact
-==================================================== */
-html[data-lc-theme] [class*="fixed"][class*="inset-0"],
-html[data-lc-theme] [class*="fixed"][class*="inset-0"] div,
-html[data-lc-theme] [class*="bg-neutral-950/50"],
-html[data-lc-theme] [class*="bg-zinc-950/50"],
-html[data-lc-theme] [class*="bg-black/"],
-html[data-lc-theme] [class*="bg-opacity-"] {
-  background-color: rgba(0, 0, 0, 0.45) !important;
-  background-image: none !important;
-}
-
-/* ====================================================
-   THEME EXTRA OVERRIDES - HOVER/VISIBILITY COUPLERS
-==================================================== */
-
-.add-bg-light_leetcode-enhancer {
-  background-color: color-mix(in srgb, var(--brand-orange) 8%, transparent) !important;
-  border-left: 3px solid var(--brand-orange) !important;
-}
-
-.add-bg-dark_leetcode-enhancer {
-  background-color: color-mix(in srgb, var(--brand-orange) 8%, transparent) !important;
-  border-left: 3px solid var(--brand-orange) !important;
-}
-
-.hide_leetcode-enhancer {
-  display: none !important;
-}
-
-.visible_leetcode-enhancer {
-  display: block !important;
-}
-
-.remove_diff_color_leetcode-enhancer {
-  color: #71717a !important;
-  background-color: transparent !important;
-  border-color: transparent !important;
-}
-
-.color-alfa0 {
-  color: rgba(0, 0, 0, 0) !important;
-}
-
-.blur {
-  border-color: gray !important;
-  color: gray !important;
-  background-color: white !important;
 }
