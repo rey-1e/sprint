@@ -1,46 +1,34 @@
 (() => {
-  // ==============================================================================
-  // --- FAIL-SAFE WEBPAGE AUTHENTICATION SYNC ---
-  // ==============================================================================
   const currentHost = window.location.hostname;
   if (
     currentHost.includes('getsprint.me') ||
     currentHost.includes('localhost') ||
     currentHost.includes('127.0.0.1')
   ) {
-    /**
-     * FIX: The old approach read `data-sprint-auth` from the DOM and wrote it to
-     * chrome.storage.local. This was correct IN CONCEPT but the attribute was being
-     * set via localStorage in app.js (wrong) and via DOM in the same tab (app.js sets
-     * it on getsprint.me's document — which IS the same document this script runs in).
-     *
-     * The root cause was that app.js was NOT calling chrome.storage.local directly.
-     * Now that app.js and navbar.js have been fixed to write directly to
-     * chrome.storage.local, the DOM observer here is a useful SECONDARY fallback only.
-     *
-     * We keep the observer but remove the unreliable setInterval polling, which
-     * caused a memory/CPU leak and was reading a stale or null attribute on LeetCode.
-     */
     const syncTokenFromDOM = () => {
       const authState = document.documentElement.getAttribute('data-sprint-auth');
-      if (!authState) return;
+      const premiumState = document.documentElement.getAttribute('data-sprint-premium');
+      
+      if (authState) {
+        if (authState === 'logout') {
+          chrome.storage.local.remove(['authToken', 'isPremium', 'cachedThemeCSS']);
+        } else {
+          chrome.storage.local.set({ authToken: authState });
+        }
+      }
 
-      if (authState === 'logout') {
-        chrome.storage.local.remove('authToken');
-      } else {
-        chrome.storage.local.set({ authToken: authState });
+      if (premiumState) {
+        chrome.storage.local.set({ isPremium: premiumState === 'true' });
       }
     };
 
-    // Run sync immediately on page initialization (catches tokens already in DOM)
     syncTokenFromDOM();
 
-    // Listen for login/logout state changes dynamically
     const authObserver = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (
           mutation.type === 'attributes' &&
-          mutation.attributeName === 'data-sprint-auth'
+          (mutation.attributeName === 'data-sprint-auth' || mutation.attributeName === 'data-sprint-premium')
         ) {
           syncTokenFromDOM();
         }
@@ -49,14 +37,10 @@
 
     authObserver.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-sprint-auth']
+      attributeFilter: ['data-sprint-auth', 'data-sprint-premium']
     });
 
-    // FIX: Removed setInterval — it was leaking and reading a null attribute on
-    // LeetCode pages where data-sprint-auth is never set. The MutationObserver
-    // above is sufficient and event-driven.
-
-    return; // Exit here. Do not execute LeetCode overrides on the website!
+    return; 
   }
   // --- END OF FAIL-SAFE SYNC ---
 
