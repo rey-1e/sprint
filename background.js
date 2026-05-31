@@ -21,17 +21,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-// Listener to securely receive Auth Tokens from your getsprint.me website
-chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-  if (request.type === "SET_AUTH_TOKEN") {
-    chrome.storage.local.set({ authToken: request.token }, () => {
-      sendResponse({ success: true, message: "Sprint auth synchronized." });
-    });
-    return true; 
-  }
-});
-
-// Helper function to read the stored auth token
 function getAuthToken() {
   return new Promise((resolve) => {
     chrome.storage.local.get(['authToken'], (res) => {
@@ -40,11 +29,13 @@ function getAuthToken() {
   });
 }
 
-// Proxied secure API call helper with injected authentication headers
 async function handleFetchRequest(url, bodyData, sendResponse) {
   try {
     const token = await getAuthToken();
-    const headers = { 'Content-Type': 'application/json' };
+    const headers = { 
+      'Content-Type': 'application/json',
+      'X-Client-Version': '3.0' // Explicitly mark client as our secure v3 platform
+    };
 
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -59,6 +50,10 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
     const data = await res.json();
 
     if (!res.ok) {
+      if (res.status === 401) {
+        sendResponse({ success: false, authRequired: true, error: data.message });
+        return;
+      }
       if (data.error === "LIMIT_REACHED") {
         sendResponse({ success: false, limitReached: true, error: data.message });
         return;

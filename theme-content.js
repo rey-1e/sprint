@@ -1,4 +1,41 @@
 (() => {
+  // ==============================================================================
+  // --- FAIL-SAFE WEBPAGE AUTHENTICATION SYNC ---
+  // ==============================================================================
+  const currentHost = window.location.hostname;
+  if (currentHost.includes('getsprint.me') || currentHost.includes('localhost') || currentHost.includes('127.0.0.1')) {
+    const syncTokenFromDOM = () => {
+      const authState = document.documentElement.getAttribute('data-sprint-auth');
+      if (authState) {
+        if (authState === 'logout') {
+          chrome.storage.local.remove('authToken');
+        } else {
+          chrome.storage.local.set({ authToken: authState });
+        }
+      }
+    };
+
+    // Run sync immediately on page initialization
+    syncTokenFromDOM();
+
+    // Listen to login/logout state changes dynamically
+    const authObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-sprint-auth') {
+          syncTokenFromDOM();
+        }
+      }
+    });
+    
+    authObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-sprint-auth'] });
+    
+    // Periodically run backup sync as a fail-safe measure
+    setInterval(syncTokenFromDOM, 2000);
+    return; // Exit here. Do not execute LeetCode overrides on your checkout website!
+  }
+  // --- END OF FAIL-SAFE SYNC ---
+
+
   let savedTheme = 'default';
   let cachedOptions = null;
 
@@ -229,7 +266,6 @@
     initVisibilityObserver();
   }
 
-  // Helper: Injects style text securely into the current DOM tree
   function injectSecureStyle(cssText) {
     let styleTag = document.getElementById('sprint-secure-theme-sheet');
     if (!styleTag) {
@@ -240,7 +276,6 @@
     styleTag.textContent = cssText;
   }
 
-  // Helper: Deletes dynamic styling sheet completely on default settings
   function clearSecureStyle() {
     const styleTag = document.getElementById('sprint-secure-theme-sheet');
     if (styleTag) styleTag.remove();
@@ -251,19 +286,16 @@
     const localData = await chrome.storage.local.get(['leetcodeTheme', 'cachedThemeCSS']);
     savedTheme = localData.leetcodeTheme || 'default';
 
-    // 1. Instantly load style variables from storage cache to prevent flash of unstyled content (FOUC)
     if (savedTheme !== 'default' && localData.cachedThemeCSS) {
       document.documentElement.setAttribute('data-lc-theme', savedTheme);
       document.documentElement.classList.add('dark');
       injectSecureStyle(localData.cachedThemeCSS);
     }
 
-    // 2. Fetch fresh verification validation in the background asynchronously
     await applyTheme(savedTheme, true);
     observeTheme();
   }
 
-  // Main Secure Verification Theme Loader
   async function applyTheme(theme, isBackgroundCheck = false) {
     if (theme === 'default') {
       clearSecureStyle();
@@ -278,7 +310,8 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${authToken}`,
+          'X-Client-Version': '3.0' // Explicitly send system version to prevent getting flagged as legacy
         },
         body: JSON.stringify({ themeName: theme })
       });
@@ -289,11 +322,9 @@
         document.documentElement.setAttribute('data-lc-theme', theme);
         document.documentElement.classList.add('dark');
         
-        // Update local memory stylesheet & commit verified copy to permanent storage cache
         injectSecureStyle(data.fullCSS);
         await chrome.storage.local.set({ cachedThemeCSS: data.fullCSS });
       } else {
-        // Validation failed (subscription has expired or user has logged out)
         clearSecureStyle();
         await chrome.storage.local.remove('cachedThemeCSS');
         

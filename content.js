@@ -178,11 +178,13 @@ function analyzeCode(code) {
       } else {
         timeEl.textContent = 'Err';
         spaceEl.textContent = 'Err';
-        if (response?.limitReached) {
-          statusEl.textContent = 'Limit reached. Click Upgrade';
-          statusEl.className = 'complexity-status sprint-text-error';
+        if (response?.authRequired) {
+          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Sign In required</a>';
+          statusEl.className = 'complexity-status';
+        } else if (response?.limitReached) {
+          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Limit reached. Click Upgrade</a>';
+          statusEl.className = 'complexity-status';
           alert(response.error);
-          window.open('https://getsprint.me/payments', '_blank');
         } else {
           statusEl.textContent = 'Analysis Failed';
           statusEl.className = 'complexity-status sprint-text-error';
@@ -288,11 +290,13 @@ function injectSubmissionAnalysisUI() {
           document.getElementById('val-sty-struc').textContent = d.sty_structure || "N/A";
           document.getElementById('val-sty-idea').textContent = d.sty_suggestions || "N/A";
         } else {
-          if (response?.limitReached) {
-            summaryEl.textContent = "Limit reached. Upgrade at getsprint.me/payments";
+          if (response?.authRequired) {
+            summaryEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Sign in to LeetCode Sprint to analyze submissions.</a>';
+            summaryEl.className = 'sprint-ai-summary sprint-text-error';
+          } else if (response?.limitReached) {
+            summaryEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Limit reached. Upgrade at getsprint.me/payments</a>';
             summaryEl.className = 'sprint-ai-summary sprint-text-error';
             alert(response.error);
-            window.open('https://getsprint.me/payments', '_blank');
           } else {
             summaryEl.textContent = "Analysis failed. Ensure service worker API is active.";
             summaryEl.className = 'sprint-ai-summary sprint-text-error';
@@ -403,6 +407,13 @@ function triggerWhereAmIWrong() {
       feedbackEl.style.textAlign = 'left';
 
       if (response?.success) {
+        if (response.data.authRequired) {
+          titleEl.textContent = 'Sign In Required';
+          titleEl.style.color = '#f87171';
+          feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/payments" target="_blank" style="color:#cd5c5c; font-weight:700; text-decoration:underline;">Click here to Sign In / Upgrade</a>';
+          return;
+        }
+
         const feedbackText = (response.data.feedback || "").trim();
         const isClean = feedbackText.toLowerCase().replace(/[^a-z]/g, '') === "therearenoerrors";
 
