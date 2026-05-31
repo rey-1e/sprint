@@ -25,7 +25,7 @@ async function broadcastMessage(message) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  setupLink('donate-link');
+  setupLink('upgrade-link');
   setupLink('website-link');
   setupLink('info-question-link');
 

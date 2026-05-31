@@ -3,35 +3,60 @@
   // --- FAIL-SAFE WEBPAGE AUTHENTICATION SYNC ---
   // ==============================================================================
   const currentHost = window.location.hostname;
-  if (currentHost.includes('getsprint.me') || currentHost.includes('localhost') || currentHost.includes('127.0.0.1')) {
+  if (
+    currentHost.includes('getsprint.me') ||
+    currentHost.includes('localhost') ||
+    currentHost.includes('127.0.0.1')
+  ) {
+    /**
+     * FIX: The old approach read `data-sprint-auth` from the DOM and wrote it to
+     * chrome.storage.local. This was correct IN CONCEPT but the attribute was being
+     * set via localStorage in app.js (wrong) and via DOM in the same tab (app.js sets
+     * it on getsprint.me's document — which IS the same document this script runs in).
+     *
+     * The root cause was that app.js was NOT calling chrome.storage.local directly.
+     * Now that app.js and navbar.js have been fixed to write directly to
+     * chrome.storage.local, the DOM observer here is a useful SECONDARY fallback only.
+     *
+     * We keep the observer but remove the unreliable setInterval polling, which
+     * caused a memory/CPU leak and was reading a stale or null attribute on LeetCode.
+     */
     const syncTokenFromDOM = () => {
       const authState = document.documentElement.getAttribute('data-sprint-auth');
-      if (authState) {
-        if (authState === 'logout') {
-          chrome.storage.local.remove('authToken');
-        } else {
-          chrome.storage.local.set({ authToken: authState });
-        }
+      if (!authState) return;
+
+      if (authState === 'logout') {
+        chrome.storage.local.remove('authToken');
+      } else {
+        chrome.storage.local.set({ authToken: authState });
       }
     };
 
-    // Run sync immediately on page initialization
+    // Run sync immediately on page initialization (catches tokens already in DOM)
     syncTokenFromDOM();
 
-    // Listen to login/logout state changes dynamically
+    // Listen for login/logout state changes dynamically
     const authObserver = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-sprint-auth') {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'data-sprint-auth'
+        ) {
           syncTokenFromDOM();
         }
       }
     });
-    
-    authObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-sprint-auth'] });
-    
-    // Periodically run backup sync as a fail-safe measure
-    setInterval(syncTokenFromDOM, 2000);
-    return; // Exit here. Do not execute LeetCode overrides on your checkout website!
+
+    authObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-sprint-auth']
+    });
+
+    // FIX: Removed setInterval — it was leaking and reading a null attribute on
+    // LeetCode pages where data-sprint-auth is never set. The MutationObserver
+    // above is sufficient and event-driven.
+
+    return; // Exit here. Do not execute LeetCode overrides on the website!
   }
   // --- END OF FAIL-SAFE SYNC ---
 
@@ -76,12 +101,17 @@
 
     highlightSolvedProblems(checked) {
       const isDarkMode = document.documentElement.classList.contains('dark');
-      const targetClass = isDarkMode ? 'add-bg-dark_leetcode-enhancer' : 'add-bg-light_leetcode-enhancer';
-      
+      const targetClass = isDarkMode
+        ? 'add-bg-dark_leetcode-enhancer'
+        : 'add-bg-light_leetcode-enhancer';
+
       this.getRows().forEach(row => {
         const checkSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="check"]');
         if (checkSvg) {
-          row.classList.remove('add-bg-dark_leetcode-enhancer', 'add-bg-light_leetcode-enhancer');
+          row.classList.remove(
+            'add-bg-dark_leetcode-enhancer',
+            'add-bg-light_leetcode-enhancer'
+          );
           if (checked) row.classList.add(targetClass);
         }
       });
@@ -131,7 +161,8 @@
 
       allAnchors.forEach(anchor => {
         if (!anchor.href.includes(`/problems/${curPath}/`)) {
-          const diffElement = anchor.parentElement?.parentElement?.parentElement?.nextElementSibling;
+          const diffElement =
+            anchor.parentElement?.parentElement?.parentElement?.nextElementSibling;
           diffElement?.classList.toggle('hide_leetcode-enhancer', !checked);
         }
       });
@@ -141,19 +172,26 @@
       const slug = window.location.pathname.split("/")[2];
       if (!slug) return;
       const problemLink = document.querySelector(`a[href='/problems/${slug}/']`);
-      problemLink?.parentNode?.parentNode?.nextSibling?.classList.toggle('hide_leetcode-enhancer', !checked);
+      problemLink?.parentNode?.parentNode?.nextSibling?.classList.toggle(
+        'hide_leetcode-enhancer',
+        !checked
+      );
     }
 
     hideAcceptance(checked) {
       const slug = window.location.pathname.split("/")[2];
       if (!slug) return;
       const problemLink = document.querySelector(`a[href='/problems/${slug}/']`);
-      const acceptanceElement = problemLink?.parentNode?.parentNode?.parentNode?.nextSibling?.nextSibling?.nextSibling?.children?.[3];
+      const acceptanceElement =
+        problemLink?.parentNode?.parentNode?.parentNode?.nextSibling?.nextSibling
+          ?.nextSibling?.children?.[3];
       acceptanceElement?.classList.toggle('hide_leetcode-enhancer', !checked);
     }
 
     hideSave(checked) {
-      document.querySelector("svg[data-icon='star']")?.classList.toggle('hide_leetcode-enhancer', !checked);
+      document
+        .querySelector("svg[data-icon='star']")
+        ?.classList.toggle('hide_leetcode-enhancer', !checked);
     }
 
     toggleByColName(colName, checked) {
@@ -172,13 +210,22 @@
 
   class ContestStrategy {
     hideDiffFromContest(checked) {
-      const oldDiffLabel = document.querySelector('.contest-question-info .list-group .list-group-item:nth-child(5) .label');
+      const oldDiffLabel = document.querySelector(
+        '.contest-question-info .list-group .list-group-item:nth-child(5) .label'
+      );
       if (oldDiffLabel) {
         oldDiffLabel.style.visibility = checked ? 'visible' : 'hidden';
         return;
       }
 
-      const diffClasses = ['.text-difficulty-easy', '.text-difficulty-medium', '.text-difficulty-hard', '.text-sd-easy', '.text-sd-medium', '.text-sd-hard'];
+      const diffClasses = [
+        '.text-difficulty-easy',
+        '.text-difficulty-medium',
+        '.text-difficulty-hard',
+        '.text-sd-easy',
+        '.text-sd-medium',
+        '.text-sd-hard'
+      ];
       diffClasses.forEach(selector => {
         document.querySelectorAll(selector).forEach(label => {
           label.classList.toggle('hide_leetcode-enhancer', !checked);
@@ -215,19 +262,23 @@
       const { optionName: name, checked } = option;
 
       if (name === 'locked') {
-        if (typeof strategy.hideLockedProblems === 'function') strategy.hideLockedProblems(checked);
+        if (typeof strategy.hideLockedProblems === 'function')
+          strategy.hideLockedProblems(checked);
       } else if (name === 'highlight') {
-        if (typeof strategy.highlightSolvedProblems === 'function') strategy.highlightSolvedProblems(checked);
+        if (typeof strategy.highlightSolvedProblems === 'function')
+          strategy.highlightSolvedProblems(checked);
       } else if (name === 'solved') {
-        if (typeof strategy.hideSolvedProb === 'function') strategy.hideSolvedProb(checked);
+        if (typeof strategy.hideSolvedProb === 'function')
+          strategy.hideSolvedProb(checked);
       } else {
-        if (typeof strategy.toggleByColName === 'function') strategy.toggleByColName(name, checked);
+        if (typeof strategy.toggleByColName === 'function')
+          strategy.toggleByColName(name, checked);
       }
     });
   }
 
   let observer = null;
-  
+
   function initVisibilityObserver() {
     if (observer) observer.disconnect();
 
@@ -311,7 +362,7 @@
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`,
-          'X-Client-Version': '3.0' // Explicitly send system version to prevent getting flagged as legacy
+          'X-Client-Version': '3.0'
         },
         body: JSON.stringify({ themeName: theme })
       });
@@ -321,13 +372,12 @@
       if (res.ok && data.success && data.fullCSS) {
         document.documentElement.setAttribute('data-lc-theme', theme);
         document.documentElement.classList.add('dark');
-        
         injectSecureStyle(data.fullCSS);
         await chrome.storage.local.set({ cachedThemeCSS: data.fullCSS });
       } else {
         clearSecureStyle();
         await chrome.storage.local.remove('cachedThemeCSS');
-        
+
         if (!isBackgroundCheck && theme !== 'default') {
           alert("Premium is required to use Custom Themes!");
           window.open('https://getsprint.me/payments', '_blank');
@@ -340,16 +390,23 @@
 
   function observeTheme() {
     const themeObserver = new MutationObserver(() => {
-      const currentTheme = document.documentElement.getAttribute('data-lc-theme') || 'default';
+      const currentTheme =
+        document.documentElement.getAttribute('data-lc-theme') || 'default';
       const hasDark = document.documentElement.classList.contains('dark');
       if (currentTheme !== savedTheme || (savedTheme !== 'default' && !hasDark)) {
         themeObserver.disconnect();
         applyTheme(savedTheme);
-        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
+        themeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-lc-theme', 'class']
+        });
       }
     });
-    
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
+
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-lc-theme', 'class']
+    });
   }
 
   initTheme();
@@ -367,7 +424,7 @@
 
   const patchHistory = (type) => {
     const orig = history[type];
-    history[type] = function() {
+    history[type] = function () {
       orig.apply(this, arguments);
       handleUrlChange();
     };

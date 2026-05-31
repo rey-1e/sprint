@@ -29,12 +29,21 @@ function getAuthToken() {
   });
 }
 
+/**
+ * FIX: Normalize all error shapes so content.js receives a consistent flat structure.
+ *
+ * Previously, the server returned { authRequired: true } inside data, but content.js
+ * checked response.authRequired (flat) for complexity and response.data.authRequired
+ * (nested) for the bug finder — causing the auth error to silently fail in the debugger.
+ *
+ * Now all responses are flat: { success, authRequired, limitReached, error, data }
+ */
 async function handleFetchRequest(url, bodyData, sendResponse) {
   try {
     const token = await getAuthToken();
-    const headers = { 
+    const headers = {
       'Content-Type': 'application/json',
-      'X-Client-Version': '3.0' // Explicitly mark client as our secure v3 platform
+      'X-Client-Version': '3.0'
     };
 
     if (token) {
@@ -46,21 +55,30 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
       headers: headers,
       body: JSON.stringify(bodyData)
     });
-    
+
     const data = await res.json();
 
     if (!res.ok) {
       if (res.status === 401) {
-        sendResponse({ success: false, authRequired: true, error: data.message });
+        // FIX: Flat authRequired flag — content.js reads response.authRequired directly
+        sendResponse({ success: false, authRequired: true, error: data.message || "Sign in required." });
         return;
       }
       if (data.error === "LIMIT_REACHED") {
+        // FIX: Flat limitReached flag
         sendResponse({ success: false, limitReached: true, error: data.message });
         return;
       }
       throw new Error(data.message || `Server error ${res.status}`);
     }
-    
+
+    // FIX: Also check for authRequired embedded inside a 200 response body
+    // (the bug finder endpoint returns 200 + { authRequired: true } on auth failure)
+    if (data.authRequired) {
+      sendResponse({ success: false, authRequired: true, error: "Sign in required." });
+      return;
+    }
+
     sendResponse({ success: true, data });
   } catch (err) {
     sendResponse({ success: false, error: err.message });
@@ -69,21 +87,33 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "FETCH_COMPLEXITY") {
-    handleFetchRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse);
-    return true; 
+    handleFetchRequest(
+      'https://analyze-i6ptizncma-uc.a.run.app',
+      { code: request.code },
+      sendResponse
+    );
+    return true;
   }
 
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
-    handleFetchRequest('https://analyzedetailed-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse);
-    return true; 
+    handleFetchRequest(
+      'https://analyzedetailed-i6ptizncma-uc.a.run.app',
+      { code: request.code },
+      sendResponse
+    );
+    return true;
   }
 
   if (request.type === "FETCH_WHERE_AM_I_WRONG") {
-    handleFetchRequest('https://findmybug-i6ptizncma-uc.a.run.app', { 
-      code: request.code,
-      problemTitle: request.problemTitle,
-      problemContext: request.problemContext
-    }, sendResponse);
+    handleFetchRequest(
+      'https://findmybug-i6ptizncma-uc.a.run.app',
+      {
+        code: request.code,
+        problemTitle: request.problemTitle,
+        problemContext: request.problemContext
+      },
+      sendResponse
+    );
     return true;
   }
 });
