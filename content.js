@@ -179,10 +179,10 @@ function analyzeCode(code) {
         timeEl.textContent = 'Err';
         spaceEl.textContent = 'Err';
         if (response?.authRequired) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:500;">Sign In required</a>';
+          statusEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; font-weight:500;">Sign In required</a>';
           statusEl.className = 'complexity-status';
         } else if (response?.limitReached) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; text-decoration:underline; font-weight:500;">Upgrade Required</a>';
+          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; font-weight:500;">Upgrade Required</a>';
           statusEl.className = 'complexity-status';
           alert(response.error);
         } else {
@@ -291,10 +291,10 @@ function injectSubmissionAnalysisUI() {
           document.getElementById('val-sty-idea').textContent = d.sty_suggestions || "N/A";
         } else {
           if (response?.authRequired) {
-            summaryEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Sign in to LeetCode Sprint to analyze submissions.</a>';
+            summaryEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:500;">Sign in to LeetCode Sprint to analyze submissions.</a>';
             summaryEl.className = 'sprint-ai-summary sprint-text-error';
           } else if (response?.limitReached) {
-            summaryEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Limit reached. Upgrade at getsprint.me/payments</a>';
+            summaryEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:500;">Limit reached. Upgrade at getsprint.me/payments</a>';
             summaryEl.className = 'sprint-ai-summary sprint-text-error';
             alert(response.error);
           } else {
@@ -411,7 +411,7 @@ function triggerWhereAmIWrong() {
         if (response.authRequired || response.data?.authRequired) {
           titleEl.textContent = 'Sign In Required';
           titleEl.style.color = '#f87171';
-          feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:700; text-decoration:underline;">Click here to Sign In</a>';
+          feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
           return;
         }
 
@@ -434,7 +434,7 @@ function triggerWhereAmIWrong() {
         if (response?.authRequired) {
           titleEl.textContent = 'Sign In Required';
           titleEl.style.color = '#f87171';
-          feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:700; text-decoration:underline;">Click here to Sign In</a>';
+          feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
         } else if (response?.limitReached) {
           closeWhereAmIWrongPopup();
           alert(response.error);
