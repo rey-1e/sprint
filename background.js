@@ -21,17 +21,51 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
+// Listener to securely receive Auth Tokens from your getsprint.me website
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+  if (request.type === "SET_AUTH_TOKEN") {
+    chrome.storage.local.set({ authToken: request.token }, () => {
+      sendResponse({ success: true, message: "Sprint auth synchronized." });
+    });
+    return true; 
+  }
+});
+
+// Helper function to read the stored auth token
+function getAuthToken() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['authToken'], (res) => {
+      resolve(res.authToken || "");
+    });
+  });
+}
+
+// Proxied secure API call helper with injected authentication headers
 async function handleFetchRequest(url, bodyData, sendResponse) {
   try {
+    const token = await getAuthToken();
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify(bodyData)
     });
     
-    if (!res.ok) throw new Error(`Server error ${res.status}`);
-    
     const data = await res.json();
+
+    if (!res.ok) {
+      if (data.error === "LIMIT_REACHED") {
+        sendResponse({ success: false, limitReached: true, error: data.message });
+        return;
+      }
+      throw new Error(data.message || `Server error ${res.status}`);
+    }
+    
     sendResponse({ success: true, data });
   } catch (err) {
     sendResponse({ success: false, error: err.message });

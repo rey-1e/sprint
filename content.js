@@ -5,7 +5,6 @@
  */
 let isInjectingTags = false;
 
-// Optimization: Implemented local 24-hour cache layer to prevent constant /api/problems/all/ roundtrips
 async function getCachedQuestionId(slug) {
   const CACHE_KEY = `sprint_id_${slug}`;
   const localData = await chrome.storage.local.get([CACHE_KEY, 'all_problems_cache', 'all_problems_cache_time']);
@@ -179,8 +178,15 @@ function analyzeCode(code) {
       } else {
         timeEl.textContent = 'Err';
         spaceEl.textContent = 'Err';
-        statusEl.textContent = 'Analysis Failed';
-        statusEl.className = 'complexity-status sprint-text-error';
+        if (response?.limitReached) {
+          statusEl.textContent = 'Limit reached. Click Upgrade';
+          statusEl.className = 'complexity-status sprint-text-error';
+          alert(response.error);
+          window.open('https://getsprint.me/payments', '_blank');
+        } else {
+          statusEl.textContent = 'Analysis Failed';
+          statusEl.className = 'complexity-status sprint-text-error';
+        }
       }
     }
   );
@@ -282,8 +288,15 @@ function injectSubmissionAnalysisUI() {
           document.getElementById('val-sty-struc').textContent = d.sty_structure || "N/A";
           document.getElementById('val-sty-idea').textContent = d.sty_suggestions || "N/A";
         } else {
-          summaryEl.textContent = "Analysis failed. Ensure service worker API is active.";
-          summaryEl.className = 'sprint-ai-summary sprint-text-error';
+          if (response?.limitReached) {
+            summaryEl.textContent = "Limit reached. Upgrade at getsprint.me/payments";
+            summaryEl.className = 'sprint-ai-summary sprint-text-error';
+            alert(response.error);
+            window.open('https://getsprint.me/payments', '_blank');
+          } else {
+            summaryEl.textContent = "Analysis failed. Ensure service worker API is active.";
+            summaryEl.className = 'sprint-ai-summary sprint-text-error';
+          }
         }
       }
     );
@@ -405,10 +418,16 @@ function triggerWhereAmIWrong() {
           feedbackEl.className = 'sprint-text-error';
         }
       } else {
-        titleEl.textContent = 'Analysis Failed';
-        titleEl.style.color = '#f87171';
-        feedbackEl.textContent = response?.error || "Could not reach the server.";
-        feedbackEl.className = 'sprint-text-error';
+        if (response?.limitReached) {
+          closeWhereAmIWrongPopup();
+          alert(response.error);
+          window.open('https://getsprint.me/payments', '_blank');
+        } else {
+          titleEl.textContent = 'Analysis Failed';
+          titleEl.style.color = '#f87171';
+          feedbackEl.textContent = response?.error || "Could not reach the server.";
+          feedbackEl.className = 'sprint-text-error';
+        }
       }
     }
   );
@@ -508,7 +527,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
-// Run immediate render pass
 setTimeout(() => {
   injectTags();
   injectComplexityUI();
@@ -517,7 +535,6 @@ setTimeout(() => {
   injectRedirectPills();
 }, 50);
 
-// Debounced structural observer
 let mutationDebounceTimer = null;
 const observer = new MutationObserver(() => {
   if (mutationDebounceTimer) clearTimeout(mutationDebounceTimer);

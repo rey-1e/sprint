@@ -172,7 +172,6 @@
     const strategy = getStrategy(mode);
     if (!strategy || !options) return;
 
-    // Reset strategy element cache on changes
     if (strategy.cachedRows) strategy.cachedRows = null;
 
     options.forEach(option => {
@@ -230,19 +229,81 @@
     initVisibilityObserver();
   }
 
+  // Helper: Injects style text securely into the current DOM tree
+  function injectSecureStyle(cssText) {
+    let styleTag = document.getElementById('sprint-secure-theme-sheet');
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'sprint-secure-theme-sheet';
+      document.documentElement.appendChild(styleTag);
+    }
+    styleTag.textContent = cssText;
+  }
+
+  // Helper: Deletes dynamic styling sheet completely on default settings
+  function clearSecureStyle() {
+    const styleTag = document.getElementById('sprint-secure-theme-sheet');
+    if (styleTag) styleTag.remove();
+    document.documentElement.removeAttribute('data-lc-theme');
+  }
+
   async function initTheme() {
-    const { leetcodeTheme = 'default' } = await chrome.storage.local.get('leetcodeTheme');
-    savedTheme = leetcodeTheme;
-    applyTheme(savedTheme);
+    const localData = await chrome.storage.local.get(['leetcodeTheme', 'cachedThemeCSS']);
+    savedTheme = localData.leetcodeTheme || 'default';
+
+    // 1. Instantly load style variables from storage cache to prevent flash of unstyled content (FOUC)
+    if (savedTheme !== 'default' && localData.cachedThemeCSS) {
+      document.documentElement.setAttribute('data-lc-theme', savedTheme);
+      document.documentElement.classList.add('dark');
+      injectSecureStyle(localData.cachedThemeCSS);
+    }
+
+    // 2. Fetch fresh verification validation in the background asynchronously
+    await applyTheme(savedTheme, true);
     observeTheme();
   }
 
-  function applyTheme(theme) {
+  // Main Secure Verification Theme Loader
+  async function applyTheme(theme, isBackgroundCheck = false) {
     if (theme === 'default') {
-      document.documentElement.removeAttribute('data-lc-theme');
-    } else {
-      document.documentElement.setAttribute('data-lc-theme', theme);
-      document.documentElement.classList.add('dark');
+      clearSecureStyle();
+      await chrome.storage.local.remove('cachedThemeCSS');
+      return;
+    }
+
+    const { authToken = "" } = await chrome.storage.local.get('authToken');
+
+    try {
+      const res = await fetch('https://gettheme-i6ptizncma-uc.a.run.app', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ themeName: theme })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success && data.fullCSS) {
+        document.documentElement.setAttribute('data-lc-theme', theme);
+        document.documentElement.classList.add('dark');
+        
+        // Update local memory stylesheet & commit verified copy to permanent storage cache
+        injectSecureStyle(data.fullCSS);
+        await chrome.storage.local.set({ cachedThemeCSS: data.fullCSS });
+      } else {
+        // Validation failed (subscription has expired or user has logged out)
+        clearSecureStyle();
+        await chrome.storage.local.remove('cachedThemeCSS');
+        
+        if (!isBackgroundCheck && theme !== 'default') {
+          alert("Premium is required to use Custom Themes!");
+          window.open('https://getsprint.me/payments', '_blank');
+        }
+      }
+    } catch (e) {
+      console.error("Secure theme delivery failure:", e);
     }
   }
 
@@ -260,7 +321,6 @@
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
   }
 
-  // Initial startup execution
   initTheme();
   initOptions();
 
