@@ -179,10 +179,10 @@ function analyzeCode(code) {
         timeEl.textContent = 'Err';
         spaceEl.textContent = 'Err';
         if (response?.authRequired) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Sign In required</a>';
+          statusEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:500;">Sign In required</a>';
           statusEl.className = 'complexity-status';
         } else if (response?.limitReached) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:600;">Limit reached. Click Upgrade</a>';
+          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; text-decoration:underline; font-weight:500;">Upgrade Required</a>';
           statusEl.className = 'complexity-status';
           alert(response.error);
         } else {
