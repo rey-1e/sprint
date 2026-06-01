@@ -76,8 +76,9 @@
 
     hideLockedProblems(checked) {
       this.getRows().forEach(row => {
-        const lockSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="lock"]');
-        if (lockSvg) {
+        const lockSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="lock"]') || row.querySelector('div>div:nth-child(1)>svg');
+        const isLock = lockSvg && (lockSvg.getAttribute('data-icon') === 'lock' || lockSvg.classList.contains('fa-lock'));
+        if (isLock) {
           row.classList.toggle('hide_leetcode-enhancer', !checked);
         }
       });
@@ -90,8 +91,9 @@
         : 'add-bg-light_leetcode-enhancer';
 
       this.getRows().forEach(row => {
-        const checkSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="check"]');
-        if (checkSvg) {
+        const checkSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="check"]') || row.querySelector('div>div:nth-child(1)>svg');
+        const isCheck = checkSvg && (checkSvg.getAttribute('data-icon') === 'check' || checkSvg.classList.contains('fa-check'));
+        if (isCheck) {
           row.classList.remove(
             'add-bg-dark_leetcode-enhancer',
             'add-bg-light_leetcode-enhancer'
@@ -103,8 +105,9 @@
 
     hideSolvedProb(checked) {
       this.getRows().forEach(row => {
-        const checkSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="check"]');
-        if (checkSvg) {
+        const checkSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="check"]') || row.querySelector('div>div:nth-child(1)>svg');
+        const isCheck = checkSvg && (checkSvg.getAttribute('data-icon') === 'check' || checkSvg.classList.contains('fa-check'));
+        if (isCheck) {
           row.classList.toggle('hide_leetcode-enhancer', !checked);
         }
       });
@@ -273,13 +276,34 @@
       if (cachedOptions) applyVisibilityChanges(cachedOptions);
     });
 
-    const targetElement = document.querySelector('#__next') || document.body;
+    const targetElement = document.documentElement;
     if (targetElement) {
       observer.observe(targetElement, { childList: true, subtree: true });
     }
   }
 
+  function injectVisibilityStyles() {
+    let styleTag = document.getElementById('sprint-visibility-styles');
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'sprint-visibility-styles';
+      styleTag.textContent = `
+        .add-bg-light_leetcode-enhancer {
+            background-color: #a1ffa5 !important;
+        }
+        .add-bg-dark_leetcode-enhancer {
+            background-color: rgb(115, 115, 115) !important;
+        }
+        .hide_leetcode-enhancer {
+            display: none !important;
+        }
+      `;
+      document.documentElement.appendChild(styleTag);
+    }
+  }
+
   async function initOptions() {
+    injectVisibilityStyles();
     const { options } = await chrome.storage.local.get('options');
     const defaultOpts = [
       { optionName: 'locked', checked: true },
