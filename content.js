@@ -40,6 +40,94 @@ async function getCachedQuestionId(slug) {
   return questionId;
 }
 
+/**
+ * Robust extraction utility that bypasses Monaco Virtualization
+ * by fetching directly from local draft storage or falling back to DOM lines.
+ */
+async function getCodeFromLocalStorage(slug, questionId) {
+  let bestCandidate = null;
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+
+    const lowerKey = key.toLowerCase();
+    
+    // Strict requirement: Must match current problem identifiers
+    const matchesProblem = (slug && lowerKey.includes(slug.toLowerCase())) || 
+                          (questionId && lowerKey.includes(questionId.toString()));
+                          
+    const isDraftKey = lowerKey.includes("draft") || 
+                       lowerKey.includes("code") || 
+                       lowerKey.includes("editor") || 
+                       lowerKey.includes("state");
+
+    // Using logical AND (&&) to prevent pulling unrelated historical drafts
+    if (matchesProblem && isDraftKey) {
+      try {
+        const val = localStorage.getItem(key);
+        if (!val) continue;
+
+        if (val.trim().startsWith('{') || val.trim().startsWith('[')) {
+          const parsed = JSON.parse(val);
+          
+          const findCodeInObj = (obj) => {
+            if (!obj) return null;
+            if (typeof obj === 'string' && (obj.includes('class Solution') || obj.includes('def ') || obj.includes('function ') || obj.includes('class '))) {
+              return obj;
+            }
+            if (typeof obj === 'object') {
+              if (obj.code && typeof obj.code === 'string') return obj.code;
+              if (obj.value && typeof obj.value === 'string') return obj.value;
+              if (obj.draft && typeof obj.draft === 'string') return obj.draft;
+              
+              for (const k in obj) {
+                const res = findCodeInObj(obj[k]);
+                if (res) return res;
+              }
+            }
+            return null;
+          };
+
+          const extracted = findCodeInObj(parsed);
+          if (extracted) return extracted;
+        } else {
+          if (val.includes('class Solution') || val.includes('def ') || val.includes('function ') || val.includes('class ') || val.includes('impl Solution')) {
+            bestCandidate = val;
+          }
+        }
+      } catch (e) {
+        // Safe parsing fallback
+      }
+    }
+  }
+  return bestCandidate;
+}
+
+async function extractFullCode() {
+  const urlParts = window.location.pathname.split('/');
+  const problemsIndex = urlParts.indexOf('problems');
+  let slug = "";
+  if (problemsIndex !== -1) {
+    slug = urlParts[problemsIndex + 1];
+  }
+  const questionId = slug ? await getCachedQuestionId(slug) : null;
+  
+  if (slug || questionId) {
+    const localCode = await getCodeFromLocalStorage(slug, questionId);
+    if (localCode && localCode.trim().length > 0) {
+      return localCode;
+    }
+  }
+
+  const codeLines = document.querySelectorAll('.view-line');
+  if (codeLines.length) {
+    return Array.from(codeLines).map(line => line.textContent).join('\n');
+  }
+
+  return "";
+}
+
 async function injectTags() {
   if (document.getElementById('custom-company-tags') || isInjectingTags) return;
   isInjectingTags = true;
@@ -199,7 +287,7 @@ function analyzeCode(code) {
  * SECTION 3: ACCEPTED SUBMISSION ANALYSIS UI
  * ==============================================================================
  */
-function injectSubmissionAnalysisUI() {
+async function injectSubmissionAnalysisUI() {
   if (document.getElementById('sprint-submission-analysis')) return;
 
   const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3');
@@ -269,8 +357,7 @@ function injectSubmissionAnalysisUI() {
     });
   });
 
-  const lines = document.querySelectorAll('.view-line');
-  const rawCode = lines.length ? Array.from(lines).map(line => line.textContent).join('\n') : "";
+  const rawCode = await extractFullCode();
   const summaryEl = document.getElementById('sprint-ai-summary');
 
   if (rawCode.trim()) {
@@ -338,7 +425,7 @@ function showWhereAmIWrongPopup() {
   modal.innerHTML = `
     <div class="sprint-modal-header">
       <div class="sprint-modal-title">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -362,14 +449,10 @@ function showWhereAmIWrongPopup() {
   document.body.appendChild(overlay);
 
   document.getElementById('sprint-close-x').addEventListener('click', closeWhereAmIWrongPopup);
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) closeWhereAmIWrongPopup();
-  });
 }
 
-function triggerWhereAmIWrong() {
-  const codeLines = document.querySelectorAll('.view-line');
-  const codeToAnalyze = codeLines.length ? Array.from(codeLines).map(line => line.textContent).join('\n') : "";
+async function triggerWhereAmIWrong() {
+  const codeToAnalyze = await extractFullCode();
 
   if (!codeToAnalyze.trim()) {
     alert("Sprint: Could not find any code. Please type something in the editor.");
@@ -407,7 +490,6 @@ function triggerWhereAmIWrong() {
       feedbackEl.style.textAlign = 'left';
 
       if (response?.success) {
-        // FIX: authRequired is a flat flag on the response, not nested inside response.data
         if (response.authRequired || response.data?.authRequired) {
           titleEl.textContent = 'Sign In Required';
           titleEl.style.color = '#f87171';
@@ -416,7 +498,12 @@ function triggerWhereAmIWrong() {
         }
 
         const feedbackText = (response.data.feedback || "").trim();
-        const isClean = feedbackText.toLowerCase().replace(/[^a-z]/g, '') === "therearenoerrors";
+        const cleanText = feedbackText.toLowerCase().replace(/[^a-z]/g, '');
+        
+        // Smarter classification checking if 'there are no errors' exists anywhere in the clean response
+        const isClean = cleanText === "therearenoerrors" || 
+                        feedbackText.toLowerCase().includes("there are no errors") ||
+                        (!feedbackText.includes("-") && feedbackText.length < 35);
 
         if (isClean) {
           titleEl.textContent = 'No Issues Found';
@@ -430,7 +517,6 @@ function triggerWhereAmIWrong() {
           feedbackEl.className = 'sprint-text-error';
         }
       } else {
-        // FIX: Handle authRequired on the failure path (background.js emits flat flag)
         if (response?.authRequired) {
           titleEl.textContent = 'Sign In Required';
           titleEl.style.color = '#f87171';
@@ -516,22 +602,22 @@ function injectRedirectPills() {
  */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "ANALYZE_SELECTION") {
-    let code = request.code || window.getSelection().toString();
+    (async () => {
+      let code = request.code || window.getSelection().toString();
 
-    if (!code.trim()) {
-      const codeLines = document.querySelectorAll('.view-line');
-      if (codeLines.length) {
-        code = Array.from(codeLines).map(line => line.textContent).join('\n');
+      if (!code.trim()) {
+        code = await extractFullCode();
       }
-    }
 
-    if (code.trim()) {
-      analyzeCode(code);
-      sendResponse({ status: "Analysis started" });
-    } else {
-      alert("Sprint: Could not find any code. Make sure the code editor is visible.");
-      sendResponse({ status: "No code found" });
-    }
+      if (code.trim()) {
+        analyzeCode(code);
+        sendResponse({ status: "Analysis started" });
+      } else {
+        alert("Sprint: Could not find any code. Make sure the code editor is visible.");
+        sendResponse({ status: "No code found" });
+      }
+    })();
+    return true; 
   }
 
   if (request.type === "TOGGLE_WHERE_AM_I_WRONG") {
@@ -539,6 +625,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       triggerWhereAmIWrong();
     }
     sendResponse({ status: "Toggled" });
+    return true;
   }
   
   return true;
