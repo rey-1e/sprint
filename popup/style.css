@@ -448,7 +448,7 @@ footer {
 .themes-lock-overlay {
     position: absolute;
     inset: 0;
-    top: 24px; /* offset the header label */
+    top: 24px;
     background: rgba(37, 37, 40, 0.45);
     backdrop-filter: blur(1.5px);
     display: flex;

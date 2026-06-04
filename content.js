@@ -6,38 +6,11 @@
 let isInjectingTags = false;
 
 async function getCachedQuestionId(slug) {
-  const CACHE_KEY = `sprint_id_${slug}`;
-  const localData = await chrome.storage.local.get([CACHE_KEY, 'all_problems_cache', 'all_problems_cache_time']);
-  
-  if (localData[CACHE_KEY]) {
-    return localData[CACHE_KEY];
-  }
-
-  const now = Date.now();
-  let problems = localData.all_problems_cache;
-
-  if (!problems || !localData.all_problems_cache_time || (now - localData.all_problems_cache_time > 86400000)) {
-    try {
-      const res = await fetch('/api/problems/all/');
-      const data = await res.json();
-      problems = data.stat_status_pairs || [];
-      await chrome.storage.local.set({
-        all_problems_cache: problems,
-        all_problems_cache_time: now
-      });
-    } catch (e) {
-      console.error("Sprint: API lookup error", e);
-      return null;
-    }
-  }
-
-  const targetProb = problems.find(p => p.stat.question__title_slug === slug);
-  const questionId = targetProb ? targetProb.stat.question_id.toString() : null;
-
-  if (questionId) {
-    await chrome.storage.local.set({ [CACHE_KEY]: questionId });
-  }
-  return questionId;
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: "GET_QUESTION_ID", slug }, (response) => {
+      resolve(response?.questionId || null);
+    });
+  });
 }
 
 /**
@@ -52,8 +25,6 @@ async function getCodeFromLocalStorage(slug, questionId) {
     if (!key) continue;
 
     const lowerKey = key.toLowerCase();
-    
-    // Strict requirement: Must match current problem identifiers
     const matchesProblem = (slug && lowerKey.includes(slug.toLowerCase())) || 
                           (questionId && lowerKey.includes(questionId.toString()));
                           
@@ -62,7 +33,6 @@ async function getCodeFromLocalStorage(slug, questionId) {
                        lowerKey.includes("editor") || 
                        lowerKey.includes("state");
 
-    // Using logical AND (&&) to prevent pulling unrelated historical drafts
     if (matchesProblem && isDraftKey) {
       try {
         const val = localStorage.getItem(key);
@@ -267,10 +237,10 @@ function analyzeCode(code) {
         timeEl.textContent = 'Err';
         spaceEl.textContent = 'Err';
         if (response?.authRequired) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; font-weight:500;">Sign In required</a>';
+          statusEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#a1a1aa; font-weight:500; text-decoration:underline;">Sign In required</a>';
           statusEl.className = 'complexity-status';
         } else if (response?.limitReached) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; font-weight:500;">Upgrade Required</a>';
+          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; font-weight:500; text-decoration:underline;">Upgrade Required</a>';
           statusEl.className = 'complexity-status';
           alert(response.error);
         } else {
@@ -378,11 +348,11 @@ async function injectSubmissionAnalysisUI() {
           document.getElementById('val-sty-idea').textContent = d.sty_suggestions || "N/A";
         } else {
           if (response?.authRequired) {
-            summaryEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:500;">Sign in to LeetCode Sprint to analyze submissions.</a>';
-            summaryEl.className = 'sprint-ai-summary sprint-text-error';
+            summaryEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#a1a1aa; text-decoration:underline; font-weight:500;">Sign in to LeetCode Sprint to analyze submissions.</a>';
+            summaryEl.className = 'sprint-ai-summary-muted';
           } else if (response?.limitReached) {
-            summaryEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#f87171; text-decoration:underline; font-weight:500;">Limit reached. Upgrade at getsprint.me/payments</a>';
-            summaryEl.className = 'sprint-ai-summary sprint-text-error';
+            summaryEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; text-decoration:underline; font-weight:500;">Limit reached. Upgrade at getsprint.me/payments</a>';
+            summaryEl.className = 'sprint-ai-summary sprint-text-warning';
             alert(response.error);
           } else {
             summaryEl.textContent = "Analysis failed. Ensure service worker API is active.";
@@ -492,7 +462,7 @@ async function triggerWhereAmIWrong() {
       if (response?.success) {
         if (response.authRequired || response.data?.authRequired) {
           titleEl.textContent = 'Sign In Required';
-          titleEl.style.color = '#f87171';
+          titleEl.style.color = '#e0a96d';
           feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
           return;
         }
@@ -500,7 +470,6 @@ async function triggerWhereAmIWrong() {
         const feedbackText = (response.data.feedback || "").trim();
         const cleanText = feedbackText.toLowerCase().replace(/[^a-z]/g, '');
         
-        // Smarter classification checking if 'there are no errors' exists anywhere in the clean response
         const isClean = cleanText === "therearenoerrors" || 
                         feedbackText.toLowerCase().includes("there are no errors") ||
                         (!feedbackText.includes("-") && feedbackText.length < 35);
@@ -519,7 +488,7 @@ async function triggerWhereAmIWrong() {
       } else {
         if (response?.authRequired) {
           titleEl.textContent = 'Sign In Required';
-          titleEl.style.color = '#f87171';
+          titleEl.style.color = '#e0a96d';
           feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
         } else if (response?.limitReached) {
           closeWhereAmIWrongPopup();
@@ -631,24 +600,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
+// Fast initial mount attempt
 setTimeout(() => {
   injectTags();
   injectComplexityUI();
-  injectSubmissionAnalysisUI();
+  if (window.location.pathname.includes('/submissions/')) {
+    injectSubmissionAnalysisUI();
+  }
   injectWhereAmIWrongButton();
   injectRedirectPills();
 }, 50);
 
+// Efficient mutation observer throttling
 let mutationDebounceTimer = null;
 const observer = new MutationObserver(() => {
   if (mutationDebounceTimer) clearTimeout(mutationDebounceTimer);
   mutationDebounceTimer = setTimeout(() => {
-    if (!document.getElementById('custom-company-tags')) injectTags();
-    if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
-    if (!document.getElementById('sprint-submission-analysis')) injectSubmissionAnalysisUI();
-    if (!document.getElementById('sprint-wrong-btn')) injectWhereAmIWrongButton();
-    injectRedirectPills();
-  }, 150);
+    const hasTags = document.getElementById('custom-company-tags');
+    const hasComplexity = document.getElementById('complexity-analyzer-container');
+    const hasAnalysis = document.getElementById('sprint-submission-analysis');
+    const hasWrongBtn = document.getElementById('sprint-wrong-btn');
+    const hasPill = document.getElementById('sprint-google-editor-pill');
+
+    if (!hasTags) injectTags();
+    if (!hasComplexity) injectComplexityUI();
+    if (!hasAnalysis && window.location.pathname.includes('/submissions/')) {
+      injectSubmissionAnalysisUI();
+    }
+    if (!hasWrongBtn) injectWhereAmIWrongButton();
+    if (!hasPill) injectRedirectPills();
+  }, 120);
 });
 
 observer.observe(document.body, { childList: true, subtree: true });

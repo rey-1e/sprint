@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // ── Visibility settings setup (remains as-is) ──
+  // ── Visibility settings setup ──
   const checkboxes = document.querySelectorAll('.sprint-switch input');
   let { options } = await chrome.storage.local.get('options');
   if (!options) {

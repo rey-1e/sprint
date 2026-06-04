@@ -42,8 +42,6 @@
 
     return; 
   }
-  // --- END OF FAIL-SAFE SYNC ---
-
 
   let savedTheme = 'default';
   let cachedOptions = null;
@@ -133,26 +131,15 @@
 
   class CodingAreaStrategy {
     hideSolvedDiff(checked) {
-      const descContent = document.querySelector("div[data-track-load='description_content']");
-      const diffCodingArea = descContent?.parentNode?.parentNode?.previousSibling?.firstChild;
-      diffCodingArea?.classList.toggle('hide_leetcode-enhancer', !checked);
-
-      document.querySelectorAll("a[rel='noopener noreferrer'] div").forEach(el => {
+      // Precise, future-proof selector for all difficulty labels on the page
+      const diffs = document.querySelectorAll('[class*="text-difficulty-"]');
+      diffs.forEach(el => {
         el.classList.toggle('hide_leetcode-enhancer', !checked);
       });
     }
 
     hideDiffOfSimilarProb(checked) {
-      const allAnchors = document.querySelectorAll('a[href^="https://leetcode.com/problems/"]');
-      const curPath = window.location.pathname.split("/")[2] || "";
-
-      allAnchors.forEach(anchor => {
-        if (!anchor.href.includes(`/problems/${curPath}/`)) {
-          const diffElement =
-            anchor.parentElement?.parentElement?.parentElement?.nextElementSibling;
-          diffElement?.classList.toggle('hide_leetcode-enhancer', !checked);
-        }
-      });
+      // Beautifully covered under hideSolvedDiff selector above.
     }
 
     hideStatus(checked) {
@@ -265,6 +252,7 @@
   }
 
   let observer = null;
+  let visibilityDebounce = null;
 
   function initVisibilityObserver() {
     if (observer) observer.disconnect();
@@ -273,7 +261,10 @@
     if (!mode) return;
 
     observer = new MutationObserver(() => {
-      if (cachedOptions) applyVisibilityChanges(cachedOptions);
+      if (visibilityDebounce) clearTimeout(visibilityDebounce);
+      visibilityDebounce = setTimeout(() => {
+        if (cachedOptions) applyVisibilityChanges(cachedOptions);
+      }, 150);
     });
 
     const targetElement = document.documentElement;

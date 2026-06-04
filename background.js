@@ -30,13 +30,7 @@ function getAuthToken() {
 }
 
 /**
- * FIX: Normalize all error shapes so content.js receives a consistent flat structure.
- *
- * Previously, the server returned { authRequired: true } inside data, but content.js
- * checked response.authRequired (flat) for complexity and response.data.authRequired
- * (nested) for the bug finder — causing the auth error to silently fail in the debugger.
- *
- * Now all responses are flat: { success, authRequired, limitReached, error, data }
+ * Normalizes error payloads and API handling so that content scripts receive structured responses.
  */
 async function handleFetchRequest(url, bodyData, sendResponse) {
   try {
@@ -60,20 +54,16 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
 
     if (!res.ok) {
       if (res.status === 401) {
-        // FIX: Flat authRequired flag — content.js reads response.authRequired directly
         sendResponse({ success: false, authRequired: true, error: data.message || "Sign in required." });
         return;
       }
       if (data.error === "LIMIT_REACHED") {
-        // FIX: Flat limitReached flag
         sendResponse({ success: false, limitReached: true, error: data.message });
         return;
       }
       throw new Error(data.message || `Server error ${res.status}`);
     }
 
-    // FIX: Also check for authRequired embedded inside a 200 response body
-    // (the bug finder endpoint returns 200 + { authRequired: true } on auth failure)
     if (data.authRequired) {
       sendResponse({ success: false, authRequired: true, error: "Sign in required." });
       return;
@@ -85,7 +75,62 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
   }
 }
 
+/**
+ * Heavy computation database query moved to service worker thread
+ */
+let allProblemsCache = null;
+let allProblemsCacheTime = 0;
+
+async function fetchAllProblems() {
+  const now = Date.now();
+  if (allProblemsCache && (now - allProblemsCacheTime < 86400000)) {
+    return allProblemsCache;
+  }
+  const localData = await chrome.storage.local.get(['all_problems_cache', 'all_problems_cache_time']);
+  if (localData.all_problems_cache && localData.all_problems_cache_time && (now - localData.all_problems_cache_time < 86400000)) {
+    allProblemsCache = localData.all_problems_cache;
+    allProblemsCacheTime = localData.all_problems_cache_time;
+    return allProblemsCache;
+  }
+  try {
+    const res = await fetch('https://leetcode.com/api/problems/all/');
+    const data = await res.json();
+    const problems = data.stat_status_pairs || [];
+    await chrome.storage.local.set({
+      all_problems_cache: problems,
+      all_problems_cache_time: now
+    });
+    allProblemsCache = problems;
+    allProblemsCacheTime = now;
+    return problems;
+  } catch (e) {
+    console.error("Sprint background: API lookup error", e);
+    return localData.all_problems_cache || [];
+  }
+}
+
+async function getQuestionId(slug) {
+  const CACHE_KEY = `sprint_id_${slug}`;
+  const cached = await chrome.storage.local.get([CACHE_KEY]);
+  if (cached[CACHE_KEY]) return cached[CACHE_KEY];
+
+  const problems = await fetchAllProblems();
+  const targetProb = problems.find(p => p.stat.question__title_slug === slug);
+  const questionId = targetProb ? targetProb.stat.question_id.toString() : null;
+  if (questionId) {
+    await chrome.storage.local.set({ [CACHE_KEY]: questionId });
+  }
+  return questionId;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === "GET_QUESTION_ID") {
+    getQuestionId(request.slug).then(questionId => {
+      sendResponse({ questionId });
+    });
+    return true; // keeps the channel active for async reply
+  }
+
   if (request.type === "FETCH_COMPLEXITY") {
     handleFetchRequest(
       'https://analyze-i6ptizncma-uc.a.run.app',
