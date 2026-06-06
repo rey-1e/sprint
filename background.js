@@ -3,7 +3,8 @@ chrome.runtime.onInstalled.addListener((details) => {
     chrome.contextMenus.create({
       id: "analyzeCodeWithSprint",
       title: "Analyse with Sprint",
-      contexts: ["all"]
+      contexts: ["all"],
+      documentUrlPatterns: ["https://leetcode.com/*", "https://leetcode.cn/*"]
     });
   });
 
@@ -29,9 +30,6 @@ function getAuthToken() {
   });
 }
 
-/**
- * Normalizes error payloads and API handling so that content scripts receive structured responses.
- */
 async function handleFetchRequest(url, bodyData, sendResponse) {
   try {
     const token = await getAuthToken();
@@ -75,9 +73,6 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
   }
 }
 
-/**
- * Heavy computation database query moved to service worker thread
- */
 let allProblemsCache = null;
 let allProblemsCacheTime = 0;
 
@@ -128,7 +123,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     getQuestionId(request.slug).then(questionId => {
       sendResponse({ questionId });
     });
-    return true; // keeps the channel active for async reply
+    return true;
   }
 
   if (request.type === "FETCH_COMPLEXITY") {
@@ -157,6 +152,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         problemTitle: request.problemTitle,
         problemContext: request.problemContext
       },
+      sendResponse
+    );
+    return true;
+  }
+
+  if (request.type === "FETCH_THEME") {
+    handleFetchRequest(
+      'https://gettheme-i6ptizncma-uc.a.run.app',
+      { themeName: request.theme },
       sendResponse
     );
     return true;

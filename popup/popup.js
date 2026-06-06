@@ -1,12 +1,8 @@
 const LEETCODE_DOMAINS = ['*://*.leetcode.com/*', '*://*.leetcode.cn/*'];
 
-function setupLink(elementId) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-  el.addEventListener('click', function (e) {
-    e.preventDefault();
-    chrome.tabs.create({ url: this.href });
-  });
+function setupLink(id) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', function (e) { e.preventDefault(); chrome.tabs.create({ url: this.href }); });
 }
 
 async function broadcastMessage(message) {
@@ -14,9 +10,7 @@ async function broadcastMessage(message) {
     try {
       const tabs = await chrome.tabs.query({ url });
       tabs.forEach(tab => chrome.tabs.sendMessage(tab.id, message).catch(() => {}));
-    } catch {
-      // Avoid runtime failures
-    }
+    } catch {}
   }
 }
 
@@ -25,23 +19,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupLink('website-link');
   setupLink('info-question-link');
 
-  const companyAnchor = document.querySelector('.kbd a[href]');
-  if (companyAnchor) {
-    companyAnchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      chrome.tabs.create({ url: this.href });
-    });
-  }
+  const comp = document.getElementById('company-link');
+  if (comp) comp.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: comp.href }); });
 
-  // ── Premium Locking Module ──
   const { isPremium = false } = await chrome.storage.local.get('isPremium');
-  const themesSection = document.getElementById('themes-section');
+  const themes = document.getElementById('themes-section');
   
-  if (!isPremium && themesSection) {
-    themesSection.classList.add('premium-locked');
-    const lockOverlay = document.createElement('div');
-    lockOverlay.className = 'themes-lock-overlay';
-    lockOverlay.innerHTML = `
+  if (!isPremium && themes) {
+    themes.classList.add('premium-locked');
+    const overlay = document.createElement('div');
+    overlay.className = 'themes-lock-overlay';
+    overlay.innerHTML = `
       <div class="lock-overlay-content">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-bottom: 4px;">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -51,19 +39,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         <a href="https://getsprint.me/payments/index.html" id="lock-cta-btn" class="btn-lock-upgrade">Upgrade Now</a>
       </div>
     `;
-    themesSection.style.position = 'relative';
-    themesSection.appendChild(lockOverlay);
+    themes.style.position = 'relative';
+    themes.appendChild(overlay);
     
     const lockCta = document.getElementById('lock-cta-btn');
-    if (lockCta) {
-      lockCta.addEventListener('click', function(e) {
-        e.preventDefault();
-        chrome.tabs.create({ url: this.href });
-      });
-    }
+    if (lockCta) lockCta.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: lockCta.href }); });
   }
 
-  // ── Theme palette setup ──
   const dots = document.querySelectorAll('.dot');
   const activeLabel = document.getElementById('active-label');
   const { leetcodeTheme = 'default' } = await chrome.storage.local.get('leetcodeTheme');
@@ -76,33 +58,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   dots.forEach(dot => {
     dot.addEventListener('click', async () => {
-      if (!isPremium && dot.dataset.theme !== 'default') {
-        return; // Prevent free users from setting premium themes locally
-      }
+      if (!isPremium && dot.dataset.theme !== 'default') return;
       const { theme, display } = dot.dataset;
-
       document.querySelector('.dot.active')?.classList.remove('active');
       dot.classList.add('active');
       if (activeLabel) activeLabel.textContent = display;
-
       await chrome.storage.local.set({ leetcodeTheme: theme });
       broadcastMessage({ action: 'setTheme', theme });
     });
   });
 
-  // ── Visibility settings setup ──
   const checkboxes = document.querySelectorAll('.sprint-switch input');
   let { options } = await chrome.storage.local.get('options');
   if (!options) {
     options = [
-      { optionName: 'locked', checked: true },
-      { optionName: 'highlight', checked: false },
-      { optionName: 'solved', checked: true },
-      { optionName: 'status', checked: true },
-      { optionName: 'acceptance', checked: true },
-      { optionName: 'difficulty', checked: true },
-      { optionName: 'frequency', checked: true },
-      { optionName: 'save', checked: true }
+      { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
+      { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
+      { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },
+      { optionName: 'frequency', checked: true }, { optionName: 'save', checked: true }
     ];
     await chrome.storage.local.set({ options });
   }
@@ -114,12 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   checkboxes.forEach(cb => {
     cb.addEventListener('change', async () => {
-      const updatedOptions = Array.from(checkboxes).map(input => ({
-        optionName: input.id,
-        checked: input.checked
-      }));
-      await chrome.storage.local.set({ options: updatedOptions });
-      broadcastMessage({ action: 'applyVisibilityOptions', options: updatedOptions });
+      const updated = Array.from(checkboxes).map(input => ({ optionName: input.id, checked: input.checked }));
+      await chrome.storage.local.set({ options: updated });
+      broadcastMessage({ action: 'applyVisibilityOptions', options: updated });
     });
   });
 });
