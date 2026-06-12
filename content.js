@@ -385,7 +385,21 @@ async function triggerWhereAmIWrong() {
       } else {
         titleEl.textContent = 'Issue Found';
         titleEl.style.color = '#b56363';
-        feedback.textContent = rawText;
+        
+        // Escape bracket formats and cleanly map dashes to visual newlines
+        const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        const formattedLines = lines.map(line => {
+          const escapedLine = line
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+          if (escapedLine.startsWith('-')) {
+            return `• ${escapedLine.substring(1).trim()}`;
+          }
+          return escapedLine;
+        });
+
+        feedback.innerHTML = formattedLines.join('<br><br>');
         feedback.className = 'sprint-text-error';
       }
     } else {
