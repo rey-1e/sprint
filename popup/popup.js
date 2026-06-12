@@ -70,14 +70,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const checkboxes = document.querySelectorAll('.sprint-switch input');
   let { options } = await chrome.storage.local.get('options');
+
+  const defaultOptions = [
+    { optionName: 'removeInjections', checked: false },
+    { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
+    { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
+    { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },
+    { optionName: 'frequency', checked: true }, { optionName: 'save', checked: true }
+  ];
+
   if (!options) {
-    options = [
-      { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
-      { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
-      { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },
-      { optionName: 'frequency', checked: true }, { optionName: 'save', checked: true }
-    ];
+    options = defaultOptions;
     await chrome.storage.local.set({ options });
+  } else {
+    let modified = false;
+    defaultOptions.forEach(defOpt => {
+      if (!options.some(opt => opt.optionName === defOpt.optionName)) {
+        options.push(defOpt);
+        modified = true;
+      }
+    });
+    if (modified) {
+      await chrome.storage.local.set({ options });
+    }
   }
 
   options.forEach(opt => {

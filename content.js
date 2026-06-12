@@ -1,4 +1,5 @@
 let isInjectingTags = false;
+let injectionsDisabled = false;
 
 async function getCachedQuestionId(slug) {
   return new Promise((resolve) => {
@@ -81,6 +82,7 @@ async function extractFullCode() {
 }
 
 async function injectTags() {
+  if (injectionsDisabled) return;
   if (document.getElementById('custom-company-tags') || isInjectingTags) return;
   isInjectingTags = true;
 
@@ -119,6 +121,7 @@ async function injectTags() {
     if (!target) return;
 
     if (elo && !target.hasAttribute('data-elo-injected')) {
+      target.setAttribute('data-original-text', target.textContent);
       target.textContent = `${target.textContent} - ${elo}`;
       target.setAttribute('data-elo-injected', 'true');
     }
@@ -153,6 +156,7 @@ async function injectTags() {
 }
 
 function injectComplexityUI() {
+  if (injectionsDisabled) return;
   if (document.getElementById('complexity-analyzer-container')) return;
   const targetBar = document.getElementById('code_tabbar_outer');
   if (!targetBar) return;
@@ -175,6 +179,7 @@ function injectComplexityUI() {
 }
 
 function analyzeCode(code) {
+  if (injectionsDisabled) return;
   injectComplexityUI();
   const time = document.getElementById('time-complexity-value');
   const space = document.getElementById('space-complexity-value');
@@ -211,6 +216,7 @@ function analyzeCode(code) {
 }
 
 async function injectSubmissionAnalysisUI() {
+  if (injectionsDisabled) return;
   if (document.getElementById('sprint-submission-analysis')) return;
   const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3');
   const targetDiv = Array.from(boxes).find(d => d.textContent.includes('Runtime') || d.textContent.includes('Memory'));
@@ -312,6 +318,7 @@ function closeWhereAmIWrongPopup() {
 }
 
 function showWhereAmIWrongPopup() {
+  if (injectionsDisabled) return;
   if (document.getElementById('sprint-custom-overlay')) return;
   const overlay = document.createElement('div');
   overlay.id = 'sprint-custom-overlay';
@@ -342,6 +349,7 @@ function showWhereAmIWrongPopup() {
 }
 
 async function triggerWhereAmIWrong() {
+  if (injectionsDisabled) return;
   const rawCode = await extractFullCode();
   if (!rawCode.trim()) {
     alert("Sprint: Could not find any code. Please type something in the editor.");
@@ -422,6 +430,7 @@ async function triggerWhereAmIWrong() {
 }
 
 function injectWhereAmIWrongButton() {
+  if (injectionsDisabled) return;
   if (document.getElementById('sprint-wrong-btn')) return;
   const targetBar = document.getElementById('code_tabbar_outer');
   if (!targetBar) return;
@@ -446,6 +455,7 @@ function injectWhereAmIWrongButton() {
 }
 
 function injectRedirectPills() {
+  if (injectionsDisabled) return;
   const target = document.querySelector('div.h-8.w-full.min-w-0.flex-1') || document.querySelector('[class*="h-8"][class*="w-full"][class*="flex-1"]');
   if (target && !document.getElementById('sprint-google-editor-pill')) {
     if (!target.classList.contains('sprint-flex-container-override')) {
@@ -464,8 +474,61 @@ function injectRedirectPills() {
   }
 }
 
+function removeInjectedElements() {
+  document.getElementById('custom-company-tags')?.remove();
+  document.getElementById('complexity-analyzer-container')?.remove();
+  document.getElementById('sprint-submission-analysis')?.remove();
+  document.getElementById('sprint-wrong-btn')?.remove();
+  document.getElementById('sprint-google-editor-pill')?.remove();
+  closeWhereAmIWrongPopup();
+
+  const eloTarget = document.querySelector('[data-elo-injected="true"]');
+  if (eloTarget) {
+    const origText = eloTarget.getAttribute('data-original-text');
+    if (origText) eloTarget.textContent = origText;
+    eloTarget.removeAttribute('data-elo-injected');
+    eloTarget.removeAttribute('data-original-text');
+  }
+}
+
+function injectAll() {
+  if (injectionsDisabled) return;
+  injectTags();
+  injectComplexityUI();
+  if (window.location.pathname.includes('/submissions/')) injectSubmissionAnalysisUI();
+  injectWhereAmIWrongButton();
+  injectRedirectPills();
+}
+
+async function updateInjectionsState() {
+  const res = await chrome.storage.local.get('options');
+  const removeInjectionsOpt = res?.options?.find(o => o.optionName === 'removeInjections');
+  injectionsDisabled = removeInjectionsOpt ? removeInjectionsOpt.checked : false;
+
+  if (injectionsDisabled) {
+    removeInjectedElements();
+  } else {
+    injectAll();
+  }
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "applyVisibilityOptions") {
+    const removeInjectionsOpt = request.options?.find(o => o.optionName === 'removeInjections');
+    injectionsDisabled = removeInjectionsOpt ? removeInjectionsOpt.checked : false;
+    if (injectionsDisabled) {
+      removeInjectedElements();
+    } else {
+      injectAll();
+    }
+    return true;
+  }
+
   if (request.type === "ANALYZE_SELECTION") {
+    if (injectionsDisabled) {
+      sendResponse({ status: "Disabled" });
+      return true;
+    }
     (async () => {
       let code = request.code || window.getSelection().toString();
       if (!code.trim()) code = await extractFullCode();
@@ -479,7 +542,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     })();
     return true;
   }
+
   if (request.type === "TOGGLE_WHERE_AM_I_WRONG") {
+    if (injectionsDisabled) {
+      sendResponse({ status: "Disabled" });
+      return true;
+    }
     if (!closeWhereAmIWrongPopup()) triggerWhereAmIWrong();
     sendResponse({ status: "Toggled" });
     return true;
@@ -488,15 +556,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 setTimeout(() => {
-  injectTags();
-  injectComplexityUI();
-  if (window.location.pathname.includes('/submissions/')) injectSubmissionAnalysisUI();
-  injectWhereAmIWrongButton();
-  injectRedirectPills();
+  updateInjectionsState();
 }, 50);
 
 let debounce = null;
 const obs = new MutationObserver(() => {
+  if (injectionsDisabled) return;
   if (debounce) clearTimeout(debounce);
   debounce = setTimeout(() => {
     if (!document.getElementById('custom-company-tags')) injectTags();
