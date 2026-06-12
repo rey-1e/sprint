@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Sprint - Enhance your Coding Experience",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Company-tags, Complexities, AI Debugging, Custom Themes and Much More.",
   "icons": {
     "128": "icon.png",

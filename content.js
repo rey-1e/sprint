@@ -121,7 +121,7 @@ async function injectTags() {
     if (!target) return;
 
     if (elo && !target.hasAttribute('data-elo-injected')) {
-      target.setAttribute('data-original-text', target.textContent);
+      target.setAttribute('data-original-text', target.textContent || '');
       target.textContent = `${target.textContent} - ${elo}`;
       target.setAttribute('data-elo-injected', 'true');
     }
@@ -164,11 +164,42 @@ function injectComplexityUI() {
   const container = document.createElement('div');
   container.id = 'complexity-analyzer-container';
   container.className = 'complexity-container';
-  container.innerHTML = `
-    <div class="complexity-item"><span class="complexity-label">Time:</span><span class="complexity-value" id="time-complexity-value">—</span></div>
-    <div class="complexity-item"><span class="complexity-label">Space:</span><span class="complexity-value" id="space-complexity-value">—</span></div>
-    <div class="complexity-status" id="complexity-status-text">Right-click or Ctrl+Shift+X</div>
-  `;
+
+  // Item 1: Time Complexity
+  const timeItem = document.createElement('div');
+  timeItem.className = 'complexity-item';
+  const timeLabel = document.createElement('span');
+  timeLabel.className = 'complexity-label';
+  timeLabel.textContent = 'Time:';
+  const timeVal = document.createElement('span');
+  timeVal.className = 'complexity-value';
+  timeVal.id = 'time-complexity-value';
+  timeVal.textContent = '—';
+  timeItem.appendChild(timeLabel);
+  timeItem.appendChild(timeVal);
+
+  // Item 2: Space Complexity
+  const spaceItem = document.createElement('div');
+  spaceItem.className = 'complexity-item';
+  const spaceLabel = document.createElement('span');
+  spaceLabel.className = 'complexity-label';
+  spaceLabel.textContent = 'Space:';
+  const spaceVal = document.createElement('span');
+  spaceVal.className = 'complexity-value';
+  spaceVal.id = 'space-complexity-value';
+  spaceVal.textContent = '—';
+  spaceItem.appendChild(spaceLabel);
+  spaceItem.appendChild(spaceVal);
+
+  // Status message
+  const statusMsg = document.createElement('div');
+  statusMsg.className = 'complexity-status';
+  statusMsg.id = 'complexity-status-text';
+  statusMsg.textContent = 'Right-click or Ctrl+Shift+X';
+
+  container.appendChild(timeItem);
+  container.appendChild(spaceItem);
+  container.appendChild(statusMsg);
 
   const inner = targetBar.querySelector('.flexlayout__tabset_tabbar_inner');
   if (inner?.nextSibling) {
@@ -200,11 +231,23 @@ function analyzeCode(code) {
     } else {
       time.textContent = 'Err';
       space.textContent = 'Err';
+      status.innerHTML = ''; // Safe clear
+      
       if (res?.authRequired) {
-        status.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#a1a1aa; font-weight:500; text-decoration:underline;">Sign In required</a>';
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#a1a1aa; font-weight:500; text-decoration:underline;';
+        link.textContent = 'Sign In required';
+        status.appendChild(link);
         status.className = 'complexity-status';
       } else if (res?.limitReached) {
-        status.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; font-weight:500; text-decoration:underline;">Upgrade Required</a>';
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/payments';
+        link.target = '_blank';
+        link.style.cssText = 'color:#eff1f680; font-weight:500; text-decoration:underline;';
+        link.textContent = 'Upgrade Required';
+        status.appendChild(link);
         status.className = 'complexity-status';
         alert(res.error);
       } else {
@@ -215,7 +258,7 @@ function analyzeCode(code) {
   });
 }
 
-async function injectSubmissionAnalysisUI() {
+function injectSubmissionAnalysisUI() {
   if (injectionsDisabled) return;
   if (document.getElementById('sprint-submission-analysis')) return;
   const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3');
@@ -225,87 +268,163 @@ async function injectSubmissionAnalysisUI() {
   const container = document.createElement('div');
   container.id = 'sprint-submission-analysis';
   container.className = 'sprint-ai-analysis';
-  container.innerHTML = `
-    <div class="sprint-ai-topbar">
-      <div class="sprint-ai-tabs">
-        <span class="sprint-ai-tab active" data-target="tab-approach">Approach</span>
-        <span class="sprint-ai-tab" data-target="tab-efficiency">Efficiency</span>
-        <span class="sprint-ai-tab" data-target="tab-style">Code Style</span>
-      </div>
-    </div>
-    <div class="sprint-ai-summary" id="sprint-ai-summary">Generating expert AI feedback...</div>
-    <div class="sprint-ai-content active" id="tab-approach">
-      <div class="sprint-ai-grid">
-        <div class="sprint-ai-label">Current</div><div class="sprint-ai-val" id="val-app-curr">...</div>
-        <div class="sprint-ai-label">Suggested</div><div class="sprint-ai-val sprint-text-success" id="val-app-sugg">...</div>
-        <div class="sprint-ai-label">Key Idea</div><div class="sprint-ai-val" id="val-app-idea">...</div>
-      </div>
-    </div>
-    <div class="sprint-ai-content sprint-hidden" id="tab-efficiency">
-      <div class="sprint-ai-grid">
-        <div class="sprint-ai-label">Current</div><div class="sprint-ai-val" id="val-eff-curr">...</div>
-        <div class="sprint-ai-label">Suggested</div><div class="sprint-ai-val sprint-text-success" id="val-eff-sugg">...</div>
-        <div class="sprint-ai-label">Suggestions</div><div class="sprint-ai-val" id="val-eff-idea">...</div>
-      </div>
-    </div>
-    <div class="sprint-ai-content sprint-hidden" id="tab-style">
-      <div class="sprint-ai-grid">
-        <div class="sprint-ai-label">Readability</div><div class="sprint-ai-val" id="val-sty-read">...</div>
-        <div class="sprint-ai-label">Structure</div><div class="sprint-ai-val" id="val-sty-struc">...</div>
-        <div class="sprint-ai-label">Suggestions</div><div class="sprint-ai-val" id="val-sty-idea">...</div>
-      </div>
-    </div>
-  `;
+
+  // Tab Header Area
+  const topbar = document.createElement('div');
+  topbar.className = 'sprint-ai-topbar';
+
+  const tabs = document.createElement('div');
+  tabs.className = 'sprint-ai-tabs';
+
+  const tabApproach = document.createElement('span');
+  tabApproach.className = 'sprint-ai-tab active';
+  tabApproach.setAttribute('data-target', 'tab-approach');
+  tabApproach.textContent = 'Approach';
+
+  const tabEfficiency = document.createElement('span');
+  tabEfficiency.className = 'sprint-ai-tab';
+  tabEfficiency.setAttribute('data-target', 'tab-efficiency');
+  tabEfficiency.textContent = 'Efficiency';
+
+  const tabStyle = document.createElement('span');
+  tabStyle.className = 'sprint-ai-tab';
+  tabStyle.setAttribute('data-target', 'tab-style');
+  tabStyle.textContent = 'Code Style';
+
+  tabs.appendChild(tabApproach);
+  tabs.appendChild(tabEfficiency);
+  tabs.appendChild(tabStyle);
+  topbar.appendChild(tabs);
+  container.appendChild(topbar);
+
+  // Status & Overview Area
+  const summary = document.createElement('div');
+  summary.id = 'sprint-ai-summary';
+  summary.className = 'sprint-ai-summary';
+  summary.textContent = 'Generating expert AI feedback...';
+  container.appendChild(summary);
+
+  const makeGridSection = (id, visible, labels) => {
+    const sec = document.createElement('div');
+    sec.id = id;
+    sec.className = 'sprint-ai-content' + (visible ? '' : ' sprint-hidden');
+    const grid = document.createElement('div');
+    grid.className = 'sprint-ai-grid';
+
+    labels.forEach(item => {
+      const lbl = document.createElement('div');
+      lbl.className = 'sprint-ai-label';
+      lbl.textContent = item.label;
+      const val = document.createElement('div');
+      val.className = 'sprint-ai-val' + (item.success ? ' sprint-text-success' : '');
+      val.id = item.id;
+      val.textContent = '...';
+      grid.appendChild(lbl);
+      grid.appendChild(val);
+    });
+
+    sec.appendChild(grid);
+    return sec;
+  };
+
+  const approachSec = makeGridSection('tab-approach', true, [
+    { label: 'Current', id: 'val-app-curr' },
+    { label: 'Suggested', id: 'val-app-sugg', success: true },
+    { label: 'Key Idea', id: 'val-app-idea' }
+  ]);
+
+  const efficiencySec = makeGridSection('tab-efficiency', false, [
+    { label: 'Current', id: 'val-eff-curr' },
+    { label: 'Suggested', id: 'val-eff-sugg', success: true },
+    { label: 'Suggestions', id: 'val-eff-idea' }
+  ]);
+
+  const styleSec = makeGridSection('tab-style', false, [
+    { label: 'Readability', id: 'val-sty-read' },
+    { label: 'Structure', id: 'val-sty-struc' },
+    { label: 'Suggestions', id: 'val-sty-idea' }
+  ]);
+
+  container.appendChild(approachSec);
+  container.appendChild(efficiencySec);
+  container.appendChild(styleSec);
+
   targetDiv.prepend(container);
 
-  const tabs = container.querySelectorAll('.sprint-ai-tab');
-  const contents = container.querySelectorAll('.sprint-ai-content');
+  const tabElements = container.querySelectorAll('.sprint-ai-tab');
+  const contentElements = container.querySelectorAll('.sprint-ai-content');
 
-  tabs.forEach(t => {
+  tabElements.forEach(t => {
     t.addEventListener('click', () => {
-      tabs.forEach(x => x.classList.remove('active'));
-      contents.forEach(c => { c.classList.remove('active'); c.classList.add('sprint-hidden'); });
+      tabElements.forEach(x => x.classList.remove('active'));
+      contentElements.forEach(c => {
+        c.classList.remove('active');
+        c.classList.add('sprint-hidden');
+      });
       t.classList.add('active');
-      const target = container.querySelector('#' + t.getAttribute('data-target'));
-      if (target) { target.classList.remove('sprint-hidden'); target.classList.add('active'); }
+      const targetId = t.getAttribute('data-target');
+      const targetContent = container.querySelector('#' + targetId);
+      if (targetContent) {
+        targetContent.classList.remove('sprint-hidden');
+        targetContent.classList.add('active');
+      }
     });
   });
 
+  fetchAnalysisData(summary);
+}
+
+async function fetchAnalysisData(summaryElement) {
   const raw = await extractFullCode();
-  const summary = document.getElementById('sprint-ai-summary');
   if (!raw.trim()) {
-    summary.textContent = "Could not locate code on the page.";
-    summary.className = 'sprint-ai-summary sprint-text-error';
+    summaryElement.textContent = "Could not locate code on the page.";
+    summaryElement.className = 'sprint-ai-summary sprint-text-error';
     return;
   }
 
   chrome.runtime.sendMessage({ type: "FETCH_DETAILED_ANALYSIS", code: raw }, (res) => {
     if (res?.success) {
       const d = res.data;
-      summary.textContent = d.summary || "Analysis complete.";
-      document.getElementById('val-app-curr').textContent = d.app_current || "N/A";
-      document.getElementById('val-app-sugg').textContent = d.app_suggested || "N/A";
-      document.getElementById('val-app-idea').textContent = d.app_keyidea || "N/A";
-      document.getElementById('val-eff-curr').textContent = d.eff_current || "N/A";
-      document.getElementById('val-eff-sugg').textContent = d.eff_suggested || "N/A";
-      document.getElementById('val-eff-idea').textContent = d.eff_suggestions || "N/A";
-      document.getElementById('val-sty-read').textContent = d.sty_readability || "N/A";
-      document.getElementById('val-sty-struc').textContent = d.sty_structure || "N/A";
-      document.getElementById('val-sty-idea').textContent = d.sty_suggestions || "N/A";
+      summaryElement.textContent = d.summary || "Analysis complete.";
+      safeSetText('val-app-curr', d.app_current);
+      safeSetText('val-app-sugg', d.app_suggested);
+      safeSetText('val-app-idea', d.app_keyidea);
+      safeSetText('val-eff-curr', d.eff_current);
+      safeSetText('val-eff-sugg', d.eff_suggested);
+      safeSetText('val-eff-idea', d.eff_suggestions);
+      safeSetText('val-sty-read', d.sty_readability);
+      safeSetText('val-sty-struc', d.sty_structure);
+      safeSetText('val-sty-idea', d.sty_suggestions);
     } else {
+      summaryElement.textContent = ''; // Safe Clear
       if (res?.authRequired) {
-        summary.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#a1a1aa; text-decoration:underline; font-weight:500;">Sign in to LeetCode Sprint to analyze submissions.</a>';
-        summary.className = 'sprint-ai-summary-muted';
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#a1a1aa; text-decoration:underline; font-weight:500;';
+        link.textContent = 'Sign in to LeetCode Sprint to analyze submissions.';
+        summaryElement.className = 'sprint-ai-summary-muted';
+        summaryElement.appendChild(link);
       } else if (res?.limitReached) {
-        summary.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; text-decoration:underline; font-weight:500;">Limit reached. Upgrade at getsprint.me/payments</a>';
-        summary.className = 'sprint-ai-summary sprint-text-warning';
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/payments';
+        link.target = '_blank';
+        link.style.cssText = 'color:#eff1f680; text-decoration:underline; font-weight:500;';
+        link.textContent = 'Limit reached. Upgrade at getsprint.me/payments';
+        summaryElement.className = 'sprint-ai-summary sprint-text-warning';
+        summaryElement.appendChild(link);
         alert(res.error);
       } else {
-        summary.textContent = "Analysis failed. Ensure service worker API is active.";
-        summary.className = 'sprint-ai-summary sprint-text-error';
+        summaryElement.textContent = "Analysis failed. Ensure service worker API is active.";
+        summaryElement.className = 'sprint-ai-summary sprint-text-error';
       }
     }
   });
+}
+
+function safeSetText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val || "N/A";
 }
 
 function closeWhereAmIWrongPopup() {
@@ -320,32 +439,113 @@ function closeWhereAmIWrongPopup() {
 function showWhereAmIWrongPopup() {
   if (injectionsDisabled) return;
   if (document.getElementById('sprint-custom-overlay')) return;
+
   const overlay = document.createElement('div');
   overlay.id = 'sprint-custom-overlay';
   overlay.className = 'sprint-overlay';
-  overlay.innerHTML = `
-    <div class="sprint-modal">
-      <div class="sprint-modal-header">
-        <div class="sprint-modal-title">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <span>Debugger Analysis</span>
-        </div>
-        <button id="sprint-close-x" class="sprint-close-x">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-      <div class="sprint-modal-body">
-        <h2 id="wrong-title" class="sprint-modal-section-title">Analyzing Code Logic...</h2>
-        <div class="sprint-modal-text-container">
-          <p id="wrong-feedback">Consulting AI model to scan for anomalies...</p>
-        </div>
-      </div>
-    </div>
-  `;
+
+  const modal = document.createElement('div');
+  modal.className = 'sprint-modal';
+
+  const header = document.createElement('div');
+  header.className = 'sprint-modal-header';
+
+  const titleWrapper = document.createElement('div');
+  titleWrapper.className = 'sprint-modal-title';
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("width", "14");
+  svg.setAttribute("height", "14");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "2.5");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke-linecap", "round");
+  svg.setAttribute("stroke-linejoin", "round");
+
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle.setAttribute("cx", "12");
+  circle.setAttribute("cy", "12");
+  circle.setAttribute("r", "10");
+  const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line1.setAttribute("x1", "12");
+  line1.setAttribute("y1", "8");
+  line1.setAttribute("x2", "12");
+  line1.setAttribute("y2", "12");
+  const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line2.setAttribute("x1", "12");
+  line2.setAttribute("y1", "16");
+  line2.setAttribute("x2", "12.01");
+  line2.setAttribute("y2", "16");
+
+  svg.appendChild(circle);
+  svg.appendChild(line1);
+  svg.appendChild(line2);
+
+  const titleSpan = document.createElement('span');
+  titleSpan.textContent = 'Debugger Analysis';
+
+  titleWrapper.appendChild(svg);
+  titleWrapper.appendChild(titleSpan);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.id = 'sprint-close-x';
+  closeBtn.className = 'sprint-close-x';
+
+  const closeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  closeSvg.setAttribute("width", "12");
+  closeSvg.setAttribute("height", "12");
+  closeSvg.setAttribute("viewBox", "0 0 24 24");
+  closeSvg.setAttribute("fill", "none");
+  closeSvg.setAttribute("stroke", "currentColor");
+  closeSvg.setAttribute("stroke-width", "2.5");
+  closeSvg.setAttribute("stroke-linecap", "round");
+  closeSvg.setAttribute("stroke-linejoin", "round");
+
+  const lineClose1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  lineClose1.setAttribute("x1", "18");
+  lineClose1.setAttribute("y1", "6");
+  lineClose1.setAttribute("x2", "6");
+  lineClose1.setAttribute("y2", "18");
+  const lineClose2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  lineClose2.setAttribute("x1", "6");
+  lineClose2.setAttribute("y1", "6");
+  lineClose2.setAttribute("x2", "18");
+  lineClose2.setAttribute("y2", "18");
+
+  closeSvg.appendChild(lineClose1);
+  closeSvg.appendChild(lineClose2);
+  closeBtn.appendChild(closeSvg);
+
+  header.appendChild(titleWrapper);
+  header.appendChild(closeBtn);
+
+  const body = document.createElement('div');
+  body.className = 'sprint-modal-body';
+
+  const secTitle = document.createElement('h2');
+  secTitle.id = 'wrong-title';
+  secTitle.className = 'sprint-modal-section-title';
+  secTitle.textContent = 'Analyzing Code Logic...';
+
+  const textContainer = document.createElement('div');
+  textContainer.className = 'sprint-modal-text-container';
+  textContainer.id = 'wrong-feedback-container';
+
+  const feedbackParagraph = document.createElement('p');
+  feedbackParagraph.id = 'wrong-feedback';
+  feedbackParagraph.textContent = 'Consulting AI model to scan for anomalies...';
+
+  textContainer.appendChild(feedbackParagraph);
+  body.appendChild(secTitle);
+  body.appendChild(textContainer);
+
+  modal.appendChild(header);
+  modal.appendChild(body);
+  overlay.appendChild(modal);
+
   document.body.appendChild(overlay);
-  document.getElementById('sprint-close-x').addEventListener('click', closeWhereAmIWrongPopup);
+  closeBtn.addEventListener('click', closeWhereAmIWrongPopup);
 }
 
 async function triggerWhereAmIWrong() {
@@ -371,16 +571,30 @@ async function triggerWhereAmIWrong() {
 
   chrome.runtime.sendMessage({ type: "FETCH_WHERE_AM_I_WRONG", code: rawCode, problemTitle: title, problemContext: ctx }, (res) => {
     const titleEl = document.getElementById('wrong-title');
-    const feedback = document.getElementById('wrong-feedback');
-    if (!feedback) return;
+    const container = document.getElementById('wrong-feedback-container');
+    if (!container || !titleEl) return;
+
+    container.innerHTML = ''; // Safe Clear
 
     if (res?.success) {
       if (res.authRequired || res.data?.authRequired) {
         titleEl.textContent = 'Sign In Required';
         titleEl.style.color = '#e0a96d';
-        feedback.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
+        
+        const textNode = document.createElement('p');
+        textNode.textContent = 'You must be logged in to use the AI Debugger.';
+        
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#cd5c5c; font-weight:600; text-decoration:underline; display:block; margin-top:12px;';
+        link.textContent = 'Click here to Sign In';
+        
+        container.appendChild(textNode);
+        container.appendChild(link);
         return;
       }
+
       const rawText = (res.data.feedback || "").trim();
       const cleanText = rawText.toLowerCase().replace(/[^a-z]/g, '');
       const isClean = cleanText === "therearenoerrors" || rawText.toLowerCase().includes("there are no errors") || (!rawText.includes("-") && rawText.length < 35);
@@ -388,33 +602,45 @@ async function triggerWhereAmIWrong() {
       if (isClean) {
         titleEl.textContent = 'No Issues Found';
         titleEl.style.color = '#6eda30';
-        feedback.textContent = 'There are no errors.';
-        feedback.className = 'sprint-text-success';
+        
+        const p = document.createElement('p');
+        p.className = 'sprint-text-success';
+        p.textContent = 'There are no errors.';
+        container.appendChild(p);
       } else {
         titleEl.textContent = 'Issue Found';
         titleEl.style.color = '#b56363';
         
-        // Escape bracket formats and cleanly map dashes to visual newlines
         const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-        const formattedLines = lines.map(line => {
-          const escapedLine = line
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-          if (escapedLine.startsWith('-')) {
-            return `• ${escapedLine.substring(1).trim()}`;
+        lines.forEach((line) => {
+          const p = document.createElement('p');
+          p.className = 'sprint-text-error';
+          p.style.marginBottom = '10px';
+          
+          if (line.startsWith('-')) {
+            p.textContent = `• ${line.substring(1).trim()}`;
+          } else {
+            p.textContent = line;
           }
-          return escapedLine;
+          container.appendChild(p);
         });
-
-        feedback.innerHTML = formattedLines.join('<br><br>');
-        feedback.className = 'sprint-text-error';
       }
     } else {
       if (res?.authRequired) {
         titleEl.textContent = 'Sign In Required';
         titleEl.style.color = '#e0a96d';
-        feedback.innerHTML = 'You must be logged in.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
+        
+        const p = document.createElement('p');
+        p.textContent = 'You must be logged in.';
+        
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#cd5c5c; font-weight:600; text-decoration:underline; display:block; margin-top:12px;';
+        link.textContent = 'Click here to Sign In';
+        
+        container.appendChild(p);
+        container.appendChild(link);
       } else if (res?.limitReached) {
         closeWhereAmIWrongPopup();
         alert(res.error);
@@ -422,8 +648,11 @@ async function triggerWhereAmIWrong() {
       } else {
         titleEl.textContent = 'Analysis Failed';
         titleEl.style.color = '#f87171';
-        feedback.textContent = res?.error || "Could not reach the server.";
-        feedback.className = 'sprint-text-error';
+        
+        const p = document.createElement('p');
+        p.className = 'sprint-text-error';
+        p.textContent = res?.error || "Could not reach the server.";
+        container.appendChild(p);
       }
     }
   });
@@ -441,14 +670,33 @@ function injectWhereAmIWrongButton() {
   const btn = document.createElement('div');
   btn.id = 'sprint-wrong-btn';
   btn.className = 'sprint-wrong-btn-style';
-  btn.innerHTML = `
-    <span class="sprint-btn-inner">
-      <svg class="sprint-sparkle-glow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-      <span>AI Insights</span>
-    </span>
-  `;
+
+  const btnInner = document.createElement('span');
+  btnInner.className = 'sprint-btn-inner';
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "sprint-sparkle-glow");
+  svg.setAttribute("width", "12");
+  svg.setAttribute("height", "12");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "2.5");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z");
+  svg.appendChild(path);
+
+  const label = document.createElement('span');
+  label.textContent = 'AI Insights';
+
+  btnInner.appendChild(svg);
+  btnInner.appendChild(label);
+  btn.appendChild(btnInner);
+
   btn.addEventListener('pointerdown', (e) => {
-    e.stopPropagation(); e.preventDefault();
+    e.stopPropagation();
+    e.preventDefault();
     triggerWhereAmIWrong();
   });
   codeTab.insertAdjacentElement('afterend', btn);

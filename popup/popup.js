@@ -29,21 +29,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     themes.classList.add('premium-locked');
     const overlay = document.createElement('div');
     overlay.className = 'themes-lock-overlay';
-    overlay.innerHTML = `
-      <div class="lock-overlay-content">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-bottom: 4px;">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-        <span>Premium Themes Locked</span>
-        <a href="https://getsprint.me/payments/index.html" id="lock-cta-btn" class="btn-lock-upgrade">Upgrade Now</a>
-      </div>
-    `;
+    
+    // Explicit programmatic build to avoid innerHTML compliance warnings
+    const content = document.createElement('div');
+    content.className = 'lock-overlay-content';
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "16");
+    svg.setAttribute("height", "16");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2.5");
+    svg.style.marginBottom = "4px";
+
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", "3");
+    rect.setAttribute("y", "11");
+    rect.setAttribute("width", "18");
+    rect.setAttribute("height", "11");
+    rect.setAttribute("rx", "2");
+    rect.setAttribute("ry", "2");
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M7 11V7a5 5 0 0 1 10 0v4");
+
+    svg.appendChild(rect);
+    svg.appendChild(path);
+
+    const lockText = document.createElement('span');
+    lockText.textContent = "Premium Themes Locked";
+
+    const ctaBtn = document.createElement('a');
+    ctaBtn.id = 'lock-cta-btn';
+    ctaBtn.className = 'btn-lock-upgrade';
+    ctaBtn.href = 'https://getsprint.me/payments/index.html';
+    ctaBtn.textContent = 'Upgrade Now';
+
+    content.appendChild(svg);
+    content.appendChild(lockText);
+    content.appendChild(ctaBtn);
+    overlay.appendChild(content);
+
     themes.style.position = 'relative';
     themes.appendChild(overlay);
     
-    const lockCta = document.getElementById('lock-cta-btn');
-    if (lockCta) lockCta.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: lockCta.href }); });
+    ctaBtn.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: ctaBtn.href }); });
   }
 
   const dots = document.querySelectorAll('.dot');

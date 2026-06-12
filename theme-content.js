@@ -133,7 +133,17 @@
   function initVisibilityObserver() {
     if (observer) observer.disconnect();
     if (!findMode()) return;
-    observer = new MutationObserver(() => {
+    observer = new MutationObserver((mutations) => {
+      // Performance optimization: check if any actual structural tree mutations occurred
+      let structuralChange = false;
+      for (const m of mutations) {
+        if (m.type === 'childList' && m.addedNodes.length > 0) {
+          structuralChange = true;
+          break;
+        }
+      }
+      if (!structuralChange) return;
+
       if (debounce) clearTimeout(debounce);
       debounce = setTimeout(() => { if (cachedOptions) applyVisibilityChanges(cachedOptions); }, 150);
     });
@@ -156,6 +166,7 @@
     injectVisibilityStyles();
     const { options } = await chrome.storage.local.get('options');
     const defaultOpts = [
+      { optionName: 'removeInjections', checked: false },
       { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
       { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
       { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },
@@ -202,7 +213,7 @@
       return;
     }
 
-    // Direct, CSP-safe background network proxy loop
+    // Direct background network proxy loop
     chrome.runtime.sendMessage({ type: "FETCH_THEME", theme }, async (res) => {
       if (res?.success && res.data?.fullCSS) {
         document.documentElement.setAttribute('data-lc-theme', theme);
