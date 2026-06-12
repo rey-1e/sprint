@@ -1,24 +1,19 @@
-/* --- GLOBAL UTILS --- */
-.sprint-hidden {
-    display: none !important;
-}
-
+.sprint-hidden { display: none !important; }
 .sprint-text-success { color: #6eda30 !important; }
 .sprint-text-warning { color: #e0a96d !important; }
 .sprint-text-error { color: #f87171 !important; }
 .sprint-text-info { color: #CD5C5C !important; }
 .sprint-text-muted { color: #a1a1aa !important; }
 
-/* --- COMPANY TAGS --- */
 .company-tags-wrapper {
     display: flex !important;
     gap: 8px !important;
-    margin: 4px 0px 0px 0px !important;
-    padding: 0px !important;
+    margin: 4px 0 0 0 !important;
+    padding: 0 !important;
 }
 
 .company-tag {
-    background-color: #FFFFFF1A !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
     color: #FAFAFA !important;
     padding: 4px 8px !important;
     border-radius: 12px !important;
@@ -27,32 +22,22 @@
     white-space: nowrap; 
 }
 
-/* --- COMPLEXITY ANALYZER STYLES --- */
 .complexity-container {
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 0 16px;
     font-size: 13px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #eff1f6bf;
+    font-family: -apple-system, sans-serif;
+    color: rgba(239, 241, 246, 0.75);
     margin-right: auto;
 }
 
-.complexity-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.complexity-label {
-    font-weight: 500;
-    color: #eff1f680;
-}
-
+.complexity-item { display: flex; align-items: center; gap: 6px; }
+.complexity-label { font-weight: 500; color: rgba(239, 241, 246, 0.5); }
 .complexity-value {
     font-weight: 600;
-    font-family: "SF Mono", "Fira Code", monospace;
+    font-family: monospace;
     font-size: 13px;
     color: #eff1f6;
     background-color: rgba(255, 255, 255, 0.08);
@@ -61,14 +46,8 @@
     min-width: 40px;
     text-align: center;
 }
+.complexity-status { font-size: 12px; font-style: italic; transition: color 0.3s; }
 
-.complexity-status {
-    font-size: 12px;
-    font-style: italic;
-    transition: color 0.3s ease;
-}
-
-/* --- ACCEPTED SUBMISSION AI STYLES --- */
 .sprint-ai-analysis {
     background-color: #2a2a2a !important;
     padding: 16px !important;
@@ -76,31 +55,18 @@
     border: 1px solid #3f3f46 !important;
     width: 100%;
     margin-bottom: 14px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, sans-serif;
     font-size: 13px !important;
     line-height: 1.5;
     box-sizing: border-box;
 }
 
-.sprint-ai-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.sprint-ai-tabs {
-    display: flex;
-    gap: 16px;
-    border-bottom: 1px solid #3f3f46;
-    width: 100%;
-    padding-bottom: 8px;
-}
-
+.sprint-ai-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.sprint-ai-tabs { display: flex; gap: 16px; border-bottom: 1px solid #3f3f46; width: 100%; padding-bottom: 8px; }
 .sprint-ai-tab {
     color: #a1a1aa;
     cursor: pointer;          
-    transition: color 0.15s ease;   
+    transition: color 0.15s;   
     display: inline-flex;
     align-items: center;
     font-weight: 500;
@@ -108,15 +74,8 @@
     position: relative;
     padding-bottom: 8px;
 }
-
-.sprint-ai-tab:hover {
-    color: #ffffff;
-}
-
-.sprint-ai-tab.active {
-    color: #CD5C5C;           
-}
-
+.sprint-ai-tab:hover { color: #ffffff; }
+.sprint-ai-tab.active { color: #CD5C5C; }
 .sprint-ai-tab.active::after {
     content: '';
     position: absolute;
@@ -149,35 +108,13 @@
     color: #a1a1aa;
 }
 
-.sprint-ai-grid {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 10px 16px;
-    align-items: flex-start;
-}
+.sprint-ai-grid { display: grid; grid-template-columns: 100px 1fr; gap: 10px 16px; align-items: flex-start; }
+.sprint-ai-label { color: #a1a1aa; font-weight: 500; font-size: 12.5px; }
+.sprint-ai-val { color: #ffffff; font-size: 13px; }
+.sprint-ai-content { animation: sprintFadeIn 0.15s ease-out forwards; }
 
-.sprint-ai-label {
-    color: #a1a1aa;
-    font-weight: 500;
-    font-size: 12.5px;
-    padding-top: 1px;
-}
+@keyframes sprintFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.sprint-ai-val {
-    color: #ffffff;
-    font-size: 13px;
-}
-
-.sprint-ai-content {
-    animation: sprintFadeIn 0.15s ease-out forwards; 
-}
-
-@keyframes sprintFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* --- "WHERE AM I WRONG" INJECTED BUTTON --- */
 .sprint-wrong-btn-style {
     display: inline-flex;
     align-items: center;
@@ -191,7 +128,7 @@
     font-size: 12px;
     height: 28px;
     box-sizing: border-box;
-    transition: all 0.15s ease;
+    transition: all 0.15s;
     font-family: inherit;
     font-weight: 500;
     white-space: nowrap;
@@ -204,29 +141,20 @@
     color: #e28f8f;
 }
 
-.sprint-btn-inner {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
+.sprint-btn-inner { display: flex; align-items: center; gap: 6px; }
+.sprint-sparkle-glow { color: #CD5C5C; }
 
-.sprint-sparkle-glow {
-    color: #CD5C5C;
-}
-
-/* --- MODAL (POPUP) UI STYLES --- */
 .sprint-overlay {
     position: fixed;
     inset: 0;
     background: transparent;
-    backdrop-filter: none !important;
     pointer-events: none;
     z-index: 2147483647;
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
     padding: 24px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, sans-serif;
     box-sizing: border-box;
 }
 
@@ -255,20 +183,8 @@
     background: #161618;
 }
 
-.sprint-modal-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #b56363;
-}
-
-.sprint-modal-title span {
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.2px;
-    color: #d1d1d6;
-}
-
+.sprint-modal-title { display: flex; align-items: center; gap: 8px; color: #b56363; }
+.sprint-modal-title span { font-weight: 600; font-size: 13px; color: #d1d1d6; }
 .sprint-close-x {
     background: transparent;
     border: none;
@@ -281,11 +197,7 @@
     justify-content: center;
     transition: color 0.15s, background-color 0.15s;
 }
-
-.sprint-close-x:hover {
-    color: #d1d1d6;
-    background-color: rgba(255, 255, 255, 0.05);
-}
+.sprint-close-x:hover { color: #d1d1d6; background-color: rgba(255, 255, 255, 0.05); }
 
 .sprint-modal-body {
     font-family: monospace;
@@ -297,69 +209,28 @@
     box-sizing: border-box;
 }
 
-/* Custom Scroll Styling inside popup */
-.sprint-modal-body::-webkit-scrollbar {
-    width: 6px !important;
-    display: block !important;
-}
-.sprint-modal-body::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-radius: 3px !important;
-}
-.sprint-modal-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2) !important;
-}
+.sprint-modal-body::-webkit-scrollbar { width: 6px !important; display: block !important; }
+.sprint-modal-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1) !important; border-radius: 3px !important; }
+.sprint-modal-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2) !important; }
 
-.sprint-modal-section-title {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #e4e4e7;
-    text-align: left;
-    width: 100%;
-}
+.sprint-modal-section-title { margin: 0 0 10px 0; font-size: 14px; font-weight: 600; color: #e4e4e7; text-align: left; }
+.sprint-modal-text-container { background-color: transparent; border: none; padding: 0; width: 100%; }
+.sprint-modal-text-container p { margin: 0; font-size: 13.5px; color: #a1a1aa; line-height: 1.6; text-align: left; }
 
-.sprint-modal-text-container {
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    width: 100%;
-}
-
-.sprint-modal-text-container p {
-    margin: 0;
-    font-size: 13.5px;
-    color: #a1a1aa;
-    line-height: 1.6;
-    text-align: left;
-    width: 100%;
-}
-
-/* Animations */
 @keyframes sprint-pop-in {
     0% { transform: scale(0.95) translateY(10px); opacity: 0; }
     100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
-.sprint-fade-out {
-    animation: sprint-fade-out 0.12s ease-in forwards !important;
-}
+.sprint-fade-out { animation: sprint-fade-out 0.12s ease-in forwards !important; }
+.sprint-pop-out { animation: sprint-pop-out 0.12s ease-in forwards !important; }
 
-.sprint-pop-out {
-    animation: sprint-pop-out 0.12s ease-in forwards !important;
-}
-
-@keyframes sprint-fade-out {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
+@keyframes sprint-fade-out { 0% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes sprint-pop-out {
     0% { transform: scale(1) translateY(0); opacity: 1; }
     100% { transform: scale(0.95) translateY(10px); opacity: 0; }
 }
 
-/* --- REDIRECT PILL (GOOGLE LINK) --- */
 .sprint-pill-editor-btn {
     background-color: rgba(255, 255, 255, 0.08) !important;
     color: rgba(255, 255, 255, 0.8) !important;
@@ -369,7 +240,7 @@
     font-size: 12px !important;
     font-weight: 500 !important;
     text-decoration: none !important;
-    transition: background-color 0.15s, color 0.15s, border-color 0.15s !important;
+    transition: all 0.15s !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -379,7 +250,6 @@
     margin-left: auto !important;
     margin-right: 12px !important;
 }
-
 .sprint-pill-editor-btn:hover {
     background-color: rgba(255, 255, 255, 0.14) !important;
     color: #ffffff !important;

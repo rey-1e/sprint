@@ -1,56 +1,30 @@
 (() => {
   const currentHost = window.location.hostname;
-  if (
-    currentHost.includes('getsprint.me') ||
-    currentHost.includes('localhost') ||
-    currentHost.includes('127.0.0.1')
-  ) {
+  if (currentHost.includes('getsprint.me') || currentHost.includes('localhost') || currentHost.includes('127.0.0.1')) {
     const syncTokenFromDOM = () => {
-      const authState = document.documentElement.getAttribute('data-sprint-auth');
-      const premiumState = document.documentElement.getAttribute('data-sprint-premium');
-      
-      if (authState) {
-        if (authState === 'logout') {
+      const auth = document.documentElement.getAttribute('data-sprint-auth');
+      const prem = document.documentElement.getAttribute('data-sprint-premium');
+      if (auth) {
+        if (auth === 'logout') {
           chrome.storage.local.remove(['authToken', 'isPremium', 'cachedThemeCSS']);
         } else {
-          chrome.storage.local.set({ authToken: authState });
+          chrome.storage.local.set({ authToken: auth });
         }
       }
-
-      if (premiumState) {
-        chrome.storage.local.set({ isPremium: premiumState === 'true' });
-      }
+      if (prem) chrome.storage.local.set({ isPremium: prem === 'true' });
     };
 
     syncTokenFromDOM();
-
-    const authObserver = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (
-          mutation.type === 'attributes' &&
-          (mutation.attributeName === 'data-sprint-auth' || mutation.attributeName === 'data-sprint-premium')
-        ) {
-          syncTokenFromDOM();
-        }
-      }
-    });
-
-    authObserver.observe(document.documentElement, {
+    new MutationObserver(() => syncTokenFromDOM()).observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-sprint-auth', 'data-sprint-premium']
     });
-
-    return; 
+    return;
   }
 
   let savedTheme = 'default';
   let cachedOptions = null;
-
-  const Mode = {
-    PROBLEM_SET: 'PROBLEM_SET',
-    CODING_AREA: 'CODING_AREA',
-    CONTEST: 'CONTEST'
-  };
+  const Mode = { PROBLEM_SET: 'PS', CODING_AREA: 'CA', CONTEST: 'CO' };
 
   function findMode() {
     const url = window.location.href;
@@ -61,384 +35,230 @@
   }
 
   class ProblemSetStrategy {
-    constructor() {
-      this.cachedRows = null;
-    }
-
+    constructor() { this.rows = null; }
     getRows() {
-      if (!this.cachedRows || this.cachedRows.length === 0) {
-        this.cachedRows = document.querySelectorAll('a[id]');
-      }
-      return this.cachedRows;
+      if (!this.rows?.length) this.rows = document.querySelectorAll('a[id]');
+      return this.rows;
     }
-
-    hideLockedProblems(checked) {
-      this.getRows().forEach(row => {
-        const lockSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="lock"]') || row.querySelector('div>div:nth-child(1)>svg');
-        const isLock = lockSvg && (lockSvg.getAttribute('data-icon') === 'lock' || lockSvg.classList.contains('fa-lock'));
-        if (isLock) {
-          row.classList.toggle('hide_leetcode-enhancer', !checked);
-        }
+    hideLockedProblems(c) {
+      this.getRows().forEach(r => {
+        const svg = r.querySelector('div>div:nth-child(1)>svg[data-icon="lock"]') || r.querySelector('div>div:nth-child(1)>svg');
+        if (svg && (svg.getAttribute('data-icon') === 'lock' || svg.classList.contains('fa-lock'))) r.classList.toggle('hide_leetcode-enhancer', !c);
       });
     }
-
-    highlightSolvedProblems(checked) {
-      const isDarkMode = document.documentElement.classList.contains('dark');
-      const targetClass = isDarkMode
-        ? 'add-bg-dark_leetcode-enhancer'
-        : 'add-bg-light_leetcode-enhancer';
-
-      this.getRows().forEach(row => {
-        const checkSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="check"]') || row.querySelector('div>div:nth-child(1)>svg');
-        const isCheck = checkSvg && (checkSvg.getAttribute('data-icon') === 'check' || checkSvg.classList.contains('fa-check'));
-        if (isCheck) {
-          row.classList.remove(
-            'add-bg-dark_leetcode-enhancer',
-            'add-bg-light_leetcode-enhancer'
-          );
-          if (checked) row.classList.add(targetClass);
-        }
+    highlightSolvedProblems(c) {
+      const isDark = document.documentElement.classList.contains('dark');
+      const cls = isDark ? 'add-bg-dark_leetcode-enhancer' : 'add-bg-light_leetcode-enhancer';
+      this.getRows().forEach(r => {
+        const svg = r.querySelector('div>div:nth-child(1)>svg[data-icon="check"]') || r.querySelector('div>div:nth-child(1)>svg');
+        const isCheck = svg && (svg.getAttribute('data-icon') === 'check' || svg.classList.contains('fa-check'));
+        r.classList.remove('add-bg-dark_leetcode-enhancer', 'add-bg-light_leetcode-enhancer');
+        if (isCheck && c) r.classList.add(cls);
       });
     }
-
-    hideSolvedProb(checked) {
-      this.getRows().forEach(row => {
-        const checkSvg = row.querySelector('div>div:nth-child(1)>svg[data-icon="check"]') || row.querySelector('div>div:nth-child(1)>svg');
-        const isCheck = checkSvg && (checkSvg.getAttribute('data-icon') === 'check' || checkSvg.classList.contains('fa-check'));
-        if (isCheck) {
-          row.classList.toggle('hide_leetcode-enhancer', !checked);
-        }
+    hideSolvedProb(c) {
+      this.getRows().forEach(r => {
+        const svg = r.querySelector('div>div:nth-child(1)>svg[data-icon="check"]') || r.querySelector('div>div:nth-child(1)>svg');
+        if (svg && (svg.getAttribute('data-icon') === 'check' || svg.classList.contains('fa-check'))) r.classList.toggle('hide_leetcode-enhancer', !c);
       });
     }
-
-    toggleByColName(colName, checked) {
-      const colMap = {
-        status: 'div>div:nth-child(1)',
-        acceptance: 'div>div:nth-child(2)>div:nth-child(2)',
-        difficulty: 'div>div:nth-child(2)>p:nth-child(3)',
-        frequency: 'div>div:nth-child(3)',
-        save: 'div>div:nth-child(4)>div'
-      };
-
-      const selector = colMap[colName];
-      if (!selector) return;
-
-      this.getRows().forEach(row => {
-        row.querySelector(selector)?.classList.toggle('hide_leetcode-enhancer', !checked);
-      });
+    toggleByColName(col, c) {
+      const map = { status: 'div>div:nth-child(1)', acceptance: 'div>div:nth-child(2)>div:nth-child(2)', difficulty: 'div>div:nth-child(2)>p:nth-child(3)', frequency: 'div>div:nth-child(3)', save: 'div>div:nth-child(4)>div' };
+      if (map[col]) this.getRows().forEach(r => r.querySelector(map[col])?.classList.toggle('hide_leetcode-enhancer', !c));
     }
   }
 
   class CodingAreaStrategy {
-    hideSolvedDiff(checked) {
-      // Precise, future-proof selector for all difficulty labels on the page
-      const diffs = document.querySelectorAll('[class*="text-difficulty-"]');
-      diffs.forEach(el => {
-        el.classList.toggle('hide_leetcode-enhancer', !checked);
-      });
+    hideSolvedDiff(c) {
+      document.querySelectorAll('[class*="text-difficulty-"]').forEach(el => el.classList.toggle('hide_leetcode-enhancer', !c));
     }
-
-    hideDiffOfSimilarProb(checked) {
-      // Beautifully covered under hideSolvedDiff selector above.
-    }
-
-    hideStatus(checked) {
+    hideStatus(c) {
       const slug = window.location.pathname.split("/")[2];
-      if (!slug) return;
-      const problemLink = document.querySelector(`a[href='/problems/${slug}/']`);
-      problemLink?.parentNode?.parentNode?.nextSibling?.classList.toggle(
-        'hide_leetcode-enhancer',
-        !checked
-      );
+      if (slug) document.querySelector(`a[href*='/problems/${slug}']`)?.parentNode?.parentNode?.nextSibling?.classList.toggle('hide_leetcode-enhancer', !c);
     }
-
-    hideAcceptance(checked) {
+    hideAcceptance(c) {
       const slug = window.location.pathname.split("/")[2];
-      if (!slug) return;
-      const problemLink = document.querySelector(`a[href='/problems/${slug}/']`);
-      const acceptanceElement =
-        problemLink?.parentNode?.parentNode?.parentNode?.nextSibling?.nextSibling
-          ?.nextSibling?.children?.[3];
-      acceptanceElement?.classList.toggle('hide_leetcode-enhancer', !checked);
-    }
-
-    hideSave(checked) {
-      document
-        .querySelector("svg[data-icon='star']")
-        ?.classList.toggle('hide_leetcode-enhancer', !checked);
-    }
-
-    toggleByColName(colName, checked) {
-      if (colName === 'difficulty') {
-        this.hideSolvedDiff(checked);
-        this.hideDiffOfSimilarProb(checked);
-      } else if (colName === 'status') {
-        this.hideStatus(checked);
-      } else if (colName === 'acceptance') {
-        this.hideAcceptance(checked);
-      } else if (colName === 'save') {
-        this.hideSave(checked);
+      if (slug) {
+        const link = document.querySelector(`a[href*='/problems/${slug}']`);
+        link?.parentNode?.parentNode?.parentNode?.nextSibling?.nextSibling?.nextSibling?.children?.[3]?.classList.toggle('hide_leetcode-enhancer', !c);
       }
+    }
+    hideSave(c) { document.querySelector("svg[data-icon='star']")?.classList.toggle('hide_leetcode-enhancer', !c); }
+    toggleByColName(col, c) {
+      if (col === 'difficulty') this.hideSolvedDiff(c);
+      else if (col === 'status') this.hideStatus(c);
+      else if (col === 'acceptance') this.hideAcceptance(c);
+      else if (col === 'save') this.hideSave(c);
     }
   }
 
   class ContestStrategy {
-    hideDiffFromContest(checked) {
-      const oldDiffLabel = document.querySelector(
-        '.contest-question-info .list-group .list-group-item:nth-child(5) .label'
-      );
-      if (oldDiffLabel) {
-        oldDiffLabel.style.visibility = checked ? 'visible' : 'hidden';
-        return;
-      }
-
-      const diffClasses = [
-        '.text-difficulty-easy',
-        '.text-difficulty-medium',
-        '.text-difficulty-hard',
-        '.text-sd-easy',
-        '.text-sd-medium',
-        '.text-sd-hard'
-      ];
-      diffClasses.forEach(selector => {
-        document.querySelectorAll(selector).forEach(label => {
-          label.classList.toggle('hide_leetcode-enhancer', !checked);
-        });
+    hideDiffFromContest(c) {
+      const label = document.querySelector('.contest-question-info .list-group .list-group-item:nth-child(5) .label');
+      if (label) { label.style.visibility = c ? 'visible' : 'hidden'; return; }
+      ['.text-difficulty-easy', '.text-difficulty-medium', '.text-difficulty-hard', '.text-sd-easy', '.text-sd-medium', '.text-sd-hard'].forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => el.classList.toggle('hide_leetcode-enhancer', !c));
       });
     }
-
-    toggleByColName(colName, checked) {
-      if (colName === 'difficulty') {
-        this.hideDiffFromContest(checked);
-      }
-    }
+    toggleByColName(col, c) { if (col === 'difficulty') this.hideDiffFromContest(c); }
   }
 
-  const strategyCache = {};
-  function getStrategy(mode) {
-    if (!mode) return null;
-    if (!strategyCache[mode]) {
-      if (mode === Mode.PROBLEM_SET) strategyCache[mode] = new ProblemSetStrategy();
-      if (mode === Mode.CODING_AREA) strategyCache[mode] = new CodingAreaStrategy();
-      if (mode === Mode.CONTEST) strategyCache[mode] = new ContestStrategy();
+  const stratCache = {};
+  function getStrategy(m) {
+    if (!m) return null;
+    if (!stratCache[m]) {
+      if (m === Mode.PROBLEM_SET) stratCache[m] = new ProblemSetStrategy();
+      if (m === Mode.CODING_AREA) stratCache[m] = new CodingAreaStrategy();
+      if (m === Mode.CONTEST) stratCache[m] = new ContestStrategy();
     }
-    return strategyCache[mode];
+    return stratCache[m];
   }
 
-  function applyVisibilityChanges(options) {
-    const mode = findMode();
-    const strategy = getStrategy(mode);
-    if (!strategy || !options) return;
+  function applyVisibilityChanges(opts) {
+    const m = findMode();
+    const strat = getStrategy(m);
+    if (!strat || !opts) return;
+    if (strat.rows) strat.rows = null;
 
-    if (strategy.cachedRows) strategy.cachedRows = null;
-
-    options.forEach(option => {
-      const { optionName: name, checked } = option;
-
-      if (name === 'locked') {
-        if (typeof strategy.hideLockedProblems === 'function')
-          strategy.hideLockedProblems(checked);
-      } else if (name === 'highlight') {
-        if (typeof strategy.highlightSolvedProblems === 'function')
-          strategy.highlightSolvedProblems(checked);
-      } else if (name === 'solved') {
-        if (typeof strategy.hideSolvedProb === 'function')
-          strategy.hideSolvedProb(checked);
-      } else {
-        if (typeof strategy.toggleByColName === 'function')
-          strategy.toggleByColName(name, checked);
-      }
+    opts.forEach(o => {
+      const { optionName: name, checked: c } = o;
+      if (name === 'locked' && typeof strat.hideLockedProblems === 'function') strat.hideLockedProblems(c);
+      else if (name === 'highlight' && typeof strat.highlightSolvedProblems === 'function') strat.highlightSolvedProblems(c);
+      else if (name === 'solved' && typeof strat.hideSolvedProb === 'function') strat.hideSolvedProb(c);
+      else if (typeof strat.toggleByColName === 'function') strat.toggleByColName(name, c);
     });
   }
 
-  let observer = null;
-  let visibilityDebounce = null;
-
+  let observer = null, debounce = null;
   function initVisibilityObserver() {
     if (observer) observer.disconnect();
+    if (!findMode()) return;
+    observer = new MutationObserver((mutations) => {
+      // Performance optimization: check if any actual structural tree mutations occurred
+      let structuralChange = false;
+      for (const m of mutations) {
+        if (m.type === 'childList' && m.addedNodes.length > 0) {
+          structuralChange = true;
+          break;
+        }
+      }
+      if (!structuralChange) return;
 
-    const mode = findMode();
-    if (!mode) return;
-
-    observer = new MutationObserver(() => {
-      if (visibilityDebounce) clearTimeout(visibilityDebounce);
-      visibilityDebounce = setTimeout(() => {
-        if (cachedOptions) applyVisibilityChanges(cachedOptions);
-      }, 150);
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(() => { if (cachedOptions) applyVisibilityChanges(cachedOptions); }, 150);
     });
-
-    const targetElement = document.documentElement;
-    if (targetElement) {
-      observer.observe(targetElement, { childList: true, subtree: true });
-    }
+    if (document.documentElement) observer.observe(document.documentElement, { childList: true, subtree: true });
   }
 
   function injectVisibilityStyles() {
-    let styleTag = document.getElementById('sprint-visibility-styles');
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = 'sprint-visibility-styles';
-      styleTag.textContent = `
-        .add-bg-light_leetcode-enhancer {
-            background-color: #a1ffa5 !important;
-        }
-        .add-bg-dark_leetcode-enhancer {
-            background-color: rgb(115, 115, 115) !important;
-        }
-        .hide_leetcode-enhancer {
-            display: none !important;
-        }
-      `;
-      document.documentElement.appendChild(styleTag);
-    }
+    if (document.getElementById('sprint-visibility-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'sprint-visibility-styles';
+    style.textContent = `
+      .add-bg-light_leetcode-enhancer { background-color: #a1ffa5 !important; }
+      .add-bg-dark_leetcode-enhancer { background-color: rgb(115, 115, 115) !important; }
+      .hide_leetcode-enhancer { display: none !important; }
+    `;
+    document.documentElement.appendChild(style);
   }
 
   async function initOptions() {
     injectVisibilityStyles();
     const { options } = await chrome.storage.local.get('options');
     const defaultOpts = [
-      { optionName: 'locked', checked: true },
-      { optionName: 'highlight', checked: false },
-      { optionName: 'solved', checked: true },
-      { optionName: 'status', checked: true },
-      { optionName: 'acceptance', checked: true },
-      { optionName: 'difficulty', checked: true },
-      { optionName: 'frequency', checked: true },
-      { optionName: 'save', checked: true }
+      { optionName: 'removeInjections', checked: false },
+      { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
+      { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
+      { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },
+      { optionName: 'frequency', checked: true }, { optionName: 'save', checked: true }
     ];
-
     cachedOptions = options || defaultOpts;
-    if (!options) {
-      await chrome.storage.local.set({ options: defaultOpts });
-    }
-
+    if (!options) await chrome.storage.local.set({ options: defaultOpts });
     applyVisibilityChanges(cachedOptions);
     initVisibilityObserver();
   }
 
   function injectSecureStyle(cssText) {
-    let styleTag = document.getElementById('sprint-secure-theme-sheet');
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = 'sprint-secure-theme-sheet';
-      document.documentElement.appendChild(styleTag);
+    let style = document.getElementById('sprint-secure-theme-sheet');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'sprint-secure-theme-sheet';
+      document.documentElement.appendChild(style);
     }
-    styleTag.textContent = cssText;
+    style.textContent = cssText;
   }
 
   function clearSecureStyle() {
-    const styleTag = document.getElementById('sprint-secure-theme-sheet');
-    if (styleTag) styleTag.remove();
+    const style = document.getElementById('sprint-secure-theme-sheet');
+    if (style) style.remove();
     document.documentElement.removeAttribute('data-lc-theme');
   }
 
   async function initTheme() {
-    const localData = await chrome.storage.local.get(['leetcodeTheme', 'cachedThemeCSS']);
-    savedTheme = localData.leetcodeTheme || 'default';
-
-    if (savedTheme !== 'default' && localData.cachedThemeCSS) {
+    const local = await chrome.storage.local.get(['leetcodeTheme', 'cachedThemeCSS']);
+    savedTheme = local.leetcodeTheme || 'default';
+    if (savedTheme !== 'default' && local.cachedThemeCSS) {
       document.documentElement.setAttribute('data-lc-theme', savedTheme);
       document.documentElement.classList.add('dark');
-      injectSecureStyle(localData.cachedThemeCSS);
+      injectSecureStyle(local.cachedThemeCSS);
     }
-
     await applyTheme(savedTheme, true);
     observeTheme();
   }
 
-  async function applyTheme(theme, isBackgroundCheck = false) {
+  async function applyTheme(theme, isBgCheck = false) {
     if (theme === 'default') {
       clearSecureStyle();
       await chrome.storage.local.remove('cachedThemeCSS');
       return;
     }
 
-    const { authToken = "" } = await chrome.storage.local.get('authToken');
-
-    try {
-      const res = await fetch('https://gettheme-i6ptizncma-uc.a.run.app', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-          'X-Client-Version': '3.0'
-        },
-        body: JSON.stringify({ themeName: theme })
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success && data.fullCSS) {
+    // Direct background network proxy loop
+    chrome.runtime.sendMessage({ type: "FETCH_THEME", theme }, async (res) => {
+      if (res?.success && res.data?.fullCSS) {
         document.documentElement.setAttribute('data-lc-theme', theme);
         document.documentElement.classList.add('dark');
-        injectSecureStyle(data.fullCSS);
-        await chrome.storage.local.set({ cachedThemeCSS: data.fullCSS });
+        injectSecureStyle(res.data.fullCSS);
+        await chrome.storage.local.set({ cachedThemeCSS: res.data.fullCSS });
       } else {
         clearSecureStyle();
         await chrome.storage.local.remove('cachedThemeCSS');
-
-        if (!isBackgroundCheck && theme !== 'default') {
+        if (!isBgCheck && theme !== 'default') {
           alert("Premium is required to use Custom Themes!");
           window.open('https://getsprint.me/payments', '_blank');
         }
       }
-    } catch (e) {
-      console.error("Secure theme delivery failure:", e);
-    }
+    });
   }
 
   function observeTheme() {
-    const themeObserver = new MutationObserver(() => {
-      const currentTheme =
-        document.documentElement.getAttribute('data-lc-theme') || 'default';
+    const obsTheme = new MutationObserver(() => {
+      const curr = document.documentElement.getAttribute('data-lc-theme') || 'default';
       const hasDark = document.documentElement.classList.contains('dark');
-      if (currentTheme !== savedTheme || (savedTheme !== 'default' && !hasDark)) {
-        themeObserver.disconnect();
+      if (curr !== savedTheme || (savedTheme !== 'default' && !hasDark)) {
+        obsTheme.disconnect();
         applyTheme(savedTheme);
-        themeObserver.observe(document.documentElement, {
-          attributes: true,
-          attributeFilter: ['data-lc-theme', 'class']
-        });
+        obsTheme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
       }
     });
-
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-lc-theme', 'class']
-    });
+    obsTheme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
   }
 
   initTheme();
   initOptions();
 
-  let currentHref = window.location.href;
-  const handleUrlChange = () => {
-    if (window.location.href !== currentHref) {
-      currentHref = window.location.href;
-      initOptions();
-    }
-  };
-
+  let href = window.location.href;
+  const handleUrlChange = () => { if (window.location.href !== href) { href = window.location.href; initOptions(); } };
   window.addEventListener('popstate', handleUrlChange);
 
-  const patchHistory = (type) => {
+  const patch = (type) => {
     const orig = history[type];
-    history[type] = function () {
-      orig.apply(this, arguments);
-      handleUrlChange();
-    };
+    history[type] = function () { orig.apply(this, arguments); handleUrlChange(); };
   };
-  patchHistory('pushState');
-  patchHistory('replaceState');
+  patch('pushState'); patch('replaceState');
 
   chrome.runtime.onMessage.addListener((request) => {
-    if (request.action === 'setTheme') {
-      savedTheme = request.theme;
-      applyTheme(savedTheme);
-    }
-    if (request.action === 'applyVisibilityOptions') {
-      cachedOptions = request.options;
-      applyVisibilityChanges(cachedOptions);
-    }
+    if (request.action === 'setTheme') { savedTheme = request.theme; applyTheme(savedTheme); }
+    if (request.action === 'applyVisibilityOptions') { cachedOptions = request.options; applyVisibilityChanges(cachedOptions); }
   });
 })();

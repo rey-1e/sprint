@@ -1,9 +1,5 @@
-/**
- * ==============================================================================
- * SECTION 1: INJECT COMPANY TAGS AND ELO RATING
- * ==============================================================================
- */
 let isInjectingTags = false;
+let injectionsDisabled = false;
 
 async function getCachedQuestionId(slug) {
   return new Promise((resolve) => {
@@ -13,137 +9,121 @@ async function getCachedQuestionId(slug) {
   });
 }
 
-/**
- * Robust extraction utility that bypasses Monaco Virtualization
- * by fetching directly from local draft storage or falling back to DOM lines.
- */
 async function getCodeFromLocalStorage(slug, questionId) {
-  let bestCandidate = null;
-
+  let candidate = null;
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (!key) continue;
-
     const lowerKey = key.toLowerCase();
-    const matchesProblem = (slug && lowerKey.includes(slug.toLowerCase())) || 
-                          (questionId && lowerKey.includes(questionId.toString()));
-                          
-    const isDraftKey = lowerKey.includes("draft") || 
-                       lowerKey.includes("code") || 
-                       lowerKey.includes("editor") || 
-                       lowerKey.includes("state");
+    const isTarget = (slug && lowerKey.includes(slug.toLowerCase())) || (questionId && lowerKey.includes(questionId.toString()));
+    const isCode = lowerKey.includes("draft") || lowerKey.includes("code") || lowerKey.includes("editor");
 
-    if (matchesProblem && isDraftKey) {
+    if (isTarget && isCode) {
       try {
         const val = localStorage.getItem(key);
         if (!val) continue;
-
         if (val.trim().startsWith('{') || val.trim().startsWith('[')) {
           const parsed = JSON.parse(val);
-          
-          const findCodeInObj = (obj) => {
+          const findCode = (obj) => {
             if (!obj) return null;
-            if (typeof obj === 'string' && (obj.includes('class Solution') || obj.includes('def ') || obj.includes('function ') || obj.includes('class '))) {
-              return obj;
-            }
+            if (typeof obj === 'string' && (obj.includes('class Solution') || obj.includes('def ') || obj.includes('function '))) return obj;
             if (typeof obj === 'object') {
               if (obj.code && typeof obj.code === 'string') return obj.code;
               if (obj.value && typeof obj.value === 'string') return obj.value;
-              if (obj.draft && typeof obj.draft === 'string') return obj.draft;
-              
               for (const k in obj) {
-                const res = findCodeInObj(obj[k]);
-                if (res) return res;
+                const r = findCode(obj[k]);
+                if (r) return r;
               }
             }
             return null;
           };
-
-          const extracted = findCodeInObj(parsed);
-          if (extracted) return extracted;
-        } else {
-          if (val.includes('class Solution') || val.includes('def ') || val.includes('function ') || val.includes('class ') || val.includes('impl Solution')) {
-            bestCandidate = val;
-          }
+          const ext = findCode(parsed);
+          if (ext) return ext;
+        } else if (val.includes('class Solution') || val.includes('def ') || val.includes('function ')) {
+          candidate = val;
         }
-      } catch (e) {
-        // Safe parsing fallback
-      }
+      } catch (e) {}
     }
   }
-  return bestCandidate;
+  return candidate;
 }
 
 async function extractFullCode() {
   const urlParts = window.location.pathname.split('/');
-  const problemsIndex = urlParts.indexOf('problems');
-  let slug = "";
-  if (problemsIndex !== -1) {
-    slug = urlParts[problemsIndex + 1];
-  }
+  const pIdx = urlParts.indexOf('problems');
+  const slug = pIdx !== -1 ? urlParts[pIdx + 1] : "";
   const questionId = slug ? await getCachedQuestionId(slug) : null;
-  
+
+  // Primary: Real-time Monaco Memory Extraction via MAIN world bridge
+  const monacoCode = await new Promise((resolve) => {
+    const handleResponse = (e) => {
+      window.removeEventListener("sprint-monaco-code-response", handleResponse);
+      resolve(e.detail?.code || null);
+    };
+    window.addEventListener("sprint-monaco-code-response", handleResponse);
+    window.dispatchEvent(new CustomEvent("sprint-get-monaco-code"));
+    setTimeout(() => {
+      window.removeEventListener("sprint-monaco-code-response", handleResponse);
+      resolve(null);
+    }, 250);
+  });
+
+  if (monacoCode && monacoCode.trim().length > 0) return monacoCode;
+
+  // Secondary Fallback: LocalStorage drafts
   if (slug || questionId) {
-    const localCode = await getCodeFromLocalStorage(slug, questionId);
-    if (localCode && localCode.trim().length > 0) {
-      return localCode;
-    }
+    const local = await getCodeFromLocalStorage(slug, questionId);
+    if (local && local.trim().length > 0) return local;
   }
 
-  const codeLines = document.querySelectorAll('.view-line');
-  if (codeLines.length) {
-    return Array.from(codeLines).map(line => line.textContent).join('\n');
-  }
-
-  return "";
+  // Tertiary Fallback: Monaco DOM virtualizer lines
+  const lines = document.querySelectorAll('.view-line');
+  return lines.length ? Array.from(lines).map(l => l.textContent).join('\n') : "";
 }
 
 async function injectTags() {
+  if (injectionsDisabled) return;
   if (document.getElementById('custom-company-tags') || isInjectingTags) return;
   isInjectingTags = true;
 
   try {
     const urlParts = window.location.pathname.split('/');
-    const problemsIndex = urlParts.indexOf('problems');
-    if (problemsIndex === -1) return;
-    
-    const slug = urlParts[problemsIndex + 1];
+    const pIdx = urlParts.indexOf('problems');
+    if (pIdx === -1) return;
+    const slug = urlParts[pIdx + 1];
     if (!slug) return;
 
     const questionId = await getCachedQuestionId(slug);
     if (!questionId) return;
 
-    const [companyRes, ratingRes] = await Promise.allSettled([
+    const [compRes, ratRes] = await Promise.allSettled([
       fetch(chrome.runtime.getURL('data.json')).then(r => r.json()),
       fetch(chrome.runtime.getURL('ratings.json')).then(r => r.json())
     ]);
 
-    const companies = companyRes.status === 'fulfilled' ? (companyRes.value[questionId] || []) : [];
-    let eloRating = null;
-
-    if (ratingRes.status === 'fulfilled') {
-      const problemData = ratingRes.value.find(p => p.TitleSlug === slug);
-      if (problemData && problemData.Rating) {
-        eloRating = Math.round(problemData.Rating);
-      }
+    const comps = compRes.status === 'fulfilled' ? (compRes.value[questionId] || []) : [];
+    let elo = null;
+    if (ratRes.status === 'fulfilled') {
+      const pData = ratRes.value.find(p => p.TitleSlug === slug);
+      if (pData?.Rating) elo = Math.round(pData.Rating);
     }
 
-    let targetElement = document.querySelector('[class*="text-difficulty-"]');
-    if (!targetElement) {
-      const metadataItems = document.querySelectorAll('div.flex.items-center.space-x-4 div, div[class*="gap-"] > div');
-      for (const el of metadataItems) {
+    let target = document.querySelector('[class*="text-difficulty-"]');
+    if (!target) {
+      const items = document.querySelectorAll('div.flex.items-center.space-x-4 div, div[class*="gap-"] > div');
+      for (const el of items) {
         if (/^(Easy|Medium|Hard)$/i.test(el.textContent?.trim())) {
-          targetElement = el;
+          target = el;
           break;
         }
       }
     }
+    if (!target) return;
 
-    if (!targetElement) return;
-
-    if (eloRating && !targetElement.hasAttribute('data-elo-injected')) {
-      targetElement.textContent = `${targetElement.textContent} - ${eloRating}`;
-      targetElement.setAttribute('data-elo-injected', 'true');
+    if (elo && !target.hasAttribute('data-elo-injected')) {
+      target.setAttribute('data-original-text', target.textContent || '');
+      target.textContent = `${target.textContent} - ${elo}`;
+      target.setAttribute('data-elo-injected', 'true');
     }
 
     if (document.getElementById('custom-company-tags')) return;
@@ -152,12 +132,11 @@ async function injectTags() {
     container.id = 'custom-company-tags';
     container.className = 'company-tags-wrapper';
 
-    if (companies.length > 0) {
-      [...new Set(companies)].slice(0, 10).forEach(name => {
-        const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
+    if (comps.length > 0) {
+      [...new Set(comps)].slice(0, 10).forEach(name => {
         const span = document.createElement('span');
         span.className = 'company-tag';
-        span.textContent = capitalized;
+        span.textContent = name.charAt(0).toUpperCase() + name.slice(1);
         container.appendChild(span);
       });
     } else {
@@ -167,223 +146,298 @@ async function injectTags() {
       container.appendChild(span);
     }
 
-    const appendTarget = targetElement.closest('.flex') || targetElement;
+    const appendTarget = target.closest('.flex') || target;
     appendTarget.after(container);
-
-  } catch (error) {
-    console.error("Sprint: Injected components failure", error);
+  } catch (e) {
+    console.error("Sprint Tags Injection Error:", e);
   } finally {
     isInjectingTags = false;
   }
 }
 
-/**
- * ==============================================================================
- * SECTION 2: COMPLEXITY ANALYSIS UI
- * ==============================================================================
- */
 function injectComplexityUI() {
+  if (injectionsDisabled) return;
   if (document.getElementById('complexity-analyzer-container')) return;
-
   const targetBar = document.getElementById('code_tabbar_outer');
   if (!targetBar) return;
 
   const container = document.createElement('div');
   container.id = 'complexity-analyzer-container';
   container.className = 'complexity-container';
-  container.innerHTML = `
-    <div class="complexity-item">
-      <span class="complexity-label">Time:</span>
-      <span class="complexity-value" id="time-complexity-value">—</span>
-    </div>
-    <div class="complexity-item">
-      <span class="complexity-label">Space:</span>
-      <span class="complexity-value" id="space-complexity-value">—</span>
-    </div>
-    <div class="complexity-status" id="complexity-status-text">Right-click or Ctrl+Shift+X</div>
-  `;
 
-  const innerBar = targetBar.querySelector('.flexlayout__tabset_tabbar_inner');
-  if (innerBar?.nextSibling) {
-    targetBar.insertBefore(container, innerBar.nextSibling);
+  // Item 1: Time Complexity
+  const timeItem = document.createElement('div');
+  timeItem.className = 'complexity-item';
+  const timeLabel = document.createElement('span');
+  timeLabel.className = 'complexity-label';
+  timeLabel.textContent = 'Time:';
+  const timeVal = document.createElement('span');
+  timeVal.className = 'complexity-value';
+  timeVal.id = 'time-complexity-value';
+  timeVal.textContent = '—';
+  timeItem.appendChild(timeLabel);
+  timeItem.appendChild(timeVal);
+
+  // Item 2: Space Complexity
+  const spaceItem = document.createElement('div');
+  spaceItem.className = 'complexity-item';
+  const spaceLabel = document.createElement('span');
+  spaceLabel.className = 'complexity-label';
+  spaceLabel.textContent = 'Space:';
+  const spaceVal = document.createElement('span');
+  spaceVal.className = 'complexity-value';
+  spaceVal.id = 'space-complexity-value';
+  spaceVal.textContent = '—';
+  spaceItem.appendChild(spaceLabel);
+  spaceItem.appendChild(spaceVal);
+
+  // Status message
+  const statusMsg = document.createElement('div');
+  statusMsg.className = 'complexity-status';
+  statusMsg.id = 'complexity-status-text';
+  statusMsg.textContent = 'Right-click or Ctrl+Shift+X';
+
+  container.appendChild(timeItem);
+  container.appendChild(spaceItem);
+  container.appendChild(statusMsg);
+
+  const inner = targetBar.querySelector('.flexlayout__tabset_tabbar_inner');
+  if (inner?.nextSibling) {
+    targetBar.insertBefore(container, inner.nextSibling);
   } else {
     targetBar.appendChild(container);
   }
 }
 
 function analyzeCode(code) {
+  if (injectionsDisabled) return;
   injectComplexityUI();
+  const time = document.getElementById('time-complexity-value');
+  const space = document.getElementById('space-complexity-value');
+  const status = document.getElementById('complexity-status-text');
 
-  const timeEl = document.getElementById('time-complexity-value');
-  const spaceEl = document.getElementById('space-complexity-value');
-  const statusEl = document.getElementById('complexity-status-text');
+  if (!time || !space || !status) return;
+  time.textContent = '...';
+  space.textContent = '...';
+  status.textContent = 'Analyzing...';
+  status.className = 'complexity-status sprint-text-warning';
 
-  if (!timeEl || !spaceEl || !statusEl) return;
-
-  timeEl.textContent = '...';
-  spaceEl.textContent = '...';
-  statusEl.textContent = 'Analyzing...';
-  statusEl.className = 'complexity-status sprint-text-warning';
-
-  chrome.runtime.sendMessage(
-    { type: "FETCH_COMPLEXITY", code },
-    (response) => {
-      if (response?.success) {
-        timeEl.textContent = response.data.time || 'N/A';
-        spaceEl.textContent = response.data.space || 'N/A';
-        statusEl.textContent = 'Analysis Complete';
-        statusEl.className = 'complexity-status sprint-text-success';
+  chrome.runtime.sendMessage({ type: "FETCH_COMPLEXITY", code }, (res) => {
+    if (res?.success) {
+      time.textContent = res.data.time || 'N/A';
+      space.textContent = res.data.space || 'N/A';
+      status.textContent = 'Analysis Complete';
+      status.className = 'complexity-status sprint-text-success';
+    } else {
+      time.textContent = 'Err';
+      space.textContent = 'Err';
+      status.innerHTML = ''; // Safe clear
+      
+      if (res?.authRequired) {
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#a1a1aa; font-weight:500; text-decoration:underline;';
+        link.textContent = 'Sign In required';
+        status.appendChild(link);
+        status.className = 'complexity-status';
+      } else if (res?.limitReached) {
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/payments';
+        link.target = '_blank';
+        link.style.cssText = 'color:#eff1f680; font-weight:500; text-decoration:underline;';
+        link.textContent = 'Upgrade Required';
+        status.appendChild(link);
+        status.className = 'complexity-status';
+        alert(res.error);
       } else {
-        timeEl.textContent = 'Err';
-        spaceEl.textContent = 'Err';
-        if (response?.authRequired) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#a1a1aa; font-weight:500; text-decoration:underline;">Sign In required</a>';
-          statusEl.className = 'complexity-status';
-        } else if (response?.limitReached) {
-          statusEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; font-weight:500; text-decoration:underline;">Upgrade Required</a>';
-          statusEl.className = 'complexity-status';
-          alert(response.error);
-        } else {
-          statusEl.textContent = 'Analysis Failed';
-          statusEl.className = 'complexity-status sprint-text-error';
-        }
+        status.textContent = 'Analysis Failed';
+        status.className = 'complexity-status sprint-text-error';
       }
     }
-  );
+  });
 }
 
-/**
- * ==============================================================================
- * SECTION 3: ACCEPTED SUBMISSION ANALYSIS UI
- * ==============================================================================
- */
-async function injectSubmissionAnalysisUI() {
+function injectSubmissionAnalysisUI() {
+  if (injectionsDisabled) return;
   if (document.getElementById('sprint-submission-analysis')) return;
-
   const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3');
-  const targetDiv = Array.from(boxes).find(div => {
-    const txt = div.textContent;
-    return txt.includes('Runtime') || txt.includes('Memory') || txt.includes('Beats');
-  });
-
+  const targetDiv = Array.from(boxes).find(d => d.textContent.includes('Runtime') || d.textContent.includes('Memory'));
   if (!targetDiv) return;
 
   const container = document.createElement('div');
   container.id = 'sprint-submission-analysis';
   container.className = 'sprint-ai-analysis';
-  container.innerHTML = `
-    <div class="sprint-ai-topbar">
-      <div class="sprint-ai-tabs">
-        <span class="sprint-ai-tab active" data-target="tab-approach">Approach</span>
-        <span class="sprint-ai-tab" data-target="tab-efficiency">Efficiency</span>
-        <span class="sprint-ai-tab" data-target="tab-style">Code Style</span>
-      </div>
-    </div>
-    <div class="sprint-ai-summary" id="sprint-ai-summary">Generating expert AI feedback...</div>
-    
-    <div class="sprint-ai-content active" id="tab-approach">
-      <div class="sprint-ai-grid">
-        <div class="sprint-ai-label">Current</div><div class="sprint-ai-val" id="val-app-curr">...</div>
-        <div class="sprint-ai-label">Suggested</div><div class="sprint-ai-val sprint-text-success" id="val-app-sugg">...</div>
-        <div class="sprint-ai-label">Key Idea</div><div class="sprint-ai-val" id="val-app-idea">...</div>
-      </div>
-    </div>
 
-    <div class="sprint-ai-content sprint-hidden" id="tab-efficiency">
-      <div class="sprint-ai-grid">
-        <div class="sprint-ai-label">Current</div><div class="sprint-ai-val" id="val-eff-curr">...</div>
-        <div class="sprint-ai-label">Suggested</div><div class="sprint-ai-val sprint-text-success" id="val-eff-sugg">...</div>
-        <div class="sprint-ai-label">Suggestions</div><div class="sprint-ai-val" id="val-eff-idea">...</div>
-      </div>
-    </div>
+  // Tab Header Area
+  const topbar = document.createElement('div');
+  topbar.className = 'sprint-ai-topbar';
 
-    <div class="sprint-ai-content sprint-hidden" id="tab-style">
-      <div class="sprint-ai-grid">
-        <div class="sprint-ai-label">Readability</div><div class="sprint-ai-val" id="val-sty-read">...</div>
-        <div class="sprint-ai-label">Structure</div><div class="sprint-ai-val" id="val-sty-struc">...</div>
-        <div class="sprint-ai-label">Suggestions</div><div class="sprint-ai-val" id="val-sty-idea">...</div>
-      </div>
-    </div>
-  `;
+  const tabs = document.createElement('div');
+  tabs.className = 'sprint-ai-tabs';
+
+  const tabApproach = document.createElement('span');
+  tabApproach.className = 'sprint-ai-tab active';
+  tabApproach.setAttribute('data-target', 'tab-approach');
+  tabApproach.textContent = 'Approach';
+
+  const tabEfficiency = document.createElement('span');
+  tabEfficiency.className = 'sprint-ai-tab';
+  tabEfficiency.setAttribute('data-target', 'tab-efficiency');
+  tabEfficiency.textContent = 'Efficiency';
+
+  const tabStyle = document.createElement('span');
+  tabStyle.className = 'sprint-ai-tab';
+  tabStyle.setAttribute('data-target', 'tab-style');
+  tabStyle.textContent = 'Code Style';
+
+  tabs.appendChild(tabApproach);
+  tabs.appendChild(tabEfficiency);
+  tabs.appendChild(tabStyle);
+  topbar.appendChild(tabs);
+  container.appendChild(topbar);
+
+  // Status & Overview Area
+  const summary = document.createElement('div');
+  summary.id = 'sprint-ai-summary';
+  summary.className = 'sprint-ai-summary';
+  summary.textContent = 'Generating expert AI feedback...';
+  container.appendChild(summary);
+
+  const makeGridSection = (id, visible, labels) => {
+    const sec = document.createElement('div');
+    sec.id = id;
+    sec.className = 'sprint-ai-content' + (visible ? '' : ' sprint-hidden');
+    const grid = document.createElement('div');
+    grid.className = 'sprint-ai-grid';
+
+    labels.forEach(item => {
+      const lbl = document.createElement('div');
+      lbl.className = 'sprint-ai-label';
+      lbl.textContent = item.label;
+      const val = document.createElement('div');
+      val.className = 'sprint-ai-val' + (item.success ? ' sprint-text-success' : '');
+      val.id = item.id;
+      val.textContent = '...';
+      grid.appendChild(lbl);
+      grid.appendChild(val);
+    });
+
+    sec.appendChild(grid);
+    return sec;
+  };
+
+  const approachSec = makeGridSection('tab-approach', true, [
+    { label: 'Current', id: 'val-app-curr' },
+    { label: 'Suggested', id: 'val-app-sugg', success: true },
+    { label: 'Key Idea', id: 'val-app-idea' }
+  ]);
+
+  const efficiencySec = makeGridSection('tab-efficiency', false, [
+    { label: 'Current', id: 'val-eff-curr' },
+    { label: 'Suggested', id: 'val-eff-sugg', success: true },
+    { label: 'Suggestions', id: 'val-eff-idea' }
+  ]);
+
+  const styleSec = makeGridSection('tab-style', false, [
+    { label: 'Readability', id: 'val-sty-read' },
+    { label: 'Structure', id: 'val-sty-struc' },
+    { label: 'Suggestions', id: 'val-sty-idea' }
+  ]);
+
+  container.appendChild(approachSec);
+  container.appendChild(efficiencySec);
+  container.appendChild(styleSec);
 
   targetDiv.prepend(container);
 
-  const tabs = container.querySelectorAll('.sprint-ai-tab');
-  const contents = container.querySelectorAll('.sprint-ai-content');
+  const tabElements = container.querySelectorAll('.sprint-ai-tab');
+  const contentElements = container.querySelectorAll('.sprint-ai-content');
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      contents.forEach(c => {
+  tabElements.forEach(t => {
+    t.addEventListener('click', () => {
+      tabElements.forEach(x => x.classList.remove('active'));
+      contentElements.forEach(c => {
         c.classList.remove('active');
         c.classList.add('sprint-hidden');
       });
-      tab.classList.add('active');
-      const spec = container.querySelector('#' + tab.getAttribute('data-target'));
-      if (spec) {
-        spec.classList.remove('sprint-hidden');
-        spec.classList.add('active');
+      t.classList.add('active');
+      const targetId = t.getAttribute('data-target');
+      const targetContent = container.querySelector('#' + targetId);
+      if (targetContent) {
+        targetContent.classList.remove('sprint-hidden');
+        targetContent.classList.add('active');
       }
     });
   });
 
-  const rawCode = await extractFullCode();
-  const summaryEl = document.getElementById('sprint-ai-summary');
-
-  if (rawCode.trim()) {
-    chrome.runtime.sendMessage(
-      { type: "FETCH_DETAILED_ANALYSIS", code: rawCode },
-      (response) => {
-        if (response?.success) {
-          const d = response.data;
-          summaryEl.textContent = d.summary || "Analysis complete.";
-          document.getElementById('val-app-curr').textContent = d.app_current || "N/A";
-          document.getElementById('val-app-sugg').textContent = d.app_suggested || "N/A";
-          document.getElementById('val-app-idea').textContent = d.app_keyidea || "N/A";
-          document.getElementById('val-eff-curr').textContent = d.eff_current || "N/A";
-          document.getElementById('val-eff-sugg').textContent = d.eff_suggested || "N/A";
-          document.getElementById('val-eff-idea').textContent = d.eff_suggestions || "N/A";
-          document.getElementById('val-sty-read').textContent = d.sty_readability || "N/A";
-          document.getElementById('val-sty-struc').textContent = d.sty_structure || "N/A";
-          document.getElementById('val-sty-idea').textContent = d.sty_suggestions || "N/A";
-        } else {
-          if (response?.authRequired) {
-            summaryEl.innerHTML = '<a href="https://getsprint.me/login" target="_blank" style="color:#a1a1aa; text-decoration:underline; font-weight:500;">Sign in to LeetCode Sprint to analyze submissions.</a>';
-            summaryEl.className = 'sprint-ai-summary-muted';
-          } else if (response?.limitReached) {
-            summaryEl.innerHTML = '<a href="https://getsprint.me/payments" target="_blank" style="color:#eff1f680; text-decoration:underline; font-weight:500;">Limit reached. Upgrade at getsprint.me/payments</a>';
-            summaryEl.className = 'sprint-ai-summary sprint-text-warning';
-            alert(response.error);
-          } else {
-            summaryEl.textContent = "Analysis failed. Ensure service worker API is active.";
-            summaryEl.className = 'sprint-ai-summary sprint-text-error';
-          }
-        }
-      }
-    );
-  } else {
-    summaryEl.textContent = "Could not locate code on the page.";
-    summaryEl.className = 'sprint-ai-summary sprint-text-error';
-  }
+  fetchAnalysisData(summary);
 }
 
-/**
- * ==============================================================================
- * SECTION 4: WHERE AM I WRONG?
- * ==============================================================================
- */
+async function fetchAnalysisData(summaryElement) {
+  const raw = await extractFullCode();
+  if (!raw.trim()) {
+    summaryElement.textContent = "Could not locate code on the page.";
+    summaryElement.className = 'sprint-ai-summary sprint-text-error';
+    return;
+  }
+
+  chrome.runtime.sendMessage({ type: "FETCH_DETAILED_ANALYSIS", code: raw }, (res) => {
+    if (res?.success) {
+      const d = res.data;
+      summaryElement.textContent = d.summary || "Analysis complete.";
+      safeSetText('val-app-curr', d.app_current);
+      safeSetText('val-app-sugg', d.app_suggested);
+      safeSetText('val-app-idea', d.app_keyidea);
+      safeSetText('val-eff-curr', d.eff_current);
+      safeSetText('val-eff-sugg', d.eff_suggested);
+      safeSetText('val-eff-idea', d.eff_suggestions);
+      safeSetText('val-sty-read', d.sty_readability);
+      safeSetText('val-sty-struc', d.sty_structure);
+      safeSetText('val-sty-idea', d.sty_suggestions);
+    } else {
+      summaryElement.textContent = ''; // Safe Clear
+      if (res?.authRequired) {
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#a1a1aa; text-decoration:underline; font-weight:500;';
+        link.textContent = 'Sign in to LeetCode Sprint to analyze submissions.';
+        summaryElement.className = 'sprint-ai-summary-muted';
+        summaryElement.appendChild(link);
+      } else if (res?.limitReached) {
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/payments';
+        link.target = '_blank';
+        link.style.cssText = 'color:#eff1f680; text-decoration:underline; font-weight:500;';
+        link.textContent = 'Limit reached. Upgrade at getsprint.me/payments';
+        summaryElement.className = 'sprint-ai-summary sprint-text-warning';
+        summaryElement.appendChild(link);
+        alert(res.error);
+      } else {
+        summaryElement.textContent = "Analysis failed. Ensure service worker API is active.";
+        summaryElement.className = 'sprint-ai-summary sprint-text-error';
+      }
+    }
+  });
+}
+
+function safeSetText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val || "N/A";
+}
+
 function closeWhereAmIWrongPopup() {
   const overlay = document.getElementById('sprint-custom-overlay');
   if (!overlay) return false;
-
   overlay.classList.add('sprint-fade-out');
   overlay.querySelector('.sprint-modal')?.classList.add('sprint-pop-out');
-  
   setTimeout(() => overlay.remove(), 120);
   return true;
 }
 
 function showWhereAmIWrongPopup() {
+  if (injectionsDisabled) return;
   if (document.getElementById('sprint-custom-overlay')) return;
 
   const overlay = document.createElement('div');
@@ -392,192 +446,340 @@ function showWhereAmIWrongPopup() {
 
   const modal = document.createElement('div');
   modal.className = 'sprint-modal';
-  modal.innerHTML = `
-    <div class="sprint-modal-header">
-      <div class="sprint-modal-title">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        <span>Debugger Analysis</span>
-      </div>
-      <button id="sprint-close-x" class="sprint-close-x">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-    </div>
-    
-    <div class="sprint-modal-body" style="text-align: left !important; width: 100%;">
-      <h2 id="wrong-title" class="sprint-modal-section-title" style="text-align: left !important; margin-bottom: 12px;">Analyzing Code Logic...</h2>
-      <div class="sprint-modal-text-container" style="text-align: left !important; width: 100%;">
-        <p id="wrong-feedback" style="white-space: pre-line !important; text-align: left !important; margin: 0; line-height: 1.6; font-size: 14px; padding-left: 4px;">Consulting AI model to scan for anomalies...</p>
-      </div>
-    </div>
-  `;
 
+  const header = document.createElement('div');
+  header.className = 'sprint-modal-header';
+
+  const titleWrapper = document.createElement('div');
+  titleWrapper.className = 'sprint-modal-title';
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("width", "14");
+  svg.setAttribute("height", "14");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "2.5");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke-linecap", "round");
+  svg.setAttribute("stroke-linejoin", "round");
+
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle.setAttribute("cx", "12");
+  circle.setAttribute("cy", "12");
+  circle.setAttribute("r", "10");
+  const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line1.setAttribute("x1", "12");
+  line1.setAttribute("y1", "8");
+  line1.setAttribute("x2", "12");
+  line1.setAttribute("y2", "12");
+  const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line2.setAttribute("x1", "12");
+  line2.setAttribute("y1", "16");
+  line2.setAttribute("x2", "12.01");
+  line2.setAttribute("y2", "16");
+
+  svg.appendChild(circle);
+  svg.appendChild(line1);
+  svg.appendChild(line2);
+
+  const titleSpan = document.createElement('span');
+  titleSpan.textContent = 'Debugger Analysis';
+
+  titleWrapper.appendChild(svg);
+  titleWrapper.appendChild(titleSpan);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.id = 'sprint-close-x';
+  closeBtn.className = 'sprint-close-x';
+
+  const closeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  closeSvg.setAttribute("width", "12");
+  closeSvg.setAttribute("height", "12");
+  closeSvg.setAttribute("viewBox", "0 0 24 24");
+  closeSvg.setAttribute("fill", "none");
+  closeSvg.setAttribute("stroke", "currentColor");
+  closeSvg.setAttribute("stroke-width", "2.5");
+  closeSvg.setAttribute("stroke-linecap", "round");
+  closeSvg.setAttribute("stroke-linejoin", "round");
+
+  const lineClose1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  lineClose1.setAttribute("x1", "18");
+  lineClose1.setAttribute("y1", "6");
+  lineClose1.setAttribute("x2", "6");
+  lineClose1.setAttribute("y2", "18");
+  const lineClose2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  lineClose2.setAttribute("x1", "6");
+  lineClose2.setAttribute("y1", "6");
+  lineClose2.setAttribute("x2", "18");
+  lineClose2.setAttribute("y2", "18");
+
+  closeSvg.appendChild(lineClose1);
+  closeSvg.appendChild(lineClose2);
+  closeBtn.appendChild(closeSvg);
+
+  header.appendChild(titleWrapper);
+  header.appendChild(closeBtn);
+
+  const body = document.createElement('div');
+  body.className = 'sprint-modal-body';
+
+  const secTitle = document.createElement('h2');
+  secTitle.id = 'wrong-title';
+  secTitle.className = 'sprint-modal-section-title';
+  secTitle.textContent = 'Analyzing Code Logic...';
+
+  const textContainer = document.createElement('div');
+  textContainer.className = 'sprint-modal-text-container';
+  textContainer.id = 'wrong-feedback-container';
+
+  const feedbackParagraph = document.createElement('p');
+  feedbackParagraph.id = 'wrong-feedback';
+  feedbackParagraph.textContent = 'Consulting AI model to scan for anomalies...';
+
+  textContainer.appendChild(feedbackParagraph);
+  body.appendChild(secTitle);
+  body.appendChild(textContainer);
+
+  modal.appendChild(header);
+  modal.appendChild(body);
   overlay.appendChild(modal);
-  document.body.appendChild(overlay);
 
-  document.getElementById('sprint-close-x').addEventListener('click', closeWhereAmIWrongPopup);
+  document.body.appendChild(overlay);
+  closeBtn.addEventListener('click', closeWhereAmIWrongPopup);
 }
 
 async function triggerWhereAmIWrong() {
-  const codeToAnalyze = await extractFullCode();
-
-  if (!codeToAnalyze.trim()) {
+  if (injectionsDisabled) return;
+  const rawCode = await extractFullCode();
+  if (!rawCode.trim()) {
     alert("Sprint: Could not find any code. Please type something in the editor.");
     return;
   }
 
-  let problemContext = "Description not found.";
-  const problemTitle = document.title.split('-')[0].trim();
-
-  const descElement = document.querySelector('[data-track-load="description_content"]') || document.querySelector('meta[name="description"]');
-  if (descElement) {
-    problemContext = descElement.textContent || descElement.content;
+  let ctx = "Description not found.";
+  const title = document.title.split('-')[0].trim();
+  const desc = document.querySelector('[data-track-load="description_content"]') || document.querySelector('meta[name="description"]');
+  if (desc) {
+    ctx = desc.textContent || desc.content;
   } else {
-    const pathParts = window.location.pathname.split('/');
-    const pIndex = pathParts.indexOf('problems');
-    if (pIndex !== -1) problemContext = `LeetCode Problem Slug: ${pathParts[pIndex + 1]}`;
+    const parts = window.location.pathname.split('/');
+    const idx = parts.indexOf('problems');
+    if (idx !== -1) ctx = `LeetCode Problem Slug: ${parts[idx + 1]}`;
   }
 
   showWhereAmIWrongPopup();
 
-  chrome.runtime.sendMessage(
-    {
-      type: "FETCH_WHERE_AM_I_WRONG",
-      code: codeToAnalyze,
-      problemTitle,
-      problemContext
-    },
-    (response) => {
-      const titleEl = document.getElementById('wrong-title');
-      const feedbackEl = document.getElementById('wrong-feedback');
+  chrome.runtime.sendMessage({ type: "FETCH_WHERE_AM_I_WRONG", code: rawCode, problemTitle: title, problemContext: ctx }, (res) => {
+    const titleEl = document.getElementById('wrong-title');
+    const container = document.getElementById('wrong-feedback-container');
+    if (!container || !titleEl) return;
 
-      if (!feedbackEl) return;
+    container.innerHTML = ''; // Safe Clear
 
-      feedbackEl.style.whiteSpace = 'pre-line';
-      feedbackEl.style.textAlign = 'left';
-
-      if (response?.success) {
-        if (response.authRequired || response.data?.authRequired) {
-          titleEl.textContent = 'Sign In Required';
-          titleEl.style.color = '#e0a96d';
-          feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
-          return;
-        }
-
-        const feedbackText = (response.data.feedback || "").trim();
-        const cleanText = feedbackText.toLowerCase().replace(/[^a-z]/g, '');
+    if (res?.success) {
+      if (res.authRequired || res.data?.authRequired) {
+        titleEl.textContent = 'Sign In Required';
+        titleEl.style.color = '#e0a96d';
         
-        const isClean = cleanText === "therearenoerrors" || 
-                        feedbackText.toLowerCase().includes("there are no errors") ||
-                        (!feedbackText.includes("-") && feedbackText.length < 35);
+        const textNode = document.createElement('p');
+        textNode.textContent = 'You must be logged in to use the AI Debugger.';
+        
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#cd5c5c; font-weight:600; text-decoration:underline; display:block; margin-top:12px;';
+        link.textContent = 'Click here to Sign In';
+        
+        container.appendChild(textNode);
+        container.appendChild(link);
+        return;
+      }
 
-        if (isClean) {
-          titleEl.textContent = 'No Issues Found';
-          titleEl.style.color = '#6eda30';
-          feedbackEl.textContent = 'There are no errors.';
-          feedbackEl.className = 'sprint-text-success';
-        } else {
-          titleEl.textContent = 'Issue Found';
-          titleEl.style.color = '#b56363';
-          feedbackEl.textContent = feedbackText || "No explicit errors described.";
-          feedbackEl.className = 'sprint-text-error';
-        }
+      const rawText = (res.data.feedback || "").trim();
+      const cleanText = rawText.toLowerCase().replace(/[^a-z]/g, '');
+      const isClean = cleanText === "therearenoerrors" || rawText.toLowerCase().includes("there are no errors") || (!rawText.includes("-") && rawText.length < 35);
+
+      if (isClean) {
+        titleEl.textContent = 'No Issues Found';
+        titleEl.style.color = '#6eda30';
+        
+        const p = document.createElement('p');
+        p.className = 'sprint-text-success';
+        p.textContent = 'There are no errors.';
+        container.appendChild(p);
       } else {
-        if (response?.authRequired) {
-          titleEl.textContent = 'Sign In Required';
-          titleEl.style.color = '#e0a96d';
-          feedbackEl.innerHTML = 'You must be logged in to use the AI Debugger.<br><br><a href="https://getsprint.me/login" target="_blank" style="color:#cd5c5c; font-weight:600; text-decoration:underline;">Click here to Sign In</a>';
-        } else if (response?.limitReached) {
-          closeWhereAmIWrongPopup();
-          alert(response.error);
-          window.open('https://getsprint.me/payments', '_blank');
-        } else {
-          titleEl.textContent = 'Analysis Failed';
-          titleEl.style.color = '#f87171';
-          feedbackEl.textContent = response?.error || "Could not reach the server.";
-          feedbackEl.className = 'sprint-text-error';
-        }
+        titleEl.textContent = 'Issue Found';
+        titleEl.style.color = '#b56363';
+        
+        const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        lines.forEach((line) => {
+          const p = document.createElement('p');
+          p.className = 'sprint-text-error';
+          p.style.marginBottom = '10px';
+          
+          if (line.startsWith('-')) {
+            p.textContent = `• ${line.substring(1).trim()}`;
+          } else {
+            p.textContent = line;
+          }
+          container.appendChild(p);
+        });
+      }
+    } else {
+      if (res?.authRequired) {
+        titleEl.textContent = 'Sign In Required';
+        titleEl.style.color = '#e0a96d';
+        
+        const p = document.createElement('p');
+        p.textContent = 'You must be logged in.';
+        
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/login';
+        link.target = '_blank';
+        link.style.cssText = 'color:#cd5c5c; font-weight:600; text-decoration:underline; display:block; margin-top:12px;';
+        link.textContent = 'Click here to Sign In';
+        
+        container.appendChild(p);
+        container.appendChild(link);
+      } else if (res?.limitReached) {
+        closeWhereAmIWrongPopup();
+        alert(res.error);
+        window.open('https://getsprint.me/payments', '_blank');
+      } else {
+        titleEl.textContent = 'Analysis Failed';
+        titleEl.style.color = '#f87171';
+        
+        const p = document.createElement('p');
+        p.className = 'sprint-text-error';
+        p.textContent = res?.error || "Could not reach the server.";
+        container.appendChild(p);
       }
     }
-  );
+  });
 }
 
 function injectWhereAmIWrongButton() {
+  if (injectionsDisabled) return;
   if (document.getElementById('sprint-wrong-btn')) return;
-
   const targetBar = document.getElementById('code_tabbar_outer');
   if (!targetBar) return;
 
-  const tabButtons = targetBar.querySelectorAll('.flexlayout__tab_button');
-  const codeTabButton = Array.from(tabButtons).find(btn => btn.textContent?.includes('Code'));
-
-  if (!codeTabButton) return;
+  const codeTab = Array.from(targetBar.querySelectorAll('.flexlayout__tab_button')).find(b => b.textContent?.includes('Code'));
+  if (!codeTab) return;
 
   const btn = document.createElement('div');
   btn.id = 'sprint-wrong-btn';
   btn.className = 'sprint-wrong-btn-style';
-  btn.innerHTML = `
-    <span class="sprint-btn-inner">
-      <svg class="sprint-sparkle-glow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-      </svg>
-      <span>AI Insights</span>
-    </span>
-  `;
+
+  const btnInner = document.createElement('span');
+  btnInner.className = 'sprint-btn-inner';
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "sprint-sparkle-glow");
+  svg.setAttribute("width", "12");
+  svg.setAttribute("height", "12");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "2.5");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z");
+  svg.appendChild(path);
+
+  const label = document.createElement('span');
+  label.textContent = 'AI Insights';
+
+  btnInner.appendChild(svg);
+  btnInner.appendChild(label);
+  btn.appendChild(btnInner);
 
   btn.addEventListener('pointerdown', (e) => {
     e.stopPropagation();
     e.preventDefault();
     triggerWhereAmIWrong();
   });
-
-  codeTabButton.insertAdjacentElement('afterend', btn);
+  codeTab.insertAdjacentElement('afterend', btn);
 }
 
-/**
- * ==============================================================================
- * SECTION 5: REDIRECT PILLS
- * ==============================================================================
- */
 function injectRedirectPills() {
-  let targetDiv = document.querySelector('div.h-8.w-full.min-w-0.flex-1') || document.querySelector('[class*="h-8"][class*="w-full"][class*="flex-1"]');
-
-  if (targetDiv && !document.getElementById('sprint-google-editor-pill')) {
-    if (!targetDiv.classList.contains('sprint-flex-container-override')) {
-      targetDiv.style.display = 'flex';
-      targetDiv.style.alignItems = 'center';
-      targetDiv.style.justifyContent = 'flex-end'; 
-      targetDiv.classList.add('sprint-flex-container-override');
+  if (injectionsDisabled) return;
+  const target = document.querySelector('div.h-8.w-full.min-w-0.flex-1') || document.querySelector('[class*="h-8"][class*="w-full"][class*="flex-1"]');
+  if (target && !document.getElementById('sprint-google-editor-pill')) {
+    if (!target.classList.contains('sprint-flex-container-override')) {
+      target.style.display = 'flex';
+      target.style.alignItems = 'center';
+      target.style.justifyContent = 'flex-end';
+      target.classList.add('sprint-flex-container-override');
     }
-
     const link = document.createElement('a');
     link.id = 'sprint-google-editor-pill';
     link.href = 'https://getsprint.me/problemset';
     link.target = '_blank';
     link.className = 'sprint-pill-editor-btn';
     link.textContent = 'Problem-Set';
-
-    targetDiv.appendChild(link);
+    target.appendChild(link);
   }
 }
 
-/**
- * ==============================================================================
- * SECTION 6: INITIALIZATION AND LISTENERS
- * ==============================================================================
- */
+function removeInjectedElements() {
+  document.getElementById('custom-company-tags')?.remove();
+  document.getElementById('complexity-analyzer-container')?.remove();
+  document.getElementById('sprint-submission-analysis')?.remove();
+  document.getElementById('sprint-wrong-btn')?.remove();
+  document.getElementById('sprint-google-editor-pill')?.remove();
+  closeWhereAmIWrongPopup();
+
+  const eloTarget = document.querySelector('[data-elo-injected="true"]');
+  if (eloTarget) {
+    const origText = eloTarget.getAttribute('data-original-text');
+    if (origText) eloTarget.textContent = origText;
+    eloTarget.removeAttribute('data-elo-injected');
+    eloTarget.removeAttribute('data-original-text');
+  }
+}
+
+function injectAll() {
+  if (injectionsDisabled) return;
+  injectTags();
+  injectComplexityUI();
+  if (window.location.pathname.includes('/submissions/')) injectSubmissionAnalysisUI();
+  injectWhereAmIWrongButton();
+  injectRedirectPills();
+}
+
+async function updateInjectionsState() {
+  const res = await chrome.storage.local.get('options');
+  const removeInjectionsOpt = res?.options?.find(o => o.optionName === 'removeInjections');
+  injectionsDisabled = removeInjectionsOpt ? removeInjectionsOpt.checked : false;
+
+  if (injectionsDisabled) {
+    removeInjectedElements();
+  } else {
+    injectAll();
+  }
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "applyVisibilityOptions") {
+    const removeInjectionsOpt = request.options?.find(o => o.optionName === 'removeInjections');
+    injectionsDisabled = removeInjectionsOpt ? removeInjectionsOpt.checked : false;
+    if (injectionsDisabled) {
+      removeInjectedElements();
+    } else {
+      injectAll();
+    }
+    return true;
+  }
+
   if (request.type === "ANALYZE_SELECTION") {
+    if (injectionsDisabled) {
+      sendResponse({ status: "Disabled" });
+      return true;
+    }
     (async () => {
       let code = request.code || window.getSelection().toString();
-
-      if (!code.trim()) {
-        code = await extractFullCode();
-      }
-
+      if (!code.trim()) code = await extractFullCode();
       if (code.trim()) {
         analyzeCode(code);
         sendResponse({ status: "Analysis started" });
@@ -586,50 +788,37 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ status: "No code found" });
       }
     })();
-    return true; 
+    return true;
   }
 
   if (request.type === "TOGGLE_WHERE_AM_I_WRONG") {
-    if (!closeWhereAmIWrongPopup()) {
-      triggerWhereAmIWrong();
+    if (injectionsDisabled) {
+      sendResponse({ status: "Disabled" });
+      return true;
     }
+    if (!closeWhereAmIWrongPopup()) triggerWhereAmIWrong();
     sendResponse({ status: "Toggled" });
     return true;
   }
-  
   return true;
 });
 
-// Fast initial mount attempt
 setTimeout(() => {
-  injectTags();
-  injectComplexityUI();
-  if (window.location.pathname.includes('/submissions/')) {
-    injectSubmissionAnalysisUI();
-  }
-  injectWhereAmIWrongButton();
-  injectRedirectPills();
+  updateInjectionsState();
 }, 50);
 
-// Efficient mutation observer throttling
-let mutationDebounceTimer = null;
-const observer = new MutationObserver(() => {
-  if (mutationDebounceTimer) clearTimeout(mutationDebounceTimer);
-  mutationDebounceTimer = setTimeout(() => {
-    const hasTags = document.getElementById('custom-company-tags');
-    const hasComplexity = document.getElementById('complexity-analyzer-container');
-    const hasAnalysis = document.getElementById('sprint-submission-analysis');
-    const hasWrongBtn = document.getElementById('sprint-wrong-btn');
-    const hasPill = document.getElementById('sprint-google-editor-pill');
-
-    if (!hasTags) injectTags();
-    if (!hasComplexity) injectComplexityUI();
-    if (!hasAnalysis && window.location.pathname.includes('/submissions/')) {
+let debounce = null;
+const obs = new MutationObserver(() => {
+  if (injectionsDisabled) return;
+  if (debounce) clearTimeout(debounce);
+  debounce = setTimeout(() => {
+    if (!document.getElementById('custom-company-tags')) injectTags();
+    if (!document.getElementById('complexity-analyzer-container')) injectComplexityUI();
+    if (!document.getElementById('sprint-submission-analysis') && window.location.pathname.includes('/submissions/')) {
       injectSubmissionAnalysisUI();
     }
-    if (!hasWrongBtn) injectWhereAmIWrongButton();
-    if (!hasPill) injectRedirectPills();
+    if (!document.getElementById('sprint-wrong-btn')) injectWhereAmIWrongButton();
+    if (!document.getElementById('sprint-google-editor-pill')) injectRedirectPills();
   }, 120);
 });
-
-observer.observe(document.body, { childList: true, subtree: true });
+obs.observe(document.body, { childList: true, subtree: true });
