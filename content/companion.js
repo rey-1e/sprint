@@ -71,7 +71,7 @@
   // Global Chat Memory for the current session
   let chatHistory = [];
 
-  // 4. Recursive selection reader (Traverses shadow root layers)
+  // Recursive selection reader (Traverses shadow root layers)
   function getDeepSelection() {
     let text = window.getSelection().toString().trim();
     if (text) return text;
@@ -117,7 +117,7 @@
     return null;
   }
 
-  // 5. Toast alerts
+  // Toast alerts
   function createToast(title, statusMessage, timeValue = "—", spaceValue = "—", isError = false) {
     const toast = document.createElement('div');
     toast.className = 'sprint-toast';
@@ -203,7 +203,7 @@
     toast.dataset.timeout = timeout;
   }
 
-  // 6. Original floating Debugger Modal window components
+  // Original floating Debugger Modal window components
   function closeBugModal() {
     const modalContainer = shadow.getElementById('sprint-custom-overlay');
     if (!modalContainer) return;
@@ -339,7 +339,7 @@
     closeBtn.addEventListener('click', closeBugModal);
   }
 
-  // 6b. Floating Chatbox Modal window components
+  // Floating Chatbox Modal window components
   function closeChatModal() {
     const modalContainer = shadow.getElementById('sprint-chat-overlay');
     if (!modalContainer) return;
@@ -487,8 +487,8 @@
     const footer = document.createElement('div');
     footer.className = 'sprint-chat-footer';
 
-    const input = document.createElement('input');
-    input.type = 'text';
+    // Formatted multi-line input box enabling Shift + Enter carriage returns
+    const input = document.createElement('textarea');
     input.placeholder = 'Ask anything...';
     input.className = 'sprint-chat-input';
 
@@ -521,10 +521,19 @@
     };
 
     sendBtn.addEventListener('click', triggerSendMessage);
+    
+    // Process input keys ensuring Shift + Enter adds a line break instead of submitting
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        e.stopPropagation();
-        triggerSendMessage();
+        if (e.shiftKey) {
+          // Allow default shift+enter behavior (newlines)
+          e.stopPropagation();
+        } else {
+          // Standard enter submits
+          e.preventDefault();
+          e.stopPropagation();
+          triggerSendMessage();
+        }
       }
     });
 
@@ -657,7 +666,7 @@
     }
   }
 
-  // 7. Action handlers
+  // Action handlers
   function performComplexityAnalysis(forcedCode = null) {
     const code = forcedCode || getDeepSelection();
     if (!code) {
@@ -741,7 +750,7 @@
     });
   }
 
-  // 8. Hover-to-Expand Physics with drag fallback checks
+  // Hover-to-Expand Physics with drag fallback checks
   let isDragging = false;
   let startY = 0;
   let startX = 0;
@@ -752,7 +761,12 @@
   const showPanel = () => {
     if (isDragging) return;
     clearTimeout(hoverTimeout);
-    actionPanel.classList.add('visible');
+    
+    // Only display command panel if the sphere is currently set to visible
+    const s = shadow.getElementById('sprint-sphere');
+    if (s && !s.classList.contains('sprint-companion-hidden')) {
+      actionPanel.classList.add('visible');
+    }
   };
 
   const hidePanel = () => {
@@ -766,7 +780,7 @@
   actionPanel.addEventListener('mouseenter', showPanel);
   actionPanel.addEventListener('mouseleave', hidePanel);
 
-  // Drag physics parameters
+  // Drag physics parameters adjusted to match the 34px sphere size profile
   sphere.addEventListener('pointerdown', (e) => {
     isDragging = false;
     startY = e.clientY;
@@ -784,7 +798,7 @@
 
     if (Math.abs(deltaY) > 6 || Math.abs(deltaX) > 6) {
       isDragging = true;
-      actionPanel.classList.remove('visible'); // keep hidden during dragging operations
+      actionPanel.classList.remove('visible'); // Keep hidden during dragging operations
       
       const computedRight = startRight + deltaX;
       const computedBottom = startBottom + deltaY;
@@ -795,8 +809,9 @@
       sphere.style.right = `${boundedRight}px`;
       sphere.style.bottom = `${boundedBottom}px`;
       
-      actionPanel.style.right = `${boundedRight + 6}px`;
-      actionPanel.style.bottom = `${boundedBottom + 60}px`;
+      // Vertical panel alignment mapping centered with the reduced 34px sphere
+      actionPanel.style.right = `${boundedRight - 1}px`;
+      actionPanel.style.bottom = `${boundedBottom + 46}px`;
     }
   });
 
@@ -834,8 +849,32 @@
     actionPanel.classList.remove('visible');
   });
 
-  // 9. Communication channels for right-clicks
+  // Dynamic visual state application handling
+  function applyShowSphereOption(options) {
+    const showSphereOpt = options?.find(o => o.optionName === 'showSphere');
+    const show = showSphereOpt ? showSphereOpt.checked : true;
+    const s = shadow.getElementById('sprint-sphere');
+    const p = shadow.getElementById('sprint-vertical-panel');
+    if (s && p) {
+      if (show) {
+        s.classList.remove('sprint-companion-hidden');
+      } else {
+        s.classList.add('sprint-companion-hidden');
+        p.classList.remove('visible'); // Ensure vertical actions stay hidden
+      }
+    }
+  }
+
+  // Load and apply initial visual layout settings on load
+  chrome.storage.local.get('options', (res) => {
+    applyShowSphereOption(res?.options);
+  });
+
+  // Communication channels for right-clicks & option switches
   chrome.runtime.onMessage.addListener((request) => {
+    if (request.action === "applyVisibilityOptions") {
+      applyShowSphereOption(request.options);
+    }
     if (request.type === "TRIGGER_ACTION") {
       const code = request.code || getDeepSelection();
       
@@ -861,10 +900,27 @@
           performBugCheck(code);
         }
       }
+
+      // Chat Toggle logic
+      else if (request.action === "chat") {
+        const chatOverlay = shadow.getElementById('sprint-chat-overlay');
+        if (chatOverlay) {
+          closeChatModal();
+        } else {
+          openChatModal();
+        }
+      }
     }
   });
 
-  // 10. Strict Toggle Keyboard Router with AltGr detection & escape hooks
+  // Handle live storage edits
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.options) {
+      applyShowSphereOption(changes.options.newValue);
+    }
+  });
+
+  // Strict Toggle Keyboard Router with AltGr detection & escape hooks
   window.addEventListener('keydown', (e) => {
     // Escape key handling
     if (e.key === 'Escape') {
@@ -882,8 +938,9 @@
     // Precise key checks block European AltGr modifiers (!e.altKey)
     const isCmdX = (e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.code === 'KeyX';
     const isCmdZ = (e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.code === 'KeyZ';
+    const isAltQ = e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyQ';
 
-    if (isCmdX || isCmdZ) {
+    if (isCmdX || isCmdZ || isAltQ) {
       e.preventDefault();
       e.stopPropagation();
 
@@ -911,6 +968,16 @@
           closeBugModal();
         } else {
           performBugCheck(selection);
+        }
+      }
+
+      // Chat Toggle Shortcut Execution
+      if (isAltQ) {
+        const chatOverlay = shadow.getElementById('sprint-chat-overlay');
+        if (chatOverlay) {
+          closeChatModal();
+        } else {
+          openChatModal();
         }
       }
     }

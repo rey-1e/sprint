@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Sprint & Web Companion",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Company tags, Space-Time complexity, AI Debugging, Custom Themes, and a global floating web assistant on all sites.",
   "icons": {
     "128": "icon.png",
@@ -103,6 +103,13 @@
         "mac": "Command+Shift+Z"
       },
       "description": "Debug selected code logic"
+    },
+    "toggle-chat": {
+      "suggested_key": {
+        "default": "Alt+Q",
+        "mac": "Alt+Q"
+      },
+      "description": "Toggle SprintAI Chat Box"
     }
   }
 }

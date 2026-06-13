@@ -166,6 +166,7 @@
     const { options } = await chrome.storage.local.get('options');
     const defaultOpts = [
       { optionName: 'removeInjections', checked: false },
+      { optionName: 'showSphere', checked: true },
       { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
       { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
       { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },

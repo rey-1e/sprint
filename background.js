@@ -33,6 +33,8 @@ chrome.commands.onCommand.addListener((command) => {
       chrome.tabs.sendMessage(tabId, { type: "TRIGGER_ACTION", action: "complexity" });
     } else if (command === "analyze-bug") {
       chrome.tabs.sendMessage(tabId, { type: "TRIGGER_ACTION", action: "bug" });
+    } else if (command === "toggle-chat") {
+      chrome.tabs.sendMessage(tabId, { type: "TRIGGER_ACTION", action: "chat" });
     }
   });
 });
@@ -58,17 +60,17 @@ async function handleApiRequest(url, payload, sendResponse) {
       body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
+    const data = await res.ok ? await res.json() : null;
     if (!res.ok) {
       if (res.status === 401) {
-        sendResponse({ success: false, authRequired: true, error: data.message || "Sign in required." });
+        sendResponse({ success: false, authRequired: true, error: data?.message || "Sign in required." });
         return;
       }
-      if (data.error === "LIMIT_REACHED") {
+      if (data && data.error === "LIMIT_REACHED") {
         sendResponse({ success: false, limitReached: true, error: data.message });
         return;
       }
-      sendResponse({ success: false, error: data.message || `Server error: ${res.status}` });
+      sendResponse({ success: false, error: data?.message || `Server error: ${res.status}` });
       return;
     }
     sendResponse({ success: true, data });
