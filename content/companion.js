@@ -12,7 +12,7 @@
 
   const shadow = host.attachShadow({ mode: 'open' });
 
-  // 2. Inject Stylesheet from package resources inside the Shadow root
+  // 2. Inject Stylesheet from package resources inside the Shadow root [1]
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = chrome.runtime.getURL('styles/companion.css');
@@ -41,6 +41,11 @@
       id: 'btn-bug',
       tooltip: 'Find My Bug',
       svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`
+    },
+    {
+      id: 'btn-chat',
+      tooltip: 'sprintAI Chat',
+      svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`
     }
   ];
 
@@ -64,7 +69,10 @@
   uiContainer.appendChild(toastContainer);
   shadow.appendChild(uiContainer);
 
-  // 4. Recursive selection reader (Traverses shadow root layers)
+  // Global Chat Memory for the current session
+  let chatHistory = [];
+
+  // 4. Recursive selection reader (Traverses shadow root layers [1])
   function getDeepSelection() {
     let text = window.getSelection().toString().trim();
     if (text) return text;
@@ -111,7 +119,7 @@
   }
 
   // 5. Toast alerts
-  function createToast(title, statusMessage, timeValue = "—", spaceValue = "—", isError = false, optLink = null) {
+  function createToast(title, statusMessage, timeValue = "—", spaceValue = "—", isError = false) {
     const toast = document.createElement('div');
     toast.className = 'sprint-toast';
     
@@ -129,22 +137,10 @@
           <span class="complexity-label">Space:</span>
           <span class="complexity-value" style="${isError ? 'color: var(--text-warning);' : ''}">${spaceValue}</span>
         </div>
-        <div class="complexity-status" style="${isError ? 'color: var(--text-warning);' : ''}"></div>
+        <div class="complexity-status" style="${isError ? 'color: var(--text-warning);' : ''}">${statusMessage}</div>
       </div>
       <div class="sprint-toast-progress-bar"></div>
     `;
-
-    const statusContainer = toast.querySelector('.complexity-status');
-    if (optLink) {
-      const link = document.createElement('a');
-      link.href = optLink.url;
-      link.target = '_blank';
-      link.style.cssText = 'color:#a1a1aa; font-weight:600; text-decoration:underline; pointer-events:auto;';
-      link.textContent = optLink.text;
-      statusContainer.appendChild(link);
-    } else {
-      statusContainer.textContent = statusMessage;
-    }
 
     toastContainer.appendChild(toast);
 
@@ -273,8 +269,158 @@
     titleWrapper.appendChild(svg);
     titleWrapper.appendChild(titleSpan);
 
+    // Dynamic followup SprintAI Chat Trigger
+    const chatCta = document.createElement('button');
+    chatCta.id = 'sprint-modal-chat-cta';
+    chatCta.className = 'sprint-modal-chat-cta';
+    chatCta.textContent = 'Ask Chat ⚡';
+    chatCta.title = 'Ask SprintAI for follow-up help';
+    chatCta.addEventListener('click', () => {
+      openChatModal();
+    });
+
     const closeBtn = document.createElement('button');
     closeBtn.id = 'sprint-close-x';
+    closeBtn.className = 'sprint-close-x';
+
+    const closeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    closeSvg.setAttribute("width", "12");
+    closeSvg.setAttribute("height", "12");
+    closeSvg.setAttribute("viewBox", "0 0 24 24");
+    closeSvg.setAttribute("fill", "none");
+    closeSvg.setAttribute("stroke", "currentColor");
+    closeSvg.setAttribute("stroke-width", "2.5");
+    closeSvg.setAttribute("stroke-linecap", "round");
+    closeSvg.setAttribute("stroke-linejoin", "round");
+
+    const lineClose1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    lineClose1.setAttribute("x1", "18");
+    lineClose1.setAttribute("y1", "6");
+    lineClose1.setAttribute("x2", "6");
+    lineClose1.setAttribute("y2", "18");
+    const lineClose2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    lineClose2.setAttribute("x1", "6");
+    lineClose2.setAttribute("y1", "6");
+    lineClose2.setAttribute("x2", "18");
+    lineClose2.setAttribute("y2", "18");
+
+    closeSvg.appendChild(lineClose1);
+    closeSvg.appendChild(lineClose2);
+    closeBtn.appendChild(closeSvg);
+
+    header.appendChild(titleWrapper);
+    header.appendChild(chatCta);
+    header.appendChild(closeBtn);
+
+    const body = document.createElement('div');
+    body.className = 'sprint-modal-body';
+
+    const secTitle = document.createElement('h2');
+    secTitle.id = 'wrong-title';
+    secTitle.className = 'sprint-modal-section-title';
+    secTitle.textContent = titleText;
+
+    const textContainer = document.createElement('div');
+    textContainer.className = 'sprint-modal-text-container';
+    textContainer.id = 'wrong-feedback-container';
+
+    const feedbackParagraph = document.createElement('p');
+    feedbackParagraph.id = 'wrong-feedback';
+    feedbackParagraph.textContent = initialFeedback;
+
+    textContainer.appendChild(feedbackParagraph);
+    body.appendChild(secTitle);
+    body.appendChild(textContainer);
+
+    modal.appendChild(header);
+    modal.appendChild(body);
+    overlay.appendChild(modal);
+
+    uiContainer.appendChild(overlay);
+    closeBtn.addEventListener('click', closeBugModal);
+  }
+
+  // 6b. Floating Chatbox Modal window components
+  function closeChatModal() {
+    const modalContainer = shadow.getElementById('sprint-chat-overlay');
+    if (!modalContainer) return;
+    
+    modalContainer.classList.add('sprint-fade-out');
+    const innerModal = modalContainer.querySelector('.sprint-modal');
+    if (innerModal) innerModal.classList.add('sprint-pop-out');
+    
+    setTimeout(() => {
+      modalContainer.remove();
+    }, 120);
+  }
+
+  function formatMessageContent(text) {
+    // Escape HTML entities to prevent XSS
+    let escaped = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    // Parse code blocks: ```lang ... ```
+    const codeBlockRegex = /```(?:[a-zA-Z0-9+#-]+)?\n([\s\S]*?)\n```/g;
+    escaped = escaped.replace(codeBlockRegex, (match, code) => {
+      return `<div class="sprint-chat-code-block-wrapper">
+        <div class="sprint-chat-code-header">
+          <span>Code Output</span>
+          <button class="sprint-chat-copy-code" data-code="${encodeURIComponent(code)}">Copy</button>
+        </div>
+        <pre><code>${code}</code></pre>
+      </div>`;
+    });
+
+    // Parse inline code: `code`
+    escaped = escaped.replace(/`([^`\n]+)`/g, '<code class="sprint-chat-inline-code">$1</code>');
+
+    // Parse bold text: **text**
+    escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    return escaped;
+  }
+
+  function openChatModal() {
+    closeBugModal();
+    closeChatModal();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'sprint-chat-overlay';
+    overlay.className = 'sprint-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'sprint-modal sprint-chat-modal';
+
+    const header = document.createElement('div');
+    header.className = 'sprint-modal-header';
+
+    const titleWrapper = document.createElement('div');
+    titleWrapper.className = 'sprint-modal-title';
+    titleWrapper.style.color = 'var(--accent)';
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("width", "14");
+    svg.setAttribute("height", "14");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2.5");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z");
+    svg.appendChild(path);
+
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = 'SprintAI Assistant';
+
+    titleWrapper.appendChild(svg);
+    titleWrapper.appendChild(titleSpan);
+
+    const closeBtn = document.createElement('button');
     closeBtn.className = 'sprint-close-x';
 
     const closeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -306,31 +452,177 @@
     header.appendChild(closeBtn);
 
     const body = document.createElement('div');
-    body.className = 'sprint-modal-body';
+    body.className = 'sprint-modal-body sprint-chat-body';
+    body.id = 'sprint-chat-body';
 
-    const secTitle = document.createElement('h2');
-    secTitle.id = 'wrong-title';
-    secTitle.className = 'sprint-modal-section-title';
-    secTitle.textContent = titleText;
+    const historyContainer = document.createElement('div');
+    historyContainer.className = 'sprint-chat-history';
+    historyContainer.id = 'sprint-chat-history';
+    body.appendChild(historyContainer);
 
-    const textContainer = document.createElement('div');
-    textContainer.className = 'sprint-modal-text-container';
-    textContainer.id = 'wrong-feedback-container';
+    renderChatHistory(historyContainer);
 
-    const feedbackParagraph = document.createElement('p');
-    feedbackParagraph.id = 'wrong-feedback';
-    feedbackParagraph.textContent = initialFeedback;
+    const footer = document.createElement('div');
+    footer.className = 'sprint-chat-footer';
 
-    textContainer.appendChild(feedbackParagraph);
-    body.appendChild(secTitle);
-    body.appendChild(textContainer);
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Ask anything...';
+    input.className = 'sprint-chat-input';
+
+    const sendBtn = document.createElement('button');
+    sendBtn.className = 'sprint-chat-send-btn';
+    sendBtn.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    `;
+
+    footer.appendChild(input);
+    footer.appendChild(sendBtn);
 
     modal.appendChild(header);
     modal.appendChild(body);
+    modal.appendChild(footer);
     overlay.appendChild(modal);
 
     uiContainer.appendChild(overlay);
-    closeBtn.addEventListener('click', closeBugModal);
+
+    closeBtn.addEventListener('click', closeChatModal);
+
+    const triggerSendMessage = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      sendMessage(text, historyContainer);
+    };
+
+    sendBtn.addEventListener('click', triggerSendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.stopPropagation();
+        triggerSendMessage();
+      }
+    });
+
+    setTimeout(() => input.focus(), 150);
+  }
+
+  function sendMessage(text, container) {
+    chatHistory.push({ role: 'user', content: text });
+    renderChatHistory(container);
+
+    const typingBubble = document.createElement('div');
+    typingBubble.className = 'sprint-chat-bubble sprint-chat-typing';
+    typingBubble.textContent = 'sprintAI is thinking...';
+    container.appendChild(typingBubble);
+    scrollToBottom();
+
+    chrome.runtime.sendMessage({
+      type: "API_CHAT",
+      message: text,
+      history: chatHistory.slice(0, -1)
+    }, (res) => {
+      typingBubble.remove();
+      if (res?.success) {
+        const replyText = res.data.reply;
+        chatHistory.push({ role: 'assistant', content: replyText });
+        renderChatHistory(container);
+      } else {
+        let errorMsg = res?.error || "Failed to process chat response.";
+        const errorBubble = document.createElement('div');
+        errorBubble.className = 'sprint-chat-bubble sprint-chat-error';
+        
+        if (res?.authRequired) {
+          errorBubble.innerHTML = `Auth Required: <a href="https://getsprint.me/login" target="_blank" style="color:var(--accent); text-decoration:underline;">Sign In</a>`;
+        } else if (res?.limitReached) {
+          errorBubble.innerHTML = `Limit Reached: <a href="https://getsprint.me/payments" target="_blank" style="color:var(--accent); text-decoration:underline;">Upgrade to Premium</a>`;
+        } else {
+          errorBubble.textContent = errorMsg;
+        }
+        
+        container.appendChild(errorBubble);
+        scrollToBottom();
+      }
+    });
+  }
+
+  function renderChatHistory(container) {
+    container.innerHTML = '';
+    
+    if (chatHistory.length === 0) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'sprint-chat-placeholder';
+      placeholder.textContent = 'Ask me anything about this code or ask to write custom solutions. sprintAI is fully optimized for speed.';
+      container.appendChild(placeholder);
+      return;
+    }
+
+    chatHistory.forEach((msg) => {
+      const bubble = document.createElement('div');
+      bubble.className = `sprint-chat-bubble sprint-chat-${msg.role}`;
+      
+      if (msg.role === 'assistant') {
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'sprint-chat-content';
+        contentDiv.innerHTML = formatMessageContent(msg.content);
+        bubble.appendChild(contentDiv);
+
+        const actionRow = document.createElement('div');
+        actionRow.className = 'sprint-chat-bubble-actions';
+        const copyAllBtn = document.createElement('button');
+        copyAllBtn.className = 'sprint-chat-copy-all-btn';
+        copyAllBtn.innerHTML = `
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy Message</span>
+        `;
+        copyAllBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(msg.content).then(() => {
+            const label = copyAllBtn.querySelector('span');
+            label.textContent = 'Copied!';
+            setTimeout(() => { label.textContent = 'Copy Message'; }, 1500);
+          });
+        });
+        actionRow.appendChild(copyAllBtn);
+        bubble.appendChild(actionRow);
+      } else {
+        const p = document.createElement('p');
+        p.style.whiteSpace = 'pre-wrap';
+        p.textContent = msg.content;
+        bubble.appendChild(p);
+      }
+
+      container.appendChild(bubble);
+    });
+
+    const copyCodeBtns = container.querySelectorAll('.sprint-chat-copy-code');
+    copyCodeBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const rawCode = decodeURIComponent(btn.getAttribute('data-code'));
+        navigator.clipboard.writeText(rawCode).then(() => {
+          btn.textContent = 'Copied!';
+          btn.style.color = 'var(--text-success)';
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.style.color = '';
+          }, 1500);
+        });
+      });
+    });
+
+    scrollToBottom();
+  }
+
+  function scrollToBottom() {
+    const body = shadow.getElementById('sprint-chat-body');
+    if (body) {
+      body.scrollTop = body.scrollHeight;
+    }
   }
 
   // 7. Action handlers
@@ -360,28 +652,8 @@
       } else {
         timeSpan.textContent = 'Err';
         spaceSpan.textContent = 'Err';
+        statusDiv.textContent = res?.error || 'Analysis Failed';
         statusDiv.style.color = 'var(--text-warning)';
-        
-        if (res?.authRequired) {
-          statusDiv.textContent = '';
-          const link = document.createElement('a');
-          link.href = 'https://getsprint.me/login';
-          link.target = '_blank';
-          link.style.cssText = 'color:#a1a1aa; font-weight:600; text-decoration:underline; pointer-events:auto;';
-          link.textContent = 'Sign In required';
-          statusDiv.appendChild(link);
-        } else if (res?.limitReached) {
-          statusDiv.textContent = '';
-          const link = document.createElement('a');
-          link.href = 'https://getsprint.me/payments';
-          link.target = '_blank';
-          link.style.cssText = 'color:#eff1f680; font-weight:600; text-decoration:underline; pointer-events:auto;';
-          link.textContent = 'Upgrade Required';
-          statusDiv.appendChild(link);
-          alert(res.error);
-        } else {
-          statusDiv.textContent = res?.error || 'Analysis Failed';
-        }
       }
     });
   }
@@ -408,77 +680,31 @@
       container.innerHTML = ''; // Clear status wrapper
 
       if (res?.success) {
-        if (res.authRequired || res.data?.authRequired) {
-          titleEl.textContent = 'Sign In Required';
-          titleEl.style.color = '#e0a96d';
-          
-          const p = document.createElement('p');
-          p.textContent = 'You must be logged in to use the AI Debugger.';
-          
-          const link = document.createElement('a');
-          link.href = 'https://getsprint.me/login';
-          link.target = '_blank';
-          link.style.cssText = 'color:#cd5c5c; font-weight:600; text-decoration:underline; display:block; margin-top:12px; pointer-events:auto;';
-          link.textContent = 'Click here to Sign In';
-          
-          container.appendChild(p);
-          container.appendChild(link);
-          return;
-        }
-
+        titleEl.textContent = 'Issue Found';
+        titleEl.style.color = '#b56363';
+        
         const rawText = (res.data.feedback || "No major logical issues found.").trim();
-        const cleanText = rawText.toLowerCase().replace(/[^a-z]/g, '');
-        const isClean = cleanText === "therearenoerrors" || rawText.toLowerCase().includes("there are no errors") || (!rawText.includes("-") && rawText.length < 35);
-
-        if (isClean) {
-          titleEl.textContent = 'No Issues Found';
-          titleEl.style.color = '#6eda30';
+        const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        
+        lines.forEach((line) => {
           const p = document.createElement('p');
-          p.textContent = 'There are no errors.';
-          p.style.color = 'var(--text-success)';
-          container.appendChild(p);
-        } else {
-          titleEl.textContent = 'Issue Found';
-          titleEl.style.color = '#b56363';
+          p.style.marginBottom = '10px';
+          p.style.color = '#a1a1aa';
           
-          const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-          lines.forEach((line) => {
-            const p = document.createElement('p');
-            p.style.marginBottom = '10px';
-            p.style.color = '#a1a1aa';
-            
-            if (line.startsWith('-')) {
-              p.textContent = `• ${line.substring(1).trim()}`;
-            } else {
-              p.textContent = line;
-            }
-            container.appendChild(p);
-          });
-        }
+          if (line.startsWith('-')) {
+            p.textContent = `• ${line.substring(1).trim()}`;
+          } else {
+            p.textContent = line;
+          }
+          container.appendChild(p);
+        });
       } else {
-        if (res?.authRequired) {
-          titleEl.textContent = 'Sign In Required';
-          titleEl.style.color = '#e0a96d';
-          const p = document.createElement('p');
-          p.textContent = 'You must be logged in.';
-          const link = document.createElement('a');
-          link.href = 'https://getsprint.me/login';
-          link.target = '_blank';
-          link.style.cssText = 'color:#cd5c5c; font-weight:600; text-decoration:underline; display:block; margin-top:12px; pointer-events:auto;';
-          link.textContent = 'Click here to Sign In';
-          container.appendChild(p);
-          container.appendChild(link);
-        } else if (res?.limitReached) {
-          closeBugModal();
-          alert(res.error);
-          window.open('https://getsprint.me/payments', '_blank');
-        } else {
-          titleEl.textContent = 'Analysis Failed';
-          titleEl.style.color = '#f87171';
-          const p = document.createElement('p');
-          p.textContent = res?.error || "Could not reach analysis model.";
-          container.appendChild(p);
-        }
+        titleEl.textContent = 'Analysis Failed';
+        titleEl.style.color = '#f87171';
+        
+        const p = document.createElement('p');
+        p.textContent = res?.error || "Could not reach analysis model.";
+        container.appendChild(p);
       }
     });
   }
@@ -500,7 +726,7 @@
   const hidePanel = () => {
     hoverTimeout = setTimeout(() => {
       actionPanel.classList.remove('visible');
-    }, 250);
+    }, 250); // 250ms gap safety transition buffer
   };
 
   sphere.addEventListener('mouseenter', showPanel);
@@ -508,6 +734,7 @@
   actionPanel.addEventListener('mouseenter', showPanel);
   actionPanel.addEventListener('mouseleave', hidePanel);
 
+  // Drag physics parameters
   sphere.addEventListener('pointerdown', (e) => {
     isDragging = false;
     startY = e.clientY;
@@ -525,7 +752,7 @@
 
     if (Math.abs(deltaY) > 6 || Math.abs(deltaX) > 6) {
       isDragging = true;
-      actionPanel.classList.remove('visible');
+      actionPanel.classList.remove('visible'); // keep hidden during dragging operations
       
       const computedRight = startRight + deltaX;
       const computedBottom = startBottom + deltaY;
@@ -565,11 +792,22 @@
     actionPanel.classList.remove('visible');
   });
 
+  shadow.getElementById('btn-chat').addEventListener('click', () => {
+    const modalContainer = shadow.getElementById('sprint-chat-overlay');
+    if (modalContainer) {
+      closeChatModal();
+    } else {
+      openChatModal();
+    }
+    actionPanel.classList.remove('visible');
+  });
+
   // 9. Communication channels for right-clicks
   chrome.runtime.onMessage.addListener((request) => {
     if (request.type === "TRIGGER_ACTION") {
       const code = request.code || getDeepSelection();
       
+      // Complexity Toggle logic
       if (request.action === "complexity") {
         const activeToasts = toastContainer.querySelectorAll('.sprint-toast');
         if (activeToasts.length > 0) {
@@ -581,6 +819,8 @@
           performComplexityAnalysis(code);
         }
       } 
+      
+      // Bug Toggle logic
       else if (request.action === "bug") {
         const modalContainer = shadow.getElementById('sprint-custom-overlay');
         if (modalContainer) {
@@ -594,8 +834,10 @@
 
   // 10. Strict Toggle Keyboard Router with AltGr detection & escape hooks
   window.addEventListener('keydown', (e) => {
+    // Escape key handling
     if (e.key === 'Escape') {
       closeBugModal();
+      closeChatModal();
       actionPanel.classList.remove('visible');
       const toasts = toastContainer.querySelectorAll('.sprint-toast');
       toasts.forEach(t => {
@@ -605,6 +847,7 @@
       return;
     }
 
+    // Precise key checks block European AltGr modifiers (!e.altKey)
     const isCmdX = (e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.code === 'KeyX';
     const isCmdZ = (e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.code === 'KeyZ';
 
@@ -614,9 +857,11 @@
 
       const selection = getDeepSelection();
 
+      // Complexity Toggle Shortcut Execution
       if (isCmdX) {
         const activeToasts = toastContainer.querySelectorAll('.sprint-toast');
         if (activeToasts.length > 0) {
+          // Toggle off: close all open toasts
           activeToasts.forEach(t => {
             t.classList.add('slide-out');
             setTimeout(() => t.remove(), 300);
@@ -626,9 +871,11 @@
         }
       }
 
+      // Bug Toggle Shortcut Execution
       if (isCmdZ) {
         const modalContainer = shadow.getElementById('sprint-custom-overlay');
         if (modalContainer) {
+          // Toggle off: close the existing debug modal
           closeBugModal();
         } else {
           performBugCheck(selection);
