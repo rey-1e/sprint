@@ -97,4 +97,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }, sendResponse);
     return true;
   }
+  if (request.type === "FETCH_THEME") {
+    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/fetchTheme', {
+      theme: request.theme
+    }, sendResponse);
+    return true;
+  }
+  if (request.type === "FETCH_DETAILED_ANALYSIS") {
+    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/fetchDetailedAnalysis', {
+      code: request.code
+    }, sendResponse);
+    return true;
+  }
+  if (request.type === "SYNC_USER") {
+    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/syncUser', {}, sendResponse);
+    return true;
+  }
+  if (request.type === "GET_QUESTION_ID") {
+    fetch(chrome.runtime.getURL('ratings.json'))
+      .then(res => res.json())
+      .then(data => {
+        const matched = data.find(p => p.TitleSlug === request.slug);
+        sendResponse({ questionId: matched?.ID || matched?.QuestionId || null });
+      })
+      .catch(err => {
+        console.error("Sprint ratings lookup error:", err);
+        sendResponse({ questionId: null });
+      });
+    return true;
+  }
 });

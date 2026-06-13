@@ -21,39 +21,37 @@
   padding: 0;
 }
 
-/* Draggable trigger badge */
+/* Draggable trigger badge - Redesigned as a plain sleek Indian Red sphere */
 #sprint-sphere {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  width: 48px;
-  height: 48px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  width: 44px;
+  height: 44px;
+  background-color: var(--accent);
+  border: 2px solid rgba(255, 255, 255, 0.16);
   border-radius: 50%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 18px rgba(205, 92, 92, 0.38);
   cursor: grab;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent);
-  font-size: 18px;
   user-select: none;
   pointer-events: auto;
-  transition: transform 0.2s var(--ease-google), box-shadow 0.2s, border-color 0.2s;
+  transition: transform 0.25s var(--ease-google), box-shadow 0.25s var(--ease-google), background-color 0.2s var(--ease-google);
 }
 
 #sprint-sphere:hover {
   transform: scale(1.08);
-  border-color: var(--accent);
-  box-shadow: 0 6px 24px rgba(205, 92, 92, 0.25);
+  background-color: var(--accent-hover);
+  box-shadow: 0 6px 22px rgba(205, 92, 92, 0.55);
 }
 
 /* Vertical Command Panel positioned above the trigger sphere */
 #sprint-vertical-panel {
   position: fixed;
-  right: 30px;
-  bottom: 84px;
+  right: 28px;
+  bottom: 80px;
   width: 36px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);

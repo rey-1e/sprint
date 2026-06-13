@@ -219,8 +219,12 @@
         injectSecureStyle(res.data.fullCSS);
         await chrome.storage.local.set({ cachedThemeCSS: res.data.fullCSS });
       } else {
+        // Clear active configurations and reset state values gracefully on failed authorization/downgrades
         clearSecureStyle();
         await chrome.storage.local.remove('cachedThemeCSS');
+        await chrome.storage.local.set({ leetcodeTheme: 'default' });
+        savedTheme = 'default';
+        
         if (!isBgCheck && theme !== 'default') {
           alert("Premium is required to use Custom Themes!");
           window.open('https://getsprint.me/payments', '_blank');
@@ -235,7 +239,8 @@
       const hasDark = document.documentElement.classList.contains('dark');
       if (curr !== savedTheme || (savedTheme !== 'default' && !hasDark)) {
         obsTheme.disconnect();
-        applyTheme(savedTheme);
+        // Background-driven correction triggers should pass true to isBgCheck to prevent infinite alert dialogue looping
+        applyTheme(savedTheme, true);
         obsTheme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
       }
     });

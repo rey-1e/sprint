@@ -1,4 +1,10 @@
-const LEETCODE_DOMAINS = ['*://*.leetcode.com/*', '*://*.leetcode.cn/*'];
+const MATCH_PATTERNS = [
+  '*://*.leetcode.com/*',
+  '*://*.leetcode.cn/*',
+  '*://getsprint.me/*',
+  'http://localhost/*',
+  'http://127.0.0.1/*'
+];
 
 function setupLink(id) {
   const el = document.getElementById(id);
@@ -6,27 +12,29 @@ function setupLink(id) {
 }
 
 async function broadcastMessage(message) {
-  for (const url of LEETCODE_DOMAINS) {
-    try {
-      const tabs = await chrome.tabs.query({ url });
-      tabs.forEach(tab => chrome.tabs.sendMessage(tab.id, message).catch(() => {}));
-    } catch {}
+  try {
+    const tabs = await chrome.tabs.query({ url: MATCH_PATTERNS });
+    tabs.forEach(tab => {
+      chrome.tabs.sendMessage(tab.id, message).catch(() => {});
+    });
+  } catch (err) {
+    console.error("Sprint Broadcast failed:", err);
   }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  setupLink('upgrade-link');
-  setupLink('website-link');
-  setupLink('info-question-link');
-
-  const comp = document.getElementById('company-link');
-  if (comp) comp.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: comp.href }); });
-
-  const { isPremium = false } = await chrome.storage.local.get('isPremium');
+// Renders the translucent lock overlay dynamically depending on verified premium state
+function renderThemesSection(isPremium) {
   const themes = document.getElementById('themes-section');
-  
-  if (!isPremium && themes) {
+  if (!themes) return;
+
+  // Clean up any existing instances of the overlay to prevent duplicates
+  const existingOverlay = themes.querySelector('.themes-lock-overlay');
+  if (existingOverlay) existingOverlay.remove();
+  themes.classList.remove('premium-locked');
+
+  if (!isPremium) {
     themes.classList.add('premium-locked');
+    
     const overlay = document.createElement('div');
     overlay.className = 'themes-lock-overlay';
     
@@ -40,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     svg.setAttribute("fill", "none");
     svg.setAttribute("stroke", "currentColor");
     svg.setAttribute("stroke-width", "2.5");
-    svg.style.styleMarginBottom = "4px";
+    svg.style.marginBottom = "4px";
 
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("x", "3");
@@ -73,12 +81,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     themes.style.position = 'relative';
     themes.appendChild(overlay);
     
-    ctaBtn.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: ctaBtn.href }); });
+    ctaBtn.addEventListener('click', (e) => { 
+      e.preventDefault(); 
+      chrome.tabs.create({ url: ctaBtn.href }); 
+    });
   }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  setupLink('upgrade-link');
+  setupLink('website-link');
+  setupLink('info-question-link');
+
+  const comp = document.getElementById('company-link');
+  if (comp) comp.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: comp.href }); });
+
+  const storage = await chrome.storage.local.get(['isPremium', 'authToken', 'leetcodeTheme']);
+  
+  // Coerce premium value correctly to handle both booleans and string conversions
+  let isPremium = storage.isPremium === true || storage.isPremium === 'true';
+  const token = storage.authToken;
+
+  // Real-time state verification loop on popup initialization
+  if (token) {
+    chrome.runtime.sendMessage({ type: "SYNC_USER" }, async (response) => {
+      if (response?.success) {
+        const verifiedPremium = response.data.isPremium === true || response.data.isPremium === 'true';
+        await chrome.storage.local.set({ 
+          isPremium: verifiedPremium,
+          premiumUntil: response.data.premiumUntil
+        });
+        
+        // Dynamically adjust UI context if the backend state updated
+        if (verifiedPremium !== isPremium) {
+          isPremium = verifiedPremium;
+          renderThemesSection(isPremium);
+        }
+      }
+    });
+  }
+
+  // Initial render step
+  renderThemesSection(isPremium);
 
   const dots = document.querySelectorAll('.dot');
   const activeLabel = document.getElementById('active-label');
-  const { leetcodeTheme = 'default' } = await chrome.storage.local.get('leetcodeTheme');
+  const leetcodeTheme = storage.leetcodeTheme || 'default';
 
   const activeDot = document.querySelector(`.dot[data-theme="${leetcodeTheme}"]`);
   if (activeDot) {

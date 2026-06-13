@@ -1,6 +1,31 @@
 let isInjectingTags = false;
 let injectionsDisabled = false;
 
+// Helper to extract the actual problem ID directly from LeetCode's rendered title headers
+function extractQuestionIdFromDOM() {
+  const selectors = [
+    '.text-title-large',
+    'div[class*="text-title-large"]',
+    'h1',
+    '[data-cy="question-title"]',
+    '.css-v3d350',
+    '#qd-content a',
+    'span[class*="text-title"]'
+  ];
+  for (const sel of selectors) {
+    const el = document.querySelector(sel);
+    if (el) {
+      const txt = el.textContent.trim();
+      // Safely matches pattern "[ID]. [Title]" e.g., "1. Two Sum"
+      const match = txt.match(/^\s*(\d+)\s*\./);
+      if (match) {
+        return match[1];
+      }
+    }
+  }
+  return null;
+}
+
 async function getCachedQuestionId(slug) {
   return new Promise((resolve) => {
     chrome.runtime.sendMessage({ type: "GET_QUESTION_ID", slug }, (response) => {
@@ -52,7 +77,7 @@ async function extractFullCode() {
   const urlParts = window.location.pathname.split('/');
   const pIdx = urlParts.indexOf('problems');
   const slug = pIdx !== -1 ? urlParts[pIdx + 1] : "";
-  const questionId = slug ? await getCachedQuestionId(slug) : null;
+  const questionId = slug ? (extractQuestionIdFromDOM() || await getCachedQuestionId(slug)) : null;
 
   // Primary: Real-time Monaco Memory Extraction via MAIN world bridge
   const monacoCode = await new Promise((resolve) => {
@@ -93,7 +118,11 @@ async function injectTags() {
     const slug = urlParts[pIdx + 1];
     if (!slug) return;
 
-    const questionId = await getCachedQuestionId(slug);
+    // Use fast DOM extractor with background ratings database as a robust fallback
+    let questionId = extractQuestionIdFromDOM();
+    if (!questionId) {
+      questionId = await getCachedQuestionId(slug);
+    }
     if (!questionId) return;
 
     const [compRes, ratRes] = await Promise.allSettled([
@@ -108,11 +137,13 @@ async function injectTags() {
       if (pData?.Rating) elo = Math.round(pData.Rating);
     }
 
-    let target = document.querySelector('[class*="text-difficulty-"]');
+    // Locate difficulty labels using highly adaptable class and text scanners
+    let target = document.querySelector('[class*="text-difficulty-"]') || document.querySelector('[class*="text-sd-"]');
     if (!target) {
-      const items = document.querySelectorAll('div.flex.items-center.space-x-4 div, div[class*="gap-"] > div');
+      const items = document.querySelectorAll('div.flex.items-center.space-x-4 div, div[class*="gap-"] > div, span, div');
       for (const el of items) {
-        if (/^(Easy|Medium|Hard)$/i.test(el.textContent?.trim())) {
+        const text = el.textContent?.trim();
+        if (/^(Easy|Medium|Hard)$/i.test(text)) {
           target = el;
           break;
         }
@@ -121,8 +152,9 @@ async function injectTags() {
     if (!target) return;
 
     if (elo && !target.hasAttribute('data-elo-injected')) {
-      target.setAttribute('data-original-text', target.textContent || '');
-      target.textContent = `${target.textContent} - ${elo}`;
+      const originalText = (target.textContent || '').trim();
+      target.setAttribute('data-original-text', originalText);
+      target.textContent = `${originalText} - ${elo}`;
       target.setAttribute('data-elo-injected', 'true');
     }
 
@@ -155,11 +187,28 @@ async function injectTags() {
   }
 }
 
+// Searches the DOM tree dynamically for any container displaying metrics
+function findSubmissionTargetDiv() {
+  const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3, div[class*="rounded-lg"][class*="border"]');
+  let target = Array.from(boxes).find(d => d.textContent.includes('Runtime') || d.textContent.includes('Memory'));
+  if (target) return target;
+
+  const divs = document.querySelectorAll('div');
+  for (const div of divs) {
+    if (div.children.length >= 2 && div.textContent.includes('Runtime') && div.textContent.includes('Memory')) {
+      if (div.classList.contains('border') || div.classList.contains('rounded-lg') || div.querySelector('[class*="bg-"]')) {
+        return div;
+      }
+    }
+  }
+  return null;
+}
+
 function injectSubmissionAnalysisUI() {
   if (injectionsDisabled) return;
   if (document.getElementById('sprint-submission-analysis')) return;
-  const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3');
-  const targetDiv = Array.from(boxes).find(d => d.textContent.includes('Runtime') || d.textContent.includes('Memory'));
+  
+  const targetDiv = findSubmissionTargetDiv();
   if (!targetDiv) return;
 
   const container = document.createElement('div');
@@ -244,7 +293,11 @@ function injectSubmissionAnalysisUI() {
   container.appendChild(efficiencySec);
   container.appendChild(styleSec);
 
-  targetDiv.prepend(container);
+  if (targetDiv.prepend) {
+    targetDiv.prepend(container);
+  } else {
+    targetDiv.insertBefore(container, targetDiv.firstChild);
+  }
 
   const tabElements = container.querySelectorAll('.sprint-ai-tab');
   const contentElements = container.querySelectorAll('.sprint-ai-content');
@@ -271,7 +324,7 @@ function injectSubmissionAnalysisUI() {
 
 async function fetchAnalysisData(summaryElement) {
   const raw = await extractFullCode();
-  if (!raw.trim()) {
+  if (!raw || !raw.trim()) {
     summaryElement.textContent = "Could not locate code on the page.";
     summaryElement.className = 'sprint-ai-summary sprint-text-error';
     return;
@@ -296,7 +349,7 @@ async function fetchAnalysisData(summaryElement) {
         const link = document.createElement('a');
         link.href = 'https://getsprint.me/login';
         link.target = '_blank';
-        link.style.cssText = 'color:#a1a1aa; text-decoration:underline; font-weight:500;';
+        link.style.cssText = 'color:#a1a1aa; text-decoration:underline; font-weight:500; display:inline-block; cursor:pointer;';
         link.textContent = 'Sign in to LeetCode Sprint to analyze submissions.';
         summaryElement.className = 'sprint-ai-summary-muted';
         summaryElement.appendChild(link);
@@ -304,11 +357,10 @@ async function fetchAnalysisData(summaryElement) {
         const link = document.createElement('a');
         link.href = 'https://getsprint.me/payments';
         link.target = '_blank';
-        link.style.cssText = 'color:#eff1f680; text-decoration:underline; font-weight:500;';
-        link.textContent = 'Limit reached. Upgrade at getsprint.me/payments';
+        link.style.cssText = 'color:#ffb000; text-decoration:underline; font-weight:500; display:inline-block; cursor:pointer;';
+        link.textContent = 'Daily usage limits reached. Click here to upgrade at getsprint.me/payments.';
         summaryElement.className = 'sprint-ai-summary sprint-text-warning';
         summaryElement.appendChild(link);
-        alert(res.error);
       } else {
         summaryElement.textContent = "Analysis failed. Ensure service worker API is active.";
         summaryElement.className = 'sprint-ai-summary sprint-text-error';
@@ -359,7 +411,11 @@ function removeInjectedElements() {
 function injectAll() {
   if (injectionsDisabled) return;
   injectTags();
-  if (window.location.pathname.includes('/submissions/')) injectSubmissionAnalysisUI();
+  
+  const hasSubmissionBox = !!findSubmissionTargetDiv();
+  if (window.location.pathname.includes('/submissions/') || hasSubmissionBox) {
+    injectSubmissionAnalysisUI();
+  }
   injectRedirectPills();
 }
 
@@ -399,7 +455,9 @@ const obs = new MutationObserver(() => {
   if (debounce) clearTimeout(debounce);
   debounce = setTimeout(() => {
     if (!document.getElementById('custom-company-tags')) injectTags();
-    if (!document.getElementById('sprint-submission-analysis') && window.location.pathname.includes('/submissions/')) {
+    
+    const hasSubmissionBox = !!findSubmissionTargetDiv();
+    if (!document.getElementById('sprint-submission-analysis') && (window.location.pathname.includes('/submissions/') || hasSubmissionBox)) {
       injectSubmissionAnalysisUI();
     }
     if (!document.getElementById('sprint-google-editor-pill')) injectRedirectPills();

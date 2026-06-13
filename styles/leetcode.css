@@ -23,30 +23,31 @@
 }
 
 .sprint-ai-analysis {
-    background-color: #2a2a2a !important;
+    background-color: #1e1e20 !important;
     padding: 16px !important;
-    border-radius: 8px !important;
-    border: 1px solid #3f3f46 !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     width: 100%;
     margin-bottom: 14px;
-    font-family: -apple-system, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 13px !important;
     line-height: 1.5;
     box-sizing: border-box;
 }
 
 .sprint-ai-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.sprint-ai-tabs { display: flex; gap: 16px; border-bottom: 1px solid #3f3f46; width: 100%; padding-bottom: 8px; }
+.sprint-ai-tabs { display: flex; gap: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); width: 100%; padding-bottom: 8px; }
 .sprint-ai-tab {
     color: #a1a1aa;
     cursor: pointer;          
     transition: color 0.15s;   
     display: inline-flex;
     align-items: center;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 12px;
     position: relative;
     padding-bottom: 8px;
+    user-select: none;
 }
 .sprint-ai-tab:hover { color: #ffffff; }
 .sprint-ai-tab.active { color: #CD5C5C; }
@@ -62,29 +63,29 @@
 
 .sprint-ai-summary {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.6;
     padding: 10px 14px;
     background: rgba(205, 92, 92, 0.08);
-    border-left: 2px solid #CD5C5C;
-    border-radius: 0 4px 4px 0;
+    border-left: 3px solid #CD5C5C;
+    border-radius: 0 6px 6px 0;
     margin-bottom: 14px;
     color: #ffd1d1;
 }
 
 .sprint-ai-summary-muted {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.6;
     padding: 10px 14px;
     background: rgba(255, 255, 255, 0.03);
-    border-left: 2px solid #a1a1aa;
-    border-radius: 0 4px 4px 0;
+    border-left: 3px solid #a1a1aa;
+    border-radius: 0 6px 6px 0;
     margin-bottom: 14px;
     color: #a1a1aa;
 }
 
 .sprint-ai-grid { display: grid; grid-template-columns: 100px 1fr; gap: 10px 16px; align-items: flex-start; }
 .sprint-ai-label { color: #a1a1aa; font-weight: 500; font-size: 12.5px; }
-.sprint-ai-val { color: #ffffff; font-size: 13px; }
+.sprint-ai-val { color: #ffffff; font-size: 13px; line-height: 1.4; }
 .sprint-ai-content { animation: sprintFadeIn 0.15s ease-out forwards; }
 
 @keyframes sprintFadeIn { from { opacity: 0; } to { opacity: 1; } }

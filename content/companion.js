@@ -12,7 +12,7 @@
 
   const shadow = host.attachShadow({ mode: 'open' });
 
-  // 2. Inject Stylesheet from package resources inside the Shadow root [1]
+  // 2. Inject Stylesheet from package resources inside the Shadow root
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = chrome.runtime.getURL('styles/companion.css');
@@ -22,10 +22,9 @@
   const uiContainer = document.createElement('div');
   uiContainer.id = 'sprint-shadow-container';
 
-  // Draggable sphere trigger
+  // Draggable sphere trigger - Modified to serve as a plain solid Indian Red sphere
   const sphere = document.createElement('div');
   sphere.id = 'sprint-sphere';
-  sphere.innerHTML = '⚡';
 
   // Floating Action Panel
   const actionPanel = document.createElement('div');
@@ -72,7 +71,7 @@
   // Global Chat Memory for the current session
   let chatHistory = [];
 
-  // 4. Recursive selection reader (Traverses shadow root layers [1])
+  // 4. Recursive selection reader (Traverses shadow root layers)
   function getDeepSelection() {
     let text = window.getSelection().toString().trim();
     if (text) return text;
@@ -354,32 +353,55 @@
     }, 120);
   }
 
-  function formatMessageContent(text) {
-    // Escape HTML entities to prevent XSS
-    let escaped = text
+  function escapeHtml(str) {
+    return str
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
-    // Parse code blocks: ```lang ... ```
-    const codeBlockRegex = /```(?:[a-zA-Z0-9+#-]+)?\n([\s\S]*?)\n```/g;
-    escaped = escaped.replace(codeBlockRegex, (match, code) => {
-      return `<div class="sprint-chat-code-block-wrapper">
-        <div class="sprint-chat-code-header">
-          <span>Code Output</span>
-          <button class="sprint-chat-copy-code" data-code="${encodeURIComponent(code)}">Copy</button>
-        </div>
-        <pre><code>${code}</code></pre>
-      </div>`;
+  function formatMessageContent(text) {
+    const placeholders = [];
+    
+    // Extract complete markdown block elements first to safeguard raw content
+    const codeBlockRegex = /```([a-zA-Z0-9+#-]+)?\n([\s\S]*?)\n```/g;
+    let processed = text.replace(codeBlockRegex, (match, lang, code) => {
+      const index = placeholders.length;
+      placeholders.push({
+        type: 'block',
+        code: code,
+        html: `<div class="sprint-chat-code-block-wrapper">
+          <div class="sprint-chat-code-header">
+            <span>${lang ? lang.toUpperCase() : 'CODE'}</span>
+            <button class="sprint-chat-copy-code" data-index="${index}">Copy</button>
+          </div>
+          <pre><code>${escapeHtml(code)}</code></pre>
+        </div>`
+      });
+      return `___SPRINT_PLACEHOLDER_${index}___`;
     });
 
-    // Parse inline code: `code`
-    escaped = escaped.replace(/`([^`\n]+)`/g, '<code class="sprint-chat-inline-code">$1</code>');
+    // Extract inline block elements
+    const inlineCodeRegex = /`([^`\n]+)`/g;
+    processed = processed.replace(inlineCodeRegex, (match, code) => {
+      const index = placeholders.length;
+      placeholders.push({
+        type: 'inline',
+        code: code,
+        html: `<code class="sprint-chat-inline-code">${escapeHtml(code)}</code>`
+      });
+      return `___SPRINT_PLACEHOLDER_${index}___`;
+    });
 
-    // Parse bold text: **text**
-    escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    // Handle general text safety escaping
+    processed = escapeHtml(processed);
 
-    return escaped;
+    // Parse bold text elements
+    processed = processed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    return { html: processed, placeholders };
   }
 
   function openChatModal() {
@@ -564,10 +586,36 @@
       bubble.className = `sprint-chat-bubble sprint-chat-${msg.role}`;
       
       if (msg.role === 'assistant') {
+        const formatted = formatMessageContent(msg.content);
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'sprint-chat-content';
-        contentDiv.innerHTML = formatMessageContent(msg.content);
+        let rawHtml = formatted.html;
+        formatted.placeholders.forEach((placeholder, idx) => {
+          rawHtml = rawHtml.replace(`___SPRINT_PLACEHOLDER_${idx}___`, placeholder.html);
+        });
+        contentDiv.innerHTML = rawHtml;
         bubble.appendChild(contentDiv);
+
+        // Bind secure action hooks directly to copy operations ensuring pure, unescaped raw data transfer
+        const copyCodeBtns = contentDiv.querySelectorAll('.sprint-chat-copy-code');
+        copyCodeBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const index = parseInt(btn.getAttribute('data-index'), 10);
+            const targetData = formatted.placeholders[index];
+            if (targetData) {
+              navigator.clipboard.writeText(targetData.code).then(() => {
+                btn.textContent = 'Copied!';
+                btn.style.color = 'var(--text-success)';
+                setTimeout(() => {
+                  btn.textContent = 'Copy';
+                  btn.style.color = '';
+                }, 1500);
+              });
+            }
+          });
+        });
 
         const actionRow = document.createElement('div');
         actionRow.className = 'sprint-chat-bubble-actions';
@@ -597,22 +645,6 @@
       }
 
       container.appendChild(bubble);
-    });
-
-    const copyCodeBtns = container.querySelectorAll('.sprint-chat-copy-code');
-    copyCodeBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const rawCode = decodeURIComponent(btn.getAttribute('data-code'));
-        navigator.clipboard.writeText(rawCode).then(() => {
-          btn.textContent = 'Copied!';
-          btn.style.color = 'var(--text-success)';
-          setTimeout(() => {
-            btn.textContent = 'Copy';
-            btn.style.color = '';
-          }, 1500);
-        });
-      });
     });
 
     scrollToBottom();
