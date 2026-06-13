@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const overlay = document.createElement('div');
     overlay.className = 'themes-lock-overlay';
     
-    // Explicit programmatic build to avoid innerHTML compliance warnings
     const content = document.createElement('div');
     content.className = 'lock-overlay-content';
 
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     svg.setAttribute("fill", "none");
     svg.setAttribute("stroke", "currentColor");
     svg.setAttribute("stroke-width", "2.5");
-    svg.style.marginBottom = "4px";
+    svg.style.styleMarginBottom = "4px";
 
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("x", "3");

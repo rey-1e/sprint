@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode Sprint - Enhance your Coding Experience",
-  "version": "3.2.2",
-  "description": "Company-tags, Complexities, AI Debugging, Custom Themes and Much More.",
+  "name": "LeetCode Sprint & Web Companion",
+  "version": "4.0.0",
+  "description": "Company tags, Space-Time complexity, AI Debugging, Custom Themes, and a global floating web assistant on all sites.",
   "icons": {
     "128": "icon.png",
     "192": "icon.png",
@@ -10,16 +10,14 @@
   },
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "LeetCode Super-tools"
+    "default_title": "Sprint Assistant"
   },
   "permissions": [
     "storage",
     "contextMenus"
   ],
   "host_permissions": [
-    "https://leetcode.com/*",
-    "https://leetcode.cn/*",
-    "https://*.a.run.app/*"
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
@@ -34,7 +32,7 @@
         "http://127.0.0.1/*"
       ],
       "js": [
-        "theme-content.js"
+        "content/leetcode-start.js"
       ],
       "run_at": "document_start"
     },
@@ -44,7 +42,7 @@
         "https://leetcode.com/submissions/*"
       ],
       "js": [
-        "content-main.js"
+        "content/content-main.js"
       ],
       "world": "MAIN",
       "run_at": "document_start"
@@ -55,12 +53,21 @@
         "https://leetcode.com/submissions/*"
       ],
       "js": [
-        "content.js"
+        "content/leetcode-idle.js"
       ],
       "css": [
-        "styles.css"
+        "styles/leetcode.css"
       ],
       "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/companion.js"
+      ],
+      "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
@@ -72,6 +79,14 @@
       "matches": [
         "https://leetcode.com/*"
       ]
+    },
+    {
+      "resources": [
+        "styles/companion.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "commands": {
@@ -80,14 +95,14 @@
         "default": "Ctrl+Shift+X",
         "mac": "Command+Shift+X"
       },
-      "description": "Analyze Time/Space Complexity"
+      "description": "Analyze Time/Space Complexity of selected code"
     },
     "analyze-bug": {
       "suggested_key": {
         "default": "Ctrl+Shift+Z",
         "mac": "Command+Shift+Z"
       },
-      "description": "Toggle Where Am I Wrong Analysis"
+      "description": "Debug selected code logic"
     }
   }
 }

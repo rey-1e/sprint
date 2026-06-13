@@ -134,7 +134,6 @@
     if (observer) observer.disconnect();
     if (!findMode()) return;
     observer = new MutationObserver((mutations) => {
-      // Performance optimization: check if any actual structural tree mutations occurred
       let structuralChange = false;
       for (const m of mutations) {
         if (m.type === 'childList' && m.addedNodes.length > 0) {
@@ -213,7 +212,6 @@
       return;
     }
 
-    // Direct background network proxy loop
     chrome.runtime.sendMessage({ type: "FETCH_THEME", theme }, async (res) => {
       if (res?.success && res.data?.fullCSS) {
         document.documentElement.setAttribute('data-lc-theme', theme);

@@ -1,10 +1,17 @@
+// Register right-click context menu options
 chrome.runtime.onInstalled.addListener((details) => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
-      id: "analyzeCodeWithSprint",
-      title: "Analyse with Sprint",
-      contexts: ["all"],
-      documentUrlPatterns: ["https://leetcode.com/*", "https://leetcode.cn/*"]
+      id: "sprintComplexityContext",
+      title: "Sprint: Analyze Complexity (Ctrl+Shift+X)",
+      contexts: ["selection"],
+      documentUrlPatterns: ["<all_urls>"]
+    });
+    chrome.contextMenus.create({
+      id: "sprintBugContext",
+      title: "Sprint: Find My Bug (Ctrl+Shift+Z)",
+      contexts: ["selection"],
+      documentUrlPatterns: ["<all_urls>"]
     });
   });
 
@@ -13,13 +20,35 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
+// Listener for context menu clicks
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "analyzeCodeWithSprint" && tab?.id) {
-    chrome.tabs.sendMessage(tab.id, {
-      type: "ANALYZE_SELECTION",
-      code: info.selectionText || ""
+  if (!tab?.id) return;
+  if (info.menuItemId === "sprintComplexityContext") {
+    chrome.tabs.sendMessage(tab.id, { 
+      type: "TRIGGER_ACTION", 
+      action: "complexity", 
+      code: info.selectionText 
+    });
+  } else if (info.menuItemId === "sprintBugContext") {
+    chrome.tabs.sendMessage(tab.id, { 
+      type: "TRIGGER_ACTION", 
+      action: "bug", 
+      code: info.selectionText 
     });
   }
+});
+
+// Listener for global keyboard commands
+chrome.commands.onCommand.addListener((command) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs || tabs.length === 0) return;
+    const tabId = tabs[0].id;
+    if (command === "analyze-complexity") {
+      chrome.tabs.sendMessage(tabId, { type: "TRIGGER_ACTION", action: "complexity" });
+    } else if (command === "analyze-bug") {
+      chrome.tabs.sendMessage(tabId, { type: "TRIGGER_ACTION", action: "bug" });
+    }
+  });
 });
 
 function getAuthToken() {
@@ -30,6 +59,7 @@ function getAuthToken() {
   });
 }
 
+// Unified API request runner with adaptive credential sync and limits enforcement
 async function handleFetchRequest(url, bodyData, sendResponse) {
   try {
     const token = await getAuthToken();
@@ -73,6 +103,7 @@ async function handleFetchRequest(url, bodyData, sendResponse) {
   }
 }
 
+// LeetCode problems list cache definitions
 let allProblemsCache = null;
 let allProblemsCacheTime = 0;
 
@@ -118,6 +149,7 @@ async function getQuestionId(slug) {
   return questionId;
 }
 
+// Global runtime message router
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "GET_QUESTION_ID") {
     getQuestionId(request.slug).then(questionId => {
@@ -126,7 +158,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.type === "FETCH_COMPLEXITY") {
+  // Merged Complexity channels
+  if (request.type === "FETCH_COMPLEXITY" || request.type === "API_COMPLEXITY") {
     handleFetchRequest(
       'https://analyze-i6ptizncma-uc.a.run.app',
       { code: request.code },
@@ -135,6 +168,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  // LeetCode submission analyzer channel
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
     handleFetchRequest(
       'https://analyzedetailed-i6ptizncma-uc.a.run.app',
@@ -144,7 +178,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.type === "FETCH_WHERE_AM_I_WRONG") {
+  // Merged logical debugger analysis channels
+  if (request.type === "FETCH_WHERE_AM_I_WRONG" || request.type === "API_FIND_BUG") {
     handleFetchRequest(
       'https://findmybug-i6ptizncma-uc.a.run.app',
       {
@@ -157,6 +192,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  // Custom Theme dynamic loader channel
   if (request.type === "FETCH_THEME") {
     handleFetchRequest(
       'https://gettheme-i6ptizncma-uc.a.run.app',
@@ -165,18 +201,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     );
     return true;
   }
-});
-
-chrome.commands.onCommand.addListener((command) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (!tabs || tabs.length === 0) return;
-
-    if (command === "analyze-complexity") {
-      chrome.tabs.sendMessage(tabs[0].id, { type: "ANALYZE_SELECTION", code: "" });
-    }
-
-    if (command === "analyze-bug") {
-      chrome.tabs.sendMessage(tabs[0].id, { type: "TOGGLE_WHERE_AM_I_WRONG" });
-    }
-  });
 });
