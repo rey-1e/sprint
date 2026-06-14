@@ -113,9 +113,9 @@ async function injectTags() {
   const existing = document.getElementById('custom-company-tags');
   if (existing) {
     if (existing.getAttribute('data-problem-slug') === slug) {
-      return; // Already matched to correct problem page context
+      return; 
     } else {
-      existing.remove(); // Safely clear mismatch nodes
+      existing.remove(); 
     }
   }
 
@@ -362,6 +362,15 @@ async function fetchAnalysisData(summaryElement) {
         link.target = '_blank';
         link.style.cssText = 'color:#ffb000; text-decoration:underline; font-weight:500; display:inline-block; cursor:pointer;';
         link.textContent = 'Daily usage limits reached. Click here to upgrade at getsprint.me/payments.';
+        summaryElement.className = 'sprint-ai-summary sprint-text-warning';
+        summaryElement.appendChild(link);
+      } else if (res?.premiumRequired || res?.error?.includes("403")) {
+        // Clear, user friendly upgrade block replacing raw status errors
+        const link = document.createElement('a');
+        link.href = 'https://getsprint.me/payments';
+        link.target = '_blank';
+        link.style.cssText = 'color:#CD5C5C; text-decoration:underline; font-weight:600; display:inline-block; cursor:pointer;';
+        link.textContent = 'Premium upgrade required. Click here to upgrade at getsprint.me/payments.';
         summaryElement.className = 'sprint-ai-summary sprint-text-warning';
         summaryElement.appendChild(link);
       } else {

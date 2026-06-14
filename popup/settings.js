@@ -19,6 +19,14 @@ async function broadcastMessage(message) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const upgradeLink = document.getElementById('upgrade-link');
+  if (upgradeLink) {
+    upgradeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      chrome.tabs.create({ url: upgradeLink.href });
+    });
+  }
+
   const checkboxes = document.querySelectorAll('.sprint-switch input');
   let { options } = await chrome.storage.local.get('options');
 
@@ -52,4 +60,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 });
-

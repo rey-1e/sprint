@@ -96,7 +96,8 @@
     });
   }
 
-  function getDeepSelection() {
+  // Returns selection strictly triggered by manual user highlights, avoiding random clicks
+  function getActualSelectionText() {
     let text = window.getSelection().toString().trim();
     if (text) return text;
 
@@ -128,6 +129,12 @@
         return active.value.substring(start, end).trim();
       }
     }
+    return null;
+  }
+
+  function getDeepSelection() {
+    const actual = getActualSelectionText();
+    if (actual) return actual;
 
     const preBlocks = document.querySelectorAll('pre');
     if (preBlocks.length === 1) {
@@ -207,7 +214,7 @@
     const cursorY = e.clientY;
 
     setTimeout(() => {
-      const sel = getDeepSelection();
+      const sel = getActualSelectionText(); // STRICT selection verification triggered here
       if (sel && sel.length > 2) {
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
@@ -554,7 +561,8 @@
       presets.forEach((p, idx) => {
         const btn = document.createElement('button');
         btn.className = 'sprint-chat-preset-btn';
-        btn.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;';
+        // Enforced strict flex formatting and vertical margins on wrap
+        btn.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; flex-shrink: 0 !important; white-space: nowrap !important; margin-bottom: 2px;';
 
         const labelSpan = document.createElement('span');
         labelSpan.textContent = p.label;
@@ -568,7 +576,7 @@
 
         const delBtn = document.createElement('span');
         delBtn.innerHTML = '&times;';
-        delBtn.style.cssText = 'color: var(--text-muted); font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 12px; border-radius: 50%; transition: color 0.15s, background-color 0.15s;';
+        delBtn.style.cssText = 'color: var(--text-muted); font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 12px; border-radius: 50%; transition: color 0.15s, background-color 0.15s; margin-left: 4px;';
         delBtn.title = 'Delete Preset';
         delBtn.addEventListener('mouseenter', () => {
           delBtn.style.color = '#ef4444';
@@ -590,10 +598,10 @@
         bar.appendChild(btn);
       });
 
-      // Add Preset button
+      // Add Preset button (Enforces styling matching wrapping layout)
       const addBtn = document.createElement('button');
       addBtn.className = 'sprint-chat-preset-btn';
-      addBtn.style.cssText = 'background: rgba(205, 92, 92, 0.15); border-color: rgba(205, 92, 92, 0.3); color: #ffd1d1; padding: 6px 12px;';
+      addBtn.style.cssText = 'background: rgba(205, 92, 92, 0.15); border-color: rgba(205, 92, 92, 0.3); color: #ffd1d1; padding: 4px 8px; flex-shrink: 0 !important; white-space: nowrap !important; display: inline-flex; align-items: center; margin-bottom: 2px;';
       addBtn.innerHTML = '+ Custom';
       addBtn.title = 'Create Custom Preset';
       addBtn.addEventListener('click', () => {
@@ -609,10 +617,10 @@
       });
       bar.appendChild(addBtn);
 
-      // Reset button
+      // Reset button (Enforces styling matching wrapping layout)
       const resetBtn = document.createElement('button');
       resetBtn.className = 'sprint-chat-preset-btn';
-      resetBtn.style.cssText = 'background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.05); color: var(--text-muted); padding: 6px 12px;';
+      resetBtn.style.cssText = 'background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.05); color: var(--text-muted); padding: 4px 8px; flex-shrink: 0 !important; white-space: nowrap !important; display: inline-flex; align-items: center; margin-bottom: 2px;';
       resetBtn.innerHTML = '↺ Reset';
       resetBtn.title = 'Reset Presets to Default';
       resetBtn.addEventListener('click', () => {
@@ -833,8 +841,11 @@
         const errorBubble = document.createElement('div');
         errorBubble.className = 'sprint-chat-bubble sprint-chat-error';
         
+        // Handles upgrade warning on Limit Reached (429) or Forbidden / Required upgrade (403)
         if (res?.limitReached) {
-          errorBubble.innerHTML = `Limit Reached: <a href="https://getsprint.me/payments" target="_blank" style="color:var(--accent); text-decoration:underline;">Upgrade to Premium</a>`;
+          errorBubble.innerHTML = `Limit Reached: <a href="https://getsprint.me/payments" target="_blank" style="color:var(--accent); text-decoration:underline; font-weight:700;">Upgrade to Premium</a>`;
+        } else if (res?.premiumRequired || errorMsg.includes("403")) {
+          errorBubble.innerHTML = `Upgrade Required: Please <a href="https://getsprint.me/payments" target="_blank" style="color:var(--accent); text-decoration:underline; font-weight:700;">Upgrade to Premium ⚡</a> to run this analysis.`;
         } else {
           errorBubble.textContent = errorMsg;
         }
@@ -962,10 +973,18 @@
         statusDiv.textContent = 'Analysis Complete';
         statusDiv.style.color = 'var(--text-success)';
       } else {
-        timeSpan.textContent = 'Err';
-        spaceSpan.textContent = 'Err';
-        statusDiv.textContent = res?.error || 'Analysis Failed';
-        statusDiv.style.color = 'var(--text-warning)';
+        // Formats upgrade warnings user friendly, offering clean redirects on 403 blocks
+        if (res?.premiumRequired || res?.error?.includes("403")) {
+          timeSpan.textContent = '🔒';
+          spaceSpan.textContent = '🔒';
+          statusDiv.innerHTML = `Upgrade Required: <a href="https://getsprint.me/payments" target="_blank" style="color: var(--accent); text-decoration: underline; font-weight:600;">Upgrade Now</a>`;
+          statusDiv.style.color = 'var(--text-warning)';
+        } else {
+          timeSpan.textContent = 'Err';
+          spaceSpan.textContent = 'Err';
+          statusDiv.textContent = res?.error || 'Analysis Failed';
+          statusDiv.style.color = 'var(--text-warning)';
+        }
       }
 
       finalizeToast(toast);
@@ -1020,12 +1039,22 @@
           container.appendChild(p);
         });
       } else {
-        titleEl.textContent = 'Analysis Failed';
-        titleEl.style.color = '#f87171';
-        
-        const p = document.createElement('p');
-        p.textContent = res?.error || "Could not reach analysis model.";
-        container.appendChild(p);
+        // Friendly visual representation for 403 Premium Required blocks inside bugs Modal
+        if (res?.premiumRequired || res?.error?.includes("403")) {
+          titleEl.textContent = 'Upgrade Required';
+          titleEl.style.color = 'var(--accent)';
+          
+          const p = document.createElement('p');
+          p.innerHTML = `This feature requires a premium account. Please <a href="https://getsprint.me/payments" target="_blank" style="color: var(--accent); text-decoration: underline; font-weight: 600;">Upgrade to Premium ⚡</a> to scan for bugs.`;
+          container.appendChild(p);
+        } else {
+          titleEl.textContent = 'Analysis Failed';
+          titleEl.style.color = '#f87171';
+          
+          const p = document.createElement('p');
+          p.textContent = res?.error || "Could not reach analysis model.";
+          container.appendChild(p);
+        }
       }
     });
   }

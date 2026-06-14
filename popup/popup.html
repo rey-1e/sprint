@@ -5,12 +5,15 @@
   <title>Sprint</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Elegant view swapping transitions */
+    /* Elegant view swapping transitions with flex alignment */
     .view-panel {
       display: none;
     }
     .view-panel.active {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -42,23 +45,6 @@
   <!-- VIEW 1: Main Dashboard Section -->
   <div id="main-view" class="view-panel active">
     <main>
-      <!-- LeetCode Options navigation triggers -->
-      <div class="section">
-        <div class="shortcut-group">
-          <div class="shortcut-row" id="leetcode-pill" style="background: rgba(205, 92, 92, 0.08); border: 1px solid var(--red-border); cursor: pointer; transition: background-color 0.15s;">
-            <span class="shortcut-label" style="display: flex; align-items: center; gap: 6px; color: var(--ink-soft);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-              LeetCode Themes & Visibility
-            </span>
-            <div class="kbd-wrap">
-              <span class="kbd" style="background: var(--red); color: #fff; border-color: var(--red-hover); font-weight: 700;">OPEN</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="section">
         <div class="shortcut-group">
           <div class="shortcut-row">
@@ -67,6 +53,16 @@
               <span class="kbd"><a href="https://getsprint.me/problemset" id="company-link">Click Here</a></span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Redesigned Site-specific customization section -->
+      <div class="section">
+        <p class="section-label">Site-specific Customization</p>
+        <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
+          <a href="leetcode.html" class="website-link" id="leetcode-pill" title="LeetCode Options" style="font-size: 11px; font-weight: 600;">
+            leetcode
+          </a>
         </div>
       </div>
 
@@ -94,7 +90,7 @@
     </footer>
   </div>
 
-  <!-- VIEW 2: Integrated Settings View (Strictly Extension Related options) -->
+  <!-- VIEW 2: Integrated Settings View -->
   <div id="settings-view" class="view-panel">
     <main>
       <div class="section">
@@ -125,7 +121,7 @@
       </div>
     </main>
     <footer>
-      <button class="btn-donate" id="settings-back-btn" style="background: var(--ink-soft); box-shadow: none;">Back to Dashboard</button>
+      <button class="btn-donate" id="settings-back-btn" style="background: var(--ink-soft); box-shadow: none;">&larr; Back</button>
     </footer>
   </div>
 

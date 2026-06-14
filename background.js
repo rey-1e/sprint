@@ -73,6 +73,10 @@ async function handleApiRequest(url, payload, sendResponse, requiresAuth = false
         sendResponse({ success: false, authRequired: true, error: data?.message || "Sign in required." });
         return;
       }
+      if (res.status === 403) {
+        sendResponse({ success: false, premiumRequired: true, error: data?.message || "Premium upgrade required." });
+        return;
+      }
       if (data && data.error === "LIMIT_REACHED") {
         sendResponse({ success: false, limitReached: true, error: data.message });
         return;
@@ -111,7 +115,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
   if (request.type === "FETCH_THEME") {
-    // Route corrected from fetchTheme to getTheme, with parameter corrected from theme to themeName
     handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/getTheme', {
       themeName: request.theme
     }, sendResponse, false);
