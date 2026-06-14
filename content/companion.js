@@ -78,6 +78,13 @@
   let activeSelectionContext = null;
   let contextAddedToSession = false;
 
+  const defaultPresets = [
+    { label: '🔍 Complexity', prompt: 'Analyze the space and time complexity of my selected solution code.' },
+    { label: '🐛 Bugs', prompt: 'Scan this selected code for hidden logical bugs or runtime failures.' },
+    { label: '✨ Optimize', prompt: 'Propose optimizations to improve speed or lessen memory usage.' },
+    { label: '💡 Explain', prompt: 'Explain this solution step by step in clear plain language.' }
+  ];
+
   function checkAuthAndRun(callback) {
     chrome.storage.local.get(['authToken'], (storage) => {
       if (!storage.authToken) {
@@ -221,7 +228,7 @@
     }, 50);
   });
 
-  function createToast(title, statusMessage, timeValue = "—", spaceValue = "—", isError = false) {
+  function createToast(title, statusMessage, timeValue = "—", spaceValue = "—", isError = false, autoClose = true) {
     const toast = document.createElement('div');
     toast.className = 'sprint-toast';
     
@@ -250,9 +257,6 @@
       toast.classList.add('show');
     }, 50);
 
-    const progressBar = toast.querySelector('.sprint-toast-progress-bar');
-    progressBar.style.animation = 'shrinkWidth 4s linear forwards';
-
     const closeSelf = () => {
       toast.classList.add('slide-out');
       setTimeout(() => {
@@ -261,6 +265,32 @@
     };
 
     toast.querySelector('.sprint-toast-close').addEventListener('click', closeSelf);
+
+    if (autoClose) {
+      const progressBar = toast.querySelector('.sprint-toast-progress-bar');
+      progressBar.style.animation = 'shrinkWidth 4s linear forwards';
+      const timeout = setTimeout(closeSelf, 4000);
+      toast.dataset.timeout = timeout;
+    } else {
+      const progressBar = toast.querySelector('.sprint-toast-progress-bar');
+      progressBar.style.width = '100%';
+    }
+
+    return toast;
+  }
+
+  function finalizeToast(toast) {
+    if (!toast) return;
+    const progressBar = toast.querySelector('.sprint-toast-progress-bar');
+    if (progressBar) {
+      progressBar.style.animation = 'shrinkWidth 4s linear forwards';
+    }
+    const closeSelf = () => {
+      toast.classList.add('slide-out');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    };
     const timeout = setTimeout(closeSelf, 4000);
     toast.dataset.timeout = timeout;
   }
@@ -516,11 +546,90 @@
     return { html: processed, placeholders };
   }
 
+  function renderPresets(bar, input) {
+    chrome.storage.local.get(['chatPresets'], (res) => {
+      const presets = res.chatPresets || defaultPresets;
+      bar.innerHTML = '';
+
+      presets.forEach((p, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'sprint-chat-preset-btn';
+        btn.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;';
+
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = p.label;
+        labelSpan.style.cursor = 'pointer';
+        labelSpan.addEventListener('click', (e) => {
+          e.stopPropagation();
+          input.value = p.prompt;
+          input.focus();
+        });
+        btn.appendChild(labelSpan);
+
+        const delBtn = document.createElement('span');
+        delBtn.innerHTML = '&times;';
+        delBtn.style.cssText = 'color: var(--text-muted); font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 12px; border-radius: 50%; transition: color 0.15s, background-color 0.15s;';
+        delBtn.title = 'Delete Preset';
+        delBtn.addEventListener('mouseenter', () => {
+          delBtn.style.color = '#ef4444';
+          delBtn.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        });
+        delBtn.addEventListener('mouseleave', () => {
+          delBtn.style.color = 'var(--text-muted)';
+          delBtn.style.backgroundColor = 'transparent';
+        });
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const updated = presets.filter((_, i) => i !== idx);
+          chrome.storage.local.set({ chatPresets: updated }, () => {
+            renderPresets(bar, input);
+          });
+        });
+        btn.appendChild(delBtn);
+
+        bar.appendChild(btn);
+      });
+
+      // Add Preset button
+      const addBtn = document.createElement('button');
+      addBtn.className = 'sprint-chat-preset-btn';
+      addBtn.style.cssText = 'background: rgba(205, 92, 92, 0.15); border-color: rgba(205, 92, 92, 0.3); color: #ffd1d1; padding: 6px 12px;';
+      addBtn.innerHTML = '+ Custom';
+      addBtn.title = 'Create Custom Preset';
+      addBtn.addEventListener('click', () => {
+        const label = prompt("Enter a short label for your custom pill (e.g., 🚀 Optimize):");
+        if (!label) return;
+        const promptText = prompt("Enter the prompt text associated with this pill:");
+        if (!promptText) return;
+
+        const updated = [...presets, { label, prompt: promptText }];
+        chrome.storage.local.set({ chatPresets: updated }, () => {
+          renderPresets(bar, input);
+        });
+      });
+      bar.appendChild(addBtn);
+
+      // Reset button
+      const resetBtn = document.createElement('button');
+      resetBtn.className = 'sprint-chat-preset-btn';
+      resetBtn.style.cssText = 'background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.05); color: var(--text-muted); padding: 6px 12px;';
+      resetBtn.innerHTML = '↺ Reset';
+      resetBtn.title = 'Reset Presets to Default';
+      resetBtn.addEventListener('click', () => {
+        if (confirm("Are you sure you want to reset all preset pills back to default?")) {
+          chrome.storage.local.set({ chatPresets: defaultPresets }, () => {
+            renderPresets(bar, input);
+          });
+        }
+      });
+      bar.appendChild(resetBtn);
+    });
+  }
+
   function openChatModal() {
     closeBugModal();
     closeChatModal();
 
-    // Capture context code dynamically on open
     activeSelectionContext = getDeepSelection();
     contextAddedToSession = false;
 
@@ -600,7 +709,6 @@
 
     renderChatHistory(historyContainer);
 
-    // Context Capture Indicator - Requirement 2
     const contextIndicator = document.createElement('div');
     contextIndicator.id = 'sprint-chat-context-indicator';
     contextIndicator.style.cssText = 'background: rgba(205, 92, 92, 0.12); border-top: 1px solid rgba(205, 92, 92, 0.2); padding: 8px 14px; font-size: 11px; display: none; align-items: center; justify-content: space-between; color: #ffd1d1; font-family: var(--font-google);';
@@ -617,15 +725,8 @@
       contextIndicator.style.display = 'flex';
     }
 
-    // Continuous presets toolbar added above input field
     const presetsBar = document.createElement('div');
     presetsBar.className = 'sprint-chat-presets-bar';
-    presetsBar.innerHTML = `
-      <button class="sprint-chat-preset-btn" data-prompt="Analyze the space and time complexity of my selected solution code.">🔍 Complexity</button>
-      <button class="sprint-chat-preset-btn" data-prompt="Scan this selected code for hidden logical bugs or runtime failures.">🐛 Bugs</button>
-      <button class="sprint-chat-preset-btn" data-prompt="Propose optimizations to improve speed or lessen memory usage.">✨ Optimize</button>
-      <button class="sprint-chat-preset-btn" data-prompt="Explain this solution step by step in clear plain language.">💡 Explain</button>
-    `;
 
     const footer = document.createElement('div');
     footer.className = 'sprint-chat-footer';
@@ -666,13 +767,7 @@
       });
     }
 
-    presetsBar.querySelectorAll('.sprint-chat-preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const text = btn.getAttribute('data-prompt');
-        input.value = text;
-        input.focus();
-      });
-    });
+    renderPresets(presetsBar, input);
 
     const triggerSendMessage = () => {
       const text = input.value.trim();
@@ -700,7 +795,6 @@
 
   function sendMessage(text, container) {
     let finalPrompt = text;
-    // Embed code context if selection exists and is not yet added to conversation context
     if (activeSelectionContext && !contextAddedToSession) {
       finalPrompt = `Context code:\n\`\`\`\n${activeSelectionContext}\n\`\`\`\n\nQuery: ${text}`;
       contextAddedToSession = true;
@@ -846,24 +940,21 @@
       return;
     }
 
-    createToast("Complexity Analysis", "Analyzing selection...", "...", "...");
+    const toast = createToast("Complexity Analysis", "Analyzing selection...", "...", "...", false, false);
 
     chrome.runtime.sendMessage({ type: "API_COMPLEXITY", code }, (res) => {
-      const toasts = toastContainer.querySelectorAll('.sprint-toast');
-      const activeToast = toasts[toasts.length - 1];
-
       if (res?.authRequired) {
-        if (activeToast) activeToast.remove();
+        if (toast) toast.remove();
         alert("You need to log in to use AI features!");
         window.open("https://getsprint.me/login", "_blank");
         return;
       }
 
-      if (!activeToast) return;
+      if (!toast) return;
 
-      const timeSpan = activeToast.querySelector('.complexity-container .complexity-item:nth-child(1) .complexity-value');
-      const spaceSpan = activeToast.querySelector('.complexity-container .complexity-item:nth-child(2) .complexity-value');
-      const statusDiv = activeToast.querySelector('.complexity-status');
+      const timeSpan = toast.querySelector('.complexity-container .complexity-item:nth-child(1) .complexity-value');
+      const spaceSpan = toast.querySelector('.complexity-container .complexity-item:nth-child(2) .complexity-value');
+      const statusDiv = toast.querySelector('.complexity-status');
 
       if (res?.success) {
         timeSpan.textContent = res.data.time || 'N/A';
@@ -876,6 +967,8 @@
         statusDiv.textContent = res?.error || 'Analysis Failed';
         statusDiv.style.color = 'var(--text-warning)';
       }
+
+      finalizeToast(toast);
     });
   }
 

@@ -22,15 +22,19 @@
   --rule:       #e4e4e7;
 }
 
+html, body {
+  width: 320px;
+  height: 560px;
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background: var(--paper);
   color: var(--ink);
-  width: 320px;
-  height: max-content;
-  max-height: 560px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar { width: 4px; }
@@ -47,6 +51,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .brand { display: flex; align-items: center; gap: 7px; }
@@ -167,7 +172,7 @@ main {
 }
 .dot:hover .tip { display: block; }
 
-footer { padding: 10px 14px 12px; border-top: 1px solid var(--rule); background: var(--paper-raised); }
+footer { padding: 10px 14px 12px; border-top: 1px solid var(--rule); background: var(--paper-raised); flex-shrink: 0; }
 .btn-donate {
   display: block;
   width: 100%;
