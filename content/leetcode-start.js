@@ -167,6 +167,7 @@
     const defaultOpts = [
       { optionName: 'removeInjections', checked: false },
       { optionName: 'showSphere', checked: true },
+      { optionName: 'removeSelectionPopup', checked: false },
       { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
       { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
       { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },
@@ -230,14 +231,22 @@
           return;
         }
 
-        clearSecureStyle();
-        await chrome.storage.local.remove('cachedThemeCSS');
-        await chrome.storage.local.set({ leetcodeTheme: 'default' });
-        savedTheme = 'default';
-        
-        if (!isBgCheck && theme !== 'default') {
-          alert("Premium is required to use Custom Themes!");
-          window.open('https://getsprint.me/payments', '_blank');
+        // Check if premium validation exists in local storage
+        const localStore = await chrome.storage.local.get(['isPremium']);
+        const isPrem = localStore.isPremium === true || localStore.isPremium === 'true';
+
+        if (!isPrem) {
+          clearSecureStyle();
+          await chrome.storage.local.remove('cachedThemeCSS');
+          await chrome.storage.local.set({ leetcodeTheme: 'default' });
+          savedTheme = 'default';
+          
+          if (!isBgCheck && theme !== 'default') {
+            alert("Premium is required to use Custom Themes!");
+            window.open('https://getsprint.me/payments', '_blank');
+          }
+        } else {
+          console.warn("Sprint Theme Sync: Theme download failed, but local Premium status is verified.");
         }
       }
     });

@@ -74,6 +74,9 @@
   shadow.appendChild(uiContainer);
 
   let chatHistory = [];
+  let selectionPopup = null;
+  let activeSelectionContext = null;
+  let contextAddedToSession = false;
 
   function checkAuthAndRun(callback) {
     chrome.storage.local.get(['authToken'], (storage) => {
@@ -130,6 +133,93 @@
 
     return null;
   }
+
+  function showSelectionPopup(x, y, selectedText) {
+    removeSelectionPopupEl();
+
+    chrome.storage.local.get('options', (res) => {
+      const removePopOpt = res?.options?.find(o => o.optionName === 'removeSelectionPopup');
+      if (removePopOpt && removePopOpt.checked) return;
+
+      selectionPopup = document.createElement('div');
+      selectionPopup.id = 'sprint-selection-popup';
+      
+      const boundedX = Math.max(10, Math.min(window.innerWidth - 130, x));
+      const boundedY = Math.max(10, Math.min(window.innerHeight - 50, y));
+      selectionPopup.style.left = `${boundedX}px`;
+      selectionPopup.style.top = `${boundedY}px`;
+
+      selectionPopup.innerHTML = `
+        <button class="sprint-selection-btn" id="sel-btn-complexity" title="Complexity">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </button>
+        <button class="sprint-selection-btn" id="sel-btn-bug" title="Find My Bug">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
+        <button class="sprint-selection-btn" id="sel-btn-chat" title="sprintAI Chat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      `;
+
+      shadow.appendChild(selectionPopup);
+      selectionPopup.style.pointerEvents = 'auto';
+
+      shadow.getElementById('sel-btn-complexity').addEventListener('click', (e) => {
+        e.stopPropagation();
+        checkAuthAndRun(() => performComplexityAnalysis(selectedText));
+        removeSelectionPopupEl();
+      });
+
+      shadow.getElementById('sel-btn-bug').addEventListener('click', (e) => {
+        e.stopPropagation();
+        checkAuthAndRun(() => performBugCheck(selectedText));
+        removeSelectionPopupEl();
+      });
+
+      shadow.getElementById('sel-btn-chat').addEventListener('click', (e) => {
+        e.stopPropagation();
+        checkAuthAndRun(() => {
+          activeSelectionContext = selectedText;
+          contextAddedToSession = false;
+          openChatModal();
+        });
+        removeSelectionPopupEl();
+      });
+    });
+  }
+
+  function removeSelectionPopupEl() {
+    if (selectionPopup) {
+      selectionPopup.remove();
+      selectionPopup = null;
+    }
+  }
+
+  document.addEventListener('mouseup', (e) => {
+    const cursorX = e.clientX;
+    const cursorY = e.clientY;
+
+    setTimeout(() => {
+      const sel = getDeepSelection();
+      if (sel && sel.length > 2) {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          
+          if (e.target && (e.target.id === 'sprint-global-companion-host' || e.target.closest('#sprint-global-companion-host'))) {
+            return;
+          }
+
+          const x = cursorX - 60;
+          const y = cursorY - 45;
+          showSelectionPopup(x, y, sel);
+        }
+      } else {
+        if (e.target && !e.target.closest('#sprint-selection-popup')) {
+          removeSelectionPopupEl();
+        }
+      }
+    }, 50);
+  });
 
   function createToast(title, statusMessage, timeValue = "—", spaceValue = "—", isError = false) {
     const toast = document.createElement('div');
@@ -408,7 +498,6 @@
     processed = escapeHtml(processed);
     processed = processed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
-    // Premium multi-paragraph and listing layout styling
     const paragraphs = processed.split(/\n\n+/);
     processed = paragraphs.map(p => {
       if (p.trim().startsWith('- ') || p.trim().startsWith('* ')) {
@@ -430,6 +519,10 @@
   function openChatModal() {
     closeBugModal();
     closeChatModal();
+
+    // Capture context code dynamically on open
+    activeSelectionContext = getDeepSelection();
+    contextAddedToSession = false;
 
     const overlay = document.createElement('div');
     overlay.id = 'sprint-chat-overlay';
@@ -507,6 +600,33 @@
 
     renderChatHistory(historyContainer);
 
+    // Context Capture Indicator - Requirement 2
+    const contextIndicator = document.createElement('div');
+    contextIndicator.id = 'sprint-chat-context-indicator';
+    contextIndicator.style.cssText = 'background: rgba(205, 92, 92, 0.12); border-top: 1px solid rgba(205, 92, 92, 0.2); padding: 8px 14px; font-size: 11px; display: none; align-items: center; justify-content: space-between; color: #ffd1d1; font-family: var(--font-google);';
+
+    if (activeSelectionContext && !contextAddedToSession) {
+      const truncated = activeSelectionContext.length > 50 ? activeSelectionContext.substring(0, 50) + "..." : activeSelectionContext;
+      contextIndicator.innerHTML = `
+        <span style="display: flex; align-items: center; gap: 6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <strong>Context Attached:</strong> "${escapeHtml(truncated)}" (${activeSelectionContext.length} chars)
+        </span>
+        <button id="sprint-clear-context-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 2px;">&times;</button>
+      `;
+      contextIndicator.style.display = 'flex';
+    }
+
+    // Continuous presets toolbar added above input field
+    const presetsBar = document.createElement('div');
+    presetsBar.className = 'sprint-chat-presets-bar';
+    presetsBar.innerHTML = `
+      <button class="sprint-chat-preset-btn" data-prompt="Analyze the space and time complexity of my selected solution code.">🔍 Complexity</button>
+      <button class="sprint-chat-preset-btn" data-prompt="Scan this selected code for hidden logical bugs or runtime failures.">🐛 Bugs</button>
+      <button class="sprint-chat-preset-btn" data-prompt="Propose optimizations to improve speed or lessen memory usage.">✨ Optimize</button>
+      <button class="sprint-chat-preset-btn" data-prompt="Explain this solution step by step in clear plain language.">💡 Explain</button>
+    `;
+
     const footer = document.createElement('div');
     footer.className = 'sprint-chat-footer';
 
@@ -528,12 +648,31 @@
 
     modal.appendChild(header);
     modal.appendChild(body);
+    modal.appendChild(contextIndicator);
+    modal.appendChild(presetsBar);
     modal.appendChild(footer);
     overlay.appendChild(modal);
 
     uiContainer.appendChild(overlay);
 
     closeBtn.addEventListener('click', closeChatModal);
+
+    const clearContextBtn = contextIndicator.querySelector('#sprint-clear-context-btn');
+    if (clearContextBtn) {
+      clearContextBtn.addEventListener('click', () => {
+        activeSelectionContext = null;
+        contextAddedToSession = false;
+        contextIndicator.style.display = 'none';
+      });
+    }
+
+    presetsBar.querySelectorAll('.sprint-chat-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-prompt');
+        input.value = text;
+        input.focus();
+      });
+    });
 
     const triggerSendMessage = () => {
       const text = input.value.trim();
@@ -560,7 +699,16 @@
   }
 
   function sendMessage(text, container) {
-    chatHistory.push({ role: 'user', content: text });
+    let finalPrompt = text;
+    // Embed code context if selection exists and is not yet added to conversation context
+    if (activeSelectionContext && !contextAddedToSession) {
+      finalPrompt = `Context code:\n\`\`\`\n${activeSelectionContext}\n\`\`\`\n\nQuery: ${text}`;
+      contextAddedToSession = true;
+      const indicator = shadow.getElementById('sprint-chat-context-indicator');
+      if (indicator) indicator.style.display = 'none';
+    }
+
+    chatHistory.push({ role: 'user', content: finalPrompt });
     renderChatHistory(container);
 
     const typingBubble = document.createElement('div');
@@ -571,7 +719,7 @@
 
     chrome.runtime.sendMessage({
       type: "API_CHAT",
-      message: text,
+      message: finalPrompt,
       history: chatHistory.slice(0, -1)
     }, (res) => {
       typingBubble.remove();
@@ -609,7 +757,9 @@
     if (chatHistory.length === 0) {
       const placeholder = document.createElement('div');
       placeholder.className = 'sprint-chat-placeholder';
-      placeholder.textContent = 'Ask anything about this problem context, optimized algorithms, or custom code drafts. sprintAI is fully synchronized.';
+      placeholder.innerHTML = `
+        <p>Ask anything about this problem context, optimized algorithms, or custom code drafts. sprintAI is fully synchronized.</p>
+      `;
       container.appendChild(placeholder);
       return;
     }
@@ -956,6 +1106,7 @@
     if (e.key === 'Escape') {
       closeBugModal();
       closeChatModal();
+      removeSelectionPopupEl();
       actionPanel.classList.remove('visible');
       const toasts = toastContainer.querySelectorAll('.sprint-toast');
       toasts.forEach(t => {

@@ -7,10 +7,13 @@
 
 .company-tags-wrapper {
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important; /* Prevent wrapping completely */
     gap: 6px !important;
     margin: 8px 0 0 0 !important;
     padding: 0 !important;
+    overflow: hidden !important; /* Gracefully clip overflowed tags */
+    width: 100% !important;
+    flex-shrink: 0 !important;
 }
 
 .company-tag {
@@ -21,8 +24,9 @@
     border-radius: 12px !important;
     font-size: 11px !important;
     font-weight: 500 !important;
-    white-space: nowrap; 
+    white-space: nowrap !important; 
     transition: background-color 0.15s;
+    flex-shrink: 0 !important; /* Keep tags structural shape */
 }
 
 .company-tag:hover {

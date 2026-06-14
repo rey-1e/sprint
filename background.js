@@ -1,4 +1,10 @@
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: "https://getsprint.me/installed" });
+  } else if (details.reason === "update") {
+    chrome.tabs.create({ url: "https://getsprint.me/updated" });
+  }
+
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: "sprintComplexityContext",
@@ -81,6 +87,10 @@ async function handleApiRequest(url, payload, sendResponse, requiresAuth = false
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === "API_COMPLEXINGS") {
+    handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse, true);
+    return true; 
+  }
   if (request.type === "API_COMPLEXITY") {
     handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse, true);
     return true; 
@@ -101,8 +111,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
   if (request.type === "FETCH_THEME") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/fetchTheme', {
-      theme: request.theme
+    // Route corrected from fetchTheme to getTheme, with parameter corrected from theme to themeName
+    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/getTheme', {
+      themeName: request.theme
     }, sendResponse, false);
     return true;
   }

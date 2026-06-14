@@ -103,16 +103,26 @@ async function extractFullCode() {
 
 async function injectTags() {
   if (injectionsDisabled) return;
-  if (document.getElementById('custom-company-tags') || isInjectingTags) return;
+
+  const urlParts = window.location.pathname.split('/');
+  const pIdx = urlParts.indexOf('problems');
+  if (pIdx === -1) return;
+  const slug = urlParts[pIdx + 1];
+  if (!slug) return;
+
+  const existing = document.getElementById('custom-company-tags');
+  if (existing) {
+    if (existing.getAttribute('data-problem-slug') === slug) {
+      return; // Already matched to correct problem page context
+    } else {
+      existing.remove(); // Safely clear mismatch nodes
+    }
+  }
+
+  if (isInjectingTags) return;
   isInjectingTags = true;
 
   try {
-    const urlParts = window.location.pathname.split('/');
-    const pIdx = urlParts.indexOf('problems');
-    if (pIdx === -1) return;
-    const slug = urlParts[pIdx + 1];
-    if (!slug) return;
-
     let questionId = extractQuestionIdFromDOM();
     if (!questionId) {
       questionId = await getCachedQuestionId(slug);
@@ -156,6 +166,7 @@ async function injectTags() {
     const container = document.createElement('div');
     container.id = 'custom-company-tags';
     container.className = 'company-tags-wrapper';
+    container.setAttribute('data-problem-slug', slug);
 
     if (comps.length > 0) {
       [...new Set(comps)].slice(0, 10).forEach(name => {
