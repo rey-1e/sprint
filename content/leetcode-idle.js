@@ -1,7 +1,6 @@
 let isInjectingTags = false;
 let injectionsDisabled = false;
 
-// Helper to extract the actual problem ID directly from LeetCode's rendered title headers
 function extractQuestionIdFromDOM() {
   const selectors = [
     '.text-title-large',
@@ -16,7 +15,6 @@ function extractQuestionIdFromDOM() {
     const el = document.querySelector(sel);
     if (el) {
       const txt = el.textContent.trim();
-      // Safely matches pattern "[ID]. [Title]" e.g., "1. Two Sum"
       const match = txt.match(/^\s*(\d+)\s*\./);
       if (match) {
         return match[1];
@@ -79,7 +77,6 @@ async function extractFullCode() {
   const slug = pIdx !== -1 ? urlParts[pIdx + 1] : "";
   const questionId = slug ? (extractQuestionIdFromDOM() || await getCachedQuestionId(slug)) : null;
 
-  // Primary: Real-time Monaco Memory Extraction via MAIN world bridge
   const monacoCode = await new Promise((resolve) => {
     const handleResponse = (e) => {
       window.removeEventListener("sprint-monaco-code-response", handleResponse);
@@ -95,13 +92,11 @@ async function extractFullCode() {
 
   if (monacoCode && monacoCode.trim().length > 0) return monacoCode;
 
-  // Secondary Fallback: LocalStorage drafts
   if (slug || questionId) {
     const local = await getCodeFromLocalStorage(slug, questionId);
     if (local && local.trim().length > 0) return local;
   }
 
-  // Tertiary Fallback: Monaco DOM virtualizer lines
   const lines = document.querySelectorAll('.view-line');
   return lines.length ? Array.from(lines).map(l => l.textContent).join('\n') : "";
 }
@@ -118,7 +113,6 @@ async function injectTags() {
     const slug = urlParts[pIdx + 1];
     if (!slug) return;
 
-    // Use fast DOM extractor with background ratings database as a robust fallback
     let questionId = extractQuestionIdFromDOM();
     if (!questionId) {
       questionId = await getCachedQuestionId(slug);
@@ -137,7 +131,6 @@ async function injectTags() {
       if (pData?.Rating) elo = Math.round(pData.Rating);
     }
 
-    // Locate difficulty labels using highly adaptable class and text scanners
     let target = document.querySelector('[class*="text-difficulty-"]') || document.querySelector('[class*="text-sd-"]');
     if (!target) {
       const items = document.querySelectorAll('div.flex.items-center.space-x-4 div, div[class*="gap-"] > div, span, div');
@@ -187,7 +180,6 @@ async function injectTags() {
   }
 }
 
-// Searches the DOM tree dynamically for any container displaying metrics
 function findSubmissionTargetDiv() {
   const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3, div[class*="rounded-lg"][class*="border"]');
   let target = Array.from(boxes).find(d => d.textContent.includes('Runtime') || d.textContent.includes('Memory'));

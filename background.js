@@ -1,4 +1,3 @@
-// Register right-click context menu options
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
@@ -14,7 +13,6 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-// Listener for context menu clicks
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (!tab?.id) return;
   if (info.menuItemId === "sprintComplexityContext") {
@@ -24,7 +22,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-// Listener for global keyboard commands
 chrome.commands.onCommand.addListener((command) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs || tabs.length === 0) return;
@@ -39,13 +36,11 @@ chrome.commands.onCommand.addListener((command) => {
   });
 });
 
-// Production API request runner with adaptive credential sync
 async function handleApiRequest(url, payload, sendResponse, requiresAuth = false) {
   try {
     const storage = await chrome.storage.local.get(['authToken']);
     const token = storage.authToken || "";
 
-    // Stop execution immediately if feature requires auth and token is not present
     if (requiresAuth && !token) {
       sendResponse({ success: false, authRequired: true, error: "Authentication required. Please log in." });
       return;

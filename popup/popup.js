@@ -23,12 +23,10 @@ async function broadcastMessage(message) {
   }
 }
 
-// Renders the translucent lock overlay dynamically depending on verified premium state
 function renderThemesSection(isPremium) {
   const themes = document.getElementById('themes-section');
   if (!themes) return;
 
-  // Clean up any existing instances of the overlay to prevent duplicates
   const existingOverlay = themes.querySelector('.themes-lock-overlay');
   if (existingOverlay) existingOverlay.remove();
   themes.classList.remove('premium-locked');
@@ -99,11 +97,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const storage = await chrome.storage.local.get(['isPremium', 'authToken', 'leetcodeTheme']);
   
-  // Coerce premium value correctly to handle both booleans and string conversions
   let isPremium = storage.isPremium === true || storage.isPremium === 'true';
   const token = storage.authToken;
 
-  // Real-time state verification loop on popup initialization
   if (token) {
     chrome.runtime.sendMessage({ type: "SYNC_USER" }, async (response) => {
       if (response?.success) {
@@ -113,7 +109,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           premiumUntil: response.data.premiumUntil
         });
         
-        // Dynamically adjust UI context if the backend state updated
         if (verifiedPremium !== isPremium) {
           isPremium = verifiedPremium;
           renderThemesSection(isPremium);
@@ -122,7 +117,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Initial render step
   renderThemesSection(isPremium);
 
   const dots = document.querySelectorAll('.dot');

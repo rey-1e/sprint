@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :host {
   --accent: #CD5C5C;
@@ -11,7 +11,8 @@
   --text-success: #6eda30;
   --text-warning: #e0a96d;
   
-  --font-google: 'Google Sans', 'Product Sans', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-google: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --ease-google: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -21,13 +22,13 @@
   padding: 0;
 }
 
-/* Draggable trigger badge - Reduced to a sleek, compact 34px sphere */
+/* Draggable trigger badge */
 #sprint-sphere {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   background-color: var(--accent);
   border: 2px solid rgba(255, 255, 255, 0.16);
   border-radius: 50%;
@@ -38,6 +39,7 @@
   justify-content: center;
   user-select: none;
   pointer-events: auto;
+  z-index: 10000;
   transition: transform 0.25s var(--ease-google), box-shadow 0.25s var(--ease-google), background-color 0.2s var(--ease-google);
 }
 
@@ -47,11 +49,15 @@
   box-shadow: 0 6px 22px rgba(205, 92, 92, 0.55);
 }
 
-/* Vertical Command Panel positioned and scaled above the reduced trigger sphere */
+#sprint-sphere:active {
+  cursor: grabbing;
+}
+
+/* Vertical Command Panel */
 #sprint-vertical-panel {
   position: fixed;
-  right: 23px; /* Realigned to center over the 34px sphere: 24px + (34px - 36px)/2 = 23px */
-  bottom: 70px; /* Reduced space from 80px to match sphere's lower height profile */
+  right: 24px;
+  bottom: 74px;
   width: 36px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -61,12 +67,13 @@
   align-items: center;
   gap: 8px;
   padding: 10px 0;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.4);
   pointer-events: auto;
   transform: translateY(12px) scale(0.92);
   opacity: 0;
   visibility: hidden;
-  transition: transform 0.2s var(--ease-google), opacity 0.15s, visibility 0.15s;
+  z-index: 9999;
+  transition: transform 0.25s var(--ease-google), opacity 0.2s, visibility 0.2s;
 }
 
 #sprint-vertical-panel.visible {
@@ -75,7 +82,6 @@
   visibility: visible;
 }
 
-/* Toggle option class to programmatically hide sphere layouts from host DOMs */
 .sprint-companion-hidden {
   display: none !important;
 }
@@ -104,7 +110,7 @@
 /* Description hover tooltips */
 .sprint-tooltip {
   position: absolute;
-  right: 42px;
+  right: 44px;
   top: 50%;
   transform: translateY(-50%) translateX(-8px);
   background-color: var(--bg-dark);
@@ -113,12 +119,13 @@
   font-family: var(--font-google);
   font-size: 11px;
   font-weight: 500;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 6px;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.12s var(--ease-google), transform 0.12s var(--ease-google);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: opacity 0.15s var(--ease-google), transform 0.15s var(--ease-google);
 }
 
 .sprint-icon-btn:hover .sprint-tooltip {
@@ -140,7 +147,7 @@
 
 .sprint-toast {
   position: relative;
-  width: 340px;
+  width: 350px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -149,7 +156,7 @@
   overflow: hidden;
   transform: translateY(-16px);
   opacity: 0;
-  transition: transform 0.25s var(--ease-google), opacity 0.2s;
+  transition: transform 0.3s var(--ease-google), opacity 0.25s;
 }
 
 .sprint-toast.show {
@@ -166,11 +173,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px 4px 16px;
+  padding: 14px 16px 4px 16px;
   font-family: var(--font-google);
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--accent);
 }
@@ -178,9 +185,10 @@
 .sprint-toast-close {
   cursor: pointer;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 16px;
   background: none;
   border: none;
+  line-height: 1;
 }
 
 .sprint-toast-close:hover {
@@ -211,13 +219,13 @@
 
 .complexity-value {
   font-weight: 600;
-  font-family: monospace;
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   color: #eff1f6;
   background-color: rgba(255, 255, 255, 0.06);
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 4px;
-  min-width: 40px;
+  min-width: 44px;
   text-align: center;
 }
 
@@ -228,7 +236,6 @@
   transition: color 0.3s;
 }
 
-/* Diminishing blue timing bar */
 .sprint-toast-progress-bar {
   position: absolute;
   bottom: 0;
@@ -243,11 +250,11 @@
   to { width: 0%; }
 }
 
-/* ORIGINAL COMPACT MODAL STYLING */
+/* Overlay and Modals */
 .sprint-overlay {
   position: fixed;
   inset: 0;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.35);
   pointer-events: none;
   z-index: 2147483647;
   display: flex;
@@ -261,20 +268,21 @@
 .sprint-modal {
   background: #1e1e20;
   border: 1px solid #333336;
-  border-radius: 12px;
+  border-radius: 14px;
   width: 380px;
-  max-height: 480px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-height: 520px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
   color: #e4e4e7;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   pointer-events: auto;
-  animation: sprint-pop-in 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: sprint-pop-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* AI Chatbox Modal Extension Layout */
+/* Chatbox Extension Layout - Balanced 450px for code display */
 .sprint-chat-modal {
+  width: 450px !important;
   height: calc(100vh - 48px);
   max-height: calc(100vh - 48px) !important;
 }
@@ -285,14 +293,32 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 16px;
+  padding: 18px;
   background: #1c1c1f;
+}
+
+/* Thin sleek scrollbar inside shadows */
+.sprint-chat-body::-webkit-scrollbar,
+.sprint-modal-body::-webkit-scrollbar {
+  width: 5px !important;
+  display: block !important;
+}
+
+.sprint-chat-body::-webkit-scrollbar-thumb,
+.sprint-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 99px !important;
+}
+
+.sprint-chat-body::-webkit-scrollbar-thumb:hover,
+.sprint-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
 }
 
 .sprint-chat-history {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   min-height: 100%;
 }
 
@@ -302,16 +328,16 @@
   line-height: 1.6;
   text-align: center;
   margin: auto;
-  padding: 0 24px;
+  padding: 0 28px;
 }
 
-/* Chat Message Bubbles */
+/* Chat Message Bubbles with enhanced typography */
 .sprint-chat-bubble {
-  max-width: 85%;
-  padding: 10px 14px;
+  max-width: 88%;
+  padding: 12px 16px;
   border-radius: 12px;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 13.5px;
+  line-height: 1.55;
   font-family: var(--font-google);
   word-wrap: break-word;
 }
@@ -321,18 +347,33 @@
   color: #ffffff;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(205, 92, 92, 0.2);
 }
 
 .sprint-chat-assistant {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-main);
   align-self: flex-start;
   border-bottom-left-radius: 4px;
   border: 1px solid var(--border-color);
 }
 
+.sprint-chat-content p {
+  margin-bottom: 10px;
+}
+.sprint-chat-content p:last-child {
+  margin-bottom: 0;
+}
+.sprint-chat-content ul, .sprint-chat-content ol {
+  margin: 6px 0 10px 18px;
+  padding-left: 0;
+}
+.sprint-chat-content li {
+  margin-bottom: 4px;
+}
+
 .sprint-chat-typing {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-muted);
   align-self: flex-start;
   font-style: italic;
@@ -340,7 +381,7 @@
 }
 
 .sprint-chat-error {
-  background: rgba(205, 92, 92, 0.1);
+  background: rgba(205, 92, 92, 0.08);
   color: var(--text-warning);
   border: 1px solid rgba(205, 92, 92, 0.2);
   align-self: center;
@@ -350,12 +391,12 @@
 
 /* Code Block Formatter */
 .sprint-chat-code-block-wrapper {
-  background: #0f0f11;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #0d0d0f;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
-  margin: 8px 0;
+  margin: 12px 0;
   overflow: hidden;
-  font-family: monospace;
+  font-family: var(--font-mono);
   text-align: left;
 }
 
@@ -363,12 +404,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 12px;
-  background: #141416;
+  padding: 6px 14px;
+  background: #121214;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 11px;
   color: var(--text-muted);
   font-family: var(--font-google);
+  font-weight: 500;
 }
 
 .sprint-chat-copy-code {
@@ -380,22 +422,23 @@
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 4px;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .sprint-chat-copy-code:hover {
   background: rgba(255, 255, 255, 0.04);
+  color: var(--accent-hover);
 }
 
 .sprint-chat-code-block-wrapper pre {
-  padding: 12px;
+  padding: 14px;
   margin: 0;
   overflow-x: auto;
 }
 
 .sprint-chat-code-block-wrapper code {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
   color: #e4e4e7;
   line-height: 1.5;
 }
@@ -403,9 +446,9 @@
 .sprint-chat-inline-code {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
-  padding: 2px 5px;
+  padding: 2px 6px;
   border-radius: 4px;
-  font-family: monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
 }
 
@@ -413,7 +456,7 @@
 .sprint-chat-bubble-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 6px;
+  margin-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
   padding-top: 6px;
 }
@@ -437,17 +480,16 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-/* Input Fields and Buttons Footer - Adjusted spacing for the Textarea input wrapper */
+/* Input Fields and Buttons Footer */
 .sprint-chat-footer {
   display: flex;
-  align-items: flex-end; /* Align to bottom for growing textareas */
+  align-items: flex-end;
   gap: 8px;
   padding: 12px 16px;
-  background: #161618;
+  background: #141416;
   border-top: 1px solid #2d2d30;
 }
 
-/* Multi-line input area layout styling */
 .sprint-chat-input {
   flex: 1;
   background: #1e1e20;
@@ -455,7 +497,7 @@
   border-radius: 8px;
   color: var(--text-main);
   font-family: var(--font-google);
-  font-size: 13.5px;
+  font-size: 13px;
   padding: 10px 14px;
   outline: none;
   transition: border-color 0.15s;
@@ -483,7 +525,7 @@
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.15s, transform 0.1s;
-  flex-shrink: 0; /* Keep send button size constant */
+  flex-shrink: 0;
   align-self: flex-end;
 }
 
@@ -495,12 +537,12 @@
   transform: scale(0.95);
 }
 
-/* Inline follow-up Ask Chat trigger button styling */
+/* Inline follow-up CTA */
 .sprint-modal-chat-cta {
   background-color: var(--accent);
   color: var(--text-main);
   border: none;
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: 4px;
   font-family: var(--font-google);
   font-size: 11px;
@@ -518,13 +560,13 @@
 }
 
 .sprint-modal-header {
-  font-family: monospace;
+  font-family: var(--font-google);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 14px 16px;
   border-bottom: 1px solid #2d2d30;
-  background: #161618;
+  background: #141416;
 }
 
 .sprint-modal-title {
@@ -536,7 +578,7 @@
 
 .sprint-modal-title span {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 13.5px;
   color: #d1d1d6;
 }
 
@@ -559,27 +601,13 @@
 }
 
 .sprint-modal-body {
-  font-family: monospace;
-  padding: 16px;
+  font-family: var(--font-google);
+  padding: 18px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  max-height: 400px;
+  max-height: 420px;
   box-sizing: border-box;
-}
-
-.sprint-modal-body::-webkit-scrollbar {
-  width: 6px !important;
-  display: block !important;
-}
-
-.sprint-modal-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 3px !important;
-}
-
-.sprint-modal-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
 }
 
 .sprint-modal-section-title {
@@ -599,23 +627,23 @@
 
 .sprint-modal-text-container p {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 13px;
   color: #a1a1aa;
   line-height: 1.6;
   text-align: left;
 }
 
 @keyframes sprint-pop-in {
-  0% { transform: scale(0.95) translateY(10px); opacity: 0; }
+  0% { transform: scale(0.96) translateY(10px); opacity: 0; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 .sprint-fade-out {
-  animation: sprint-fade-out 0.12s ease-in forwards !important;
+  animation: sprint-fade-out 0.15s ease-in forwards !important;
 }
 
 .sprint-pop-out {
-  animation: sprint-pop-out 0.12s ease-in forwards !important;
+  animation: sprint-pop-out 0.15s ease-in forwards !important;
 }
 
 @keyframes sprint-fade-out {
@@ -625,5 +653,5 @@
 
 @keyframes sprint-pop-out {
   0% { transform: scale(1) translateY(0); opacity: 1; }
-  100% { transform: scale(0.95) translateY(10px); opacity: 0; }
+  100% { transform: scale(0.96) translateY(10px); opacity: 0; }
 }

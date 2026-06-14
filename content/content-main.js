@@ -4,7 +4,6 @@
       if (window.monaco && typeof window.monaco.editor === 'object') {
         const models = window.monaco.editor.getModels();
         if (models && models.length > 0) {
-          // Find active user-editor model while ignoring JSON or markdown structures
           const targetModel = models.find(m => {
             if (typeof m.getLanguageId !== 'function' && typeof m.getModeId !== 'function') return false;
             const lang = (m.getLanguageId ? m.getLanguageId() : m.getModeId ? m.getModeId() : "").toLowerCase();

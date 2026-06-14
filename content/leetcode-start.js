@@ -256,11 +256,9 @@
     obsTheme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
   }
 
-  // Handle active updates when changes happen inside other open tabs or sessions
   chrome.storage.onChanged.addListener(async (changes) => {
     if (changes.authToken) {
       if (!changes.authToken.newValue) {
-        // Active logout detected: immediately strip out any remaining custom layouts
         savedTheme = 'default';
         clearSecureStyle();
       }

@@ -12,7 +12,7 @@
 
   const shadow = host.attachShadow({ mode: 'open' });
 
-  // 2. Inject Stylesheet from package resources inside the Shadow root
+  // 2. Inject Stylesheet
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = chrome.runtime.getURL('styles/companion.css');
@@ -25,6 +25,11 @@
   // Draggable sphere trigger
   const sphere = document.createElement('div');
   sphere.id = 'sprint-sphere';
+  sphere.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+    </svg>
+  `;
 
   // Floating Action Panel
   const actionPanel = document.createElement('div');
@@ -68,10 +73,8 @@
   uiContainer.appendChild(toastContainer);
   shadow.appendChild(uiContainer);
 
-  // Global Chat Memory for the current session
   let chatHistory = [];
 
-  // Helper validation routing
   function checkAuthAndRun(callback) {
     chrome.storage.local.get(['authToken'], (storage) => {
       if (!storage.authToken) {
@@ -83,7 +86,6 @@
     });
   }
 
-  // Recursive selection reader
   function getDeepSelection() {
     let text = window.getSelection().toString().trim();
     if (text) return text;
@@ -129,7 +131,6 @@
     return null;
   }
 
-  // Toast alerts
   function createToast(title, statusMessage, timeValue = "—", spaceValue = "—", isError = false) {
     const toast = document.createElement('div');
     toast.className = 'sprint-toast';
@@ -188,7 +189,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          <span style="font-weight: 600; font-family: var(--font-google); color: var(--text-warning);">You should select code.</span>
+          <span style="font-weight: 600; font-family: var(--font-google); color: var(--text-warning);">Please select code first.</span>
         </div>
       </div>
       <div class="sprint-toast-progress-bar" style="background-color: #3b82f6;"></div>
@@ -215,7 +216,6 @@
     toast.dataset.timeout = timeout;
   }
 
-  // Floating Debugger Modal
   function closeBugModal() {
     const modalContainer = shadow.getElementById('sprint-custom-overlay');
     if (!modalContainer) return;
@@ -352,7 +352,6 @@
     closeBtn.addEventListener('click', closeBugModal);
   }
 
-  // Floating Chatbox Modal
   function closeChatModal() {
     const modalContainer = shadow.getElementById('sprint-chat-overlay');
     if (!modalContainer) return;
@@ -408,6 +407,22 @@
 
     processed = escapeHtml(processed);
     processed = processed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // Premium multi-paragraph and listing layout styling
+    const paragraphs = processed.split(/\n\n+/);
+    processed = paragraphs.map(p => {
+      if (p.trim().startsWith('- ') || p.trim().startsWith('* ')) {
+        const items = p.split(/\n[-*]\s+/);
+        const listItems = items.map((item, i) => `<li>${i === 0 ? item.replace(/^[-*]\s+/, '') : item}</li>`).join('');
+        return `<ul>${listItems}</ul>`;
+      }
+      if (/^\d+\.\s+/.test(p.trim())) {
+        const items = p.split(/\n\d+\.\s+/);
+        const listItems = items.map((item, i) => `<li>${i === 0 ? item.replace(/^\d+\.\s+/, '') : item}</li>`).join('');
+        return `<ol>${listItems}</ol>`;
+      }
+      return `<p>${p}</p>`;
+    }).join('');
 
     return { html: processed, placeholders };
   }
@@ -594,7 +609,7 @@
     if (chatHistory.length === 0) {
       const placeholder = document.createElement('div');
       placeholder.className = 'sprint-chat-placeholder';
-      placeholder.textContent = 'Ask me anything about this code or ask to write custom solutions. sprintAI is fully optimized for speed.';
+      placeholder.textContent = 'Ask anything about this problem context, optimized algorithms, or custom code drafts. sprintAI is fully synchronized.';
       container.appendChild(placeholder);
       return;
     }
@@ -674,7 +689,6 @@
     }
   }
 
-  // Action handlers
   function performComplexityAnalysis(forcedCode = null) {
     const code = forcedCode || getDeepSelection();
     if (!code) {
@@ -773,7 +787,7 @@
     });
   }
 
-  // Hover-to-Expand Physics with drag fallback checks
+  // Drag Physics inside Window boundaries
   let isDragging = false;
   let startY = 0;
   let startX = 0;
@@ -830,8 +844,8 @@
       sphere.style.right = `${boundedRight}px`;
       sphere.style.bottom = `${boundedBottom}px`;
       
-      actionPanel.style.right = `${boundedRight - 1}px`;
-      actionPanel.style.bottom = `${boundedBottom + 46}px`;
+      actionPanel.style.right = `${boundedRight}px`;
+      actionPanel.style.bottom = `${boundedBottom + 48}px`;
     }
   });
 
@@ -843,7 +857,6 @@
     setTimeout(() => { isDragging = false; }, 50);
   });
 
-  // Action Panel Bindings
   shadow.getElementById('btn-complexity').addEventListener('click', () => {
     checkAuthAndRun(() => {
       performComplexityAnalysis();
@@ -894,7 +907,6 @@
     applyShowSphereOption(res?.options);
   });
 
-  // Communication channels for right-clicks & commands
   chrome.runtime.onMessage.addListener((request) => {
     if (request.action === "applyVisibilityOptions") {
       applyShowSphereOption(request.options);
@@ -940,7 +952,6 @@
     }
   });
 
-  // Strict Toggle Keyboard Router
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeBugModal();
