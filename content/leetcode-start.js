@@ -220,7 +220,16 @@
         injectSecureStyle(res.data.fullCSS);
         await chrome.storage.local.set({ cachedThemeCSS: res.data.fullCSS });
       } else {
-        // Clear active configurations and reset state values gracefully on failed authorization/downgrades
+        const isNetworkOrServerError = res && res.error && (
+          res.error.includes("Connection failed") || 
+          res.error.includes("Server error: 5")
+        );
+
+        if (isNetworkOrServerError) {
+          console.warn("Sprint Theme Sync: Temporary server or connection error. Preserving cached theme.");
+          return;
+        }
+
         clearSecureStyle();
         await chrome.storage.local.remove('cachedThemeCSS');
         await chrome.storage.local.set({ leetcodeTheme: 'default' });
@@ -240,13 +249,27 @@
       const hasDark = document.documentElement.classList.contains('dark');
       if (curr !== savedTheme || (savedTheme !== 'default' && !hasDark)) {
         obsTheme.disconnect();
-        // Background-driven correction triggers should pass true to isBgCheck to prevent infinite alert dialogue looping
         applyTheme(savedTheme, true);
         obsTheme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
       }
     });
     obsTheme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lc-theme', 'class'] });
   }
+
+  // Handle active updates when changes happen inside other open tabs or sessions
+  chrome.storage.onChanged.addListener(async (changes) => {
+    if (changes.authToken) {
+      if (!changes.authToken.newValue) {
+        // Active logout detected: immediately strip out any remaining custom layouts
+        savedTheme = 'default';
+        clearSecureStyle();
+      }
+    }
+    if (changes.leetcodeTheme) {
+      savedTheme = changes.leetcodeTheme.newValue || 'default';
+      await applyTheme(savedTheme, true);
+    }
+  });
 
   initTheme();
   initOptions();

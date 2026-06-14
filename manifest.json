@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Sprint & Web Companion",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Company tags, Space-Time complexity, AI Debugging, Custom Themes, and a global floating web assistant on all sites.",
   "icons": {
     "128": "icon.png",
@@ -28,6 +28,7 @@
         "https://leetcode.com/*",
         "https://leetcode.cn/*",
         "https://getsprint.me/*",
+        "https://*.getsprint.me/*",
         "http://localhost/*",
         "http://127.0.0.1/*"
       ],

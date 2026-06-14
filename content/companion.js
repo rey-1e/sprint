@@ -22,7 +22,7 @@
   const uiContainer = document.createElement('div');
   uiContainer.id = 'sprint-shadow-container';
 
-  // Draggable sphere trigger - Modified to serve as a plain solid Indian Red sphere
+  // Draggable sphere trigger
   const sphere = document.createElement('div');
   sphere.id = 'sprint-sphere';
 
@@ -71,7 +71,19 @@
   // Global Chat Memory for the current session
   let chatHistory = [];
 
-  // Recursive selection reader (Traverses shadow root layers)
+  // Helper validation routing
+  function checkAuthAndRun(callback) {
+    chrome.storage.local.get(['authToken'], (storage) => {
+      if (!storage.authToken) {
+        alert("You need to log in to use AI features!");
+        window.open("https://getsprint.me/login", "_blank");
+        return;
+      }
+      callback();
+    });
+  }
+
+  // Recursive selection reader
   function getDeepSelection() {
     let text = window.getSelection().toString().trim();
     if (text) return text;
@@ -203,7 +215,7 @@
     toast.dataset.timeout = timeout;
   }
 
-  // Original floating Debugger Modal window components
+  // Floating Debugger Modal
   function closeBugModal() {
     const modalContainer = shadow.getElementById('sprint-custom-overlay');
     if (!modalContainer) return;
@@ -218,7 +230,7 @@
   }
 
   function openBugModal(titleText, initialFeedback) {
-    closeBugModal(); // Close existing instances if open
+    closeBugModal();
 
     const overlay = document.createElement('div');
     overlay.id = 'sprint-custom-overlay';
@@ -268,14 +280,15 @@
     titleWrapper.appendChild(svg);
     titleWrapper.appendChild(titleSpan);
 
-    // Dynamic followup SprintAI Chat Trigger
     const chatCta = document.createElement('button');
     chatCta.id = 'sprint-modal-chat-cta';
     chatCta.className = 'sprint-modal-chat-cta';
     chatCta.textContent = 'Ask Chat ⚡';
     chatCta.title = 'Ask SprintAI for follow-up help';
     chatCta.addEventListener('click', () => {
-      openChatModal();
+      checkAuthAndRun(() => {
+        openChatModal();
+      });
     });
 
     const closeBtn = document.createElement('button');
@@ -339,7 +352,7 @@
     closeBtn.addEventListener('click', closeBugModal);
   }
 
-  // Floating Chatbox Modal window components
+  // Floating Chatbox Modal
   function closeChatModal() {
     const modalContainer = shadow.getElementById('sprint-chat-overlay');
     if (!modalContainer) return;
@@ -365,7 +378,6 @@
   function formatMessageContent(text) {
     const placeholders = [];
     
-    // Extract complete markdown block elements first to safeguard raw content
     const codeBlockRegex = /```([a-zA-Z0-9+#-]+)?\n([\s\S]*?)\n```/g;
     let processed = text.replace(codeBlockRegex, (match, lang, code) => {
       const index = placeholders.length;
@@ -383,7 +395,6 @@
       return `___SPRINT_PLACEHOLDER_${index}___`;
     });
 
-    // Extract inline block elements
     const inlineCodeRegex = /`([^`\n]+)`/g;
     processed = processed.replace(inlineCodeRegex, (match, code) => {
       const index = placeholders.length;
@@ -395,10 +406,7 @@
       return `___SPRINT_PLACEHOLDER_${index}___`;
     });
 
-    // Handle general text safety escaping
     processed = escapeHtml(processed);
-
-    // Parse bold text elements
     processed = processed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
     return { html: processed, placeholders };
@@ -487,7 +495,6 @@
     const footer = document.createElement('div');
     footer.className = 'sprint-chat-footer';
 
-    // Formatted multi-line input box enabling Shift + Enter carriage returns
     const input = document.createElement('textarea');
     input.placeholder = 'Ask anything...';
     input.className = 'sprint-chat-input';
@@ -522,14 +529,11 @@
 
     sendBtn.addEventListener('click', triggerSendMessage);
     
-    // Process input keys ensuring Shift + Enter adds a line break instead of submitting
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         if (e.shiftKey) {
-          // Allow default shift+enter behavior (newlines)
           e.stopPropagation();
         } else {
-          // Standard enter submits
           e.preventDefault();
           e.stopPropagation();
           triggerSendMessage();
@@ -561,13 +565,18 @@
         chatHistory.push({ role: 'assistant', content: replyText });
         renderChatHistory(container);
       } else {
+        if (res?.authRequired) {
+          closeChatModal();
+          alert("You need to log in to use AI features!");
+          window.open("https://getsprint.me/login", "_blank");
+          return;
+        }
+
         let errorMsg = res?.error || "Failed to process chat response.";
         const errorBubble = document.createElement('div');
         errorBubble.className = 'sprint-chat-bubble sprint-chat-error';
         
-        if (res?.authRequired) {
-          errorBubble.innerHTML = `Auth Required: <a href="https://getsprint.me/login" target="_blank" style="color:var(--accent); text-decoration:underline;">Sign In</a>`;
-        } else if (res?.limitReached) {
+        if (res?.limitReached) {
           errorBubble.innerHTML = `Limit Reached: <a href="https://getsprint.me/payments" target="_blank" style="color:var(--accent); text-decoration:underline;">Upgrade to Premium</a>`;
         } else {
           errorBubble.textContent = errorMsg;
@@ -606,7 +615,6 @@
         contentDiv.innerHTML = rawHtml;
         bubble.appendChild(contentDiv);
 
-        // Bind secure action hooks directly to copy operations ensuring pure, unescaped raw data transfer
         const copyCodeBtns = contentDiv.querySelectorAll('.sprint-chat-copy-code');
         copyCodeBtns.forEach(btn => {
           btn.addEventListener('click', (e) => {
@@ -679,6 +687,14 @@
     chrome.runtime.sendMessage({ type: "API_COMPLEXITY", code }, (res) => {
       const toasts = toastContainer.querySelectorAll('.sprint-toast');
       const activeToast = toasts[toasts.length - 1];
+
+      if (res?.authRequired) {
+        if (activeToast) activeToast.remove();
+        alert("You need to log in to use AI features!");
+        window.open("https://getsprint.me/login", "_blank");
+        return;
+      }
+
       if (!activeToast) return;
 
       const timeSpan = activeToast.querySelector('.complexity-container .complexity-item:nth-child(1) .complexity-value');
@@ -714,11 +730,18 @@
       problemTitle: document.title,
       problemContext: `Host context: ${window.location.hostname}`
     }, (res) => {
+      if (res?.authRequired) {
+        closeBugModal();
+        alert("You need to log in to use AI features!");
+        window.open("https://getsprint.me/login", "_blank");
+        return;
+      }
+
       const titleEl = shadow.getElementById('wrong-title');
       const container = shadow.getElementById('wrong-feedback-container');
       if (!container || !titleEl) return;
 
-      container.innerHTML = ''; // Clear status wrapper
+      container.innerHTML = '';
 
       if (res?.success) {
         titleEl.textContent = 'Issue Found';
@@ -762,7 +785,6 @@
     if (isDragging) return;
     clearTimeout(hoverTimeout);
     
-    // Only display command panel if the sphere is currently set to visible
     const s = shadow.getElementById('sprint-sphere');
     if (s && !s.classList.contains('sprint-companion-hidden')) {
       actionPanel.classList.add('visible');
@@ -772,7 +794,7 @@
   const hidePanel = () => {
     hoverTimeout = setTimeout(() => {
       actionPanel.classList.remove('visible');
-    }, 250); // 250ms gap safety transition buffer
+    }, 250);
   };
 
   sphere.addEventListener('mouseenter', showPanel);
@@ -780,7 +802,6 @@
   actionPanel.addEventListener('mouseenter', showPanel);
   actionPanel.addEventListener('mouseleave', hidePanel);
 
-  // Drag physics parameters adjusted to match the 34px sphere size profile
   sphere.addEventListener('pointerdown', (e) => {
     isDragging = false;
     startY = e.clientY;
@@ -798,7 +819,7 @@
 
     if (Math.abs(deltaY) > 6 || Math.abs(deltaX) > 6) {
       isDragging = true;
-      actionPanel.classList.remove('visible'); // Keep hidden during dragging operations
+      actionPanel.classList.remove('visible');
       
       const computedRight = startRight + deltaX;
       const computedBottom = startBottom + deltaY;
@@ -809,7 +830,6 @@
       sphere.style.right = `${boundedRight}px`;
       sphere.style.bottom = `${boundedBottom}px`;
       
-      // Vertical panel alignment mapping centered with the reduced 34px sphere
       actionPanel.style.right = `${boundedRight - 1}px`;
       actionPanel.style.bottom = `${boundedBottom + 46}px`;
     }
@@ -825,31 +845,36 @@
 
   // Action Panel Bindings
   shadow.getElementById('btn-complexity').addEventListener('click', () => {
-    performComplexityAnalysis();
+    checkAuthAndRun(() => {
+      performComplexityAnalysis();
+    });
     actionPanel.classList.remove('visible');
   });
 
   shadow.getElementById('btn-bug').addEventListener('click', () => {
-    const modalContainer = shadow.getElementById('sprint-custom-overlay');
-    if (modalContainer) {
-      closeBugModal();
-    } else {
-      performBugCheck();
-    }
+    checkAuthAndRun(() => {
+      const modalContainer = shadow.getElementById('sprint-custom-overlay');
+      if (modalContainer) {
+        closeBugModal();
+      } else {
+        performBugCheck();
+      }
+    });
     actionPanel.classList.remove('visible');
   });
 
   shadow.getElementById('btn-chat').addEventListener('click', () => {
-    const modalContainer = shadow.getElementById('sprint-chat-overlay');
-    if (modalContainer) {
-      closeChatModal();
-    } else {
-      openChatModal();
-    }
+    checkAuthAndRun(() => {
+      const modalContainer = shadow.getElementById('sprint-chat-overlay');
+      if (modalContainer) {
+        closeChatModal();
+      } else {
+        openChatModal();
+      }
+    });
     actionPanel.classList.remove('visible');
   });
 
-  // Dynamic visual state application handling
   function applyShowSphereOption(options) {
     const showSphereOpt = options?.find(o => o.optionName === 'showSphere');
     const show = showSphereOpt ? showSphereOpt.checked : true;
@@ -860,17 +885,16 @@
         s.classList.remove('sprint-companion-hidden');
       } else {
         s.classList.add('sprint-companion-hidden');
-        p.classList.remove('visible'); // Ensure vertical actions stay hidden
+        p.classList.remove('visible');
       }
     }
   }
 
-  // Load and apply initial visual layout settings on load
   chrome.storage.local.get('options', (res) => {
     applyShowSphereOption(res?.options);
   });
 
-  // Communication channels for right-clicks & option switches
+  // Communication channels for right-clicks & commands
   chrome.runtime.onMessage.addListener((request) => {
     if (request.action === "applyVisibilityOptions") {
       applyShowSphereOption(request.options);
@@ -878,51 +902,46 @@
     if (request.type === "TRIGGER_ACTION") {
       const code = request.code || getDeepSelection();
       
-      // Complexity Toggle logic
-      if (request.action === "complexity") {
-        const activeToasts = toastContainer.querySelectorAll('.sprint-toast');
-        if (activeToasts.length > 0) {
-          activeToasts.forEach(t => {
-            t.classList.add('slide-out');
-            setTimeout(() => t.remove(), 300);
-          });
-        } else {
-          performComplexityAnalysis(code);
+      checkAuthAndRun(() => {
+        if (request.action === "complexity") {
+          const activeToasts = toastContainer.querySelectorAll('.sprint-toast');
+          if (activeToasts.length > 0) {
+            activeToasts.forEach(t => {
+              t.classList.add('slide-out');
+              setTimeout(() => t.remove(), 300);
+            });
+          } else {
+            performComplexityAnalysis(code);
+          }
+        } 
+        else if (request.action === "bug") {
+          const modalContainer = shadow.getElementById('sprint-custom-overlay');
+          if (modalContainer) {
+            closeBugModal();
+          } else {
+            performBugCheck(code);
+          }
         }
-      } 
-      
-      // Bug Toggle logic
-      else if (request.action === "bug") {
-        const modalContainer = shadow.getElementById('sprint-custom-overlay');
-        if (modalContainer) {
-          closeBugModal();
-        } else {
-          performBugCheck(code);
+        else if (request.action === "chat") {
+          const chatOverlay = shadow.getElementById('sprint-chat-overlay');
+          if (chatOverlay) {
+            closeChatModal();
+          } else {
+            openChatModal();
+          }
         }
-      }
-
-      // Chat Toggle logic
-      else if (request.action === "chat") {
-        const chatOverlay = shadow.getElementById('sprint-chat-overlay');
-        if (chatOverlay) {
-          closeChatModal();
-        } else {
-          openChatModal();
-        }
-      }
+      });
     }
   });
 
-  // Handle live storage edits
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.options) {
       applyShowSphereOption(changes.options.newValue);
     }
   });
 
-  // Strict Toggle Keyboard Router with AltGr detection & escape hooks
+  // Strict Toggle Keyboard Router
   window.addEventListener('keydown', (e) => {
-    // Escape key handling
     if (e.key === 'Escape') {
       closeBugModal();
       closeChatModal();
@@ -935,7 +954,6 @@
       return;
     }
 
-    // Precise key checks block European AltGr modifiers (!e.altKey)
     const isCmdX = (e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.code === 'KeyX';
     const isCmdZ = (e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.code === 'KeyZ';
     const isAltQ = e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyQ';
@@ -946,41 +964,38 @@
 
       const selection = getDeepSelection();
 
-      // Complexity Toggle Shortcut Execution
-      if (isCmdX) {
-        const activeToasts = toastContainer.querySelectorAll('.sprint-toast');
-        if (activeToasts.length > 0) {
-          // Toggle off: close all open toasts
-          activeToasts.forEach(t => {
-            t.classList.add('slide-out');
-            setTimeout(() => t.remove(), 300);
-          });
-        } else {
-          performComplexityAnalysis(selection);
+      checkAuthAndRun(() => {
+        if (isCmdX) {
+          const activeToasts = toastContainer.querySelectorAll('.sprint-toast');
+          if (activeToasts.length > 0) {
+            activeToasts.forEach(t => {
+              t.classList.add('slide-out');
+              setTimeout(() => t.remove(), 300);
+            });
+          } else {
+            performComplexityAnalysis(selection);
+          }
         }
-      }
 
-      // Bug Toggle Shortcut Execution
-      if (isCmdZ) {
-        const modalContainer = shadow.getElementById('sprint-custom-overlay');
-        if (modalContainer) {
-          // Toggle off: close the existing debug modal
-          closeBugModal();
-        } else {
-          performBugCheck(selection);
+        if (isCmdZ) {
+          const modalContainer = shadow.getElementById('sprint-custom-overlay');
+          if (modalContainer) {
+            closeBugModal();
+          } else {
+            performBugCheck(selection);
+          }
         }
-      }
 
-      // Chat Toggle Shortcut Execution
-      if (isAltQ) {
-        const chatOverlay = shadow.getElementById('sprint-chat-overlay');
-        if (chatOverlay) {
-          closeChatModal();
-        } else {
-          openChatModal();
+        if (isAltQ) {
+          const chatOverlay = shadow.getElementById('sprint-chat-overlay');
+          if (chatOverlay) {
+            closeChatModal();
+          } else {
+            openChatModal();
+          }
         }
-      }
+      });
     }
-  }, true); // Capture phase implementation prevents host site keystroke traps
+  }, true);
 
 })();

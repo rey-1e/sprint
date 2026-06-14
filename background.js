@@ -40,10 +40,16 @@ chrome.commands.onCommand.addListener((command) => {
 });
 
 // Production API request runner with adaptive credential sync
-async function handleApiRequest(url, payload, sendResponse) {
+async function handleApiRequest(url, payload, sendResponse, requiresAuth = false) {
   try {
     const storage = await chrome.storage.local.get(['authToken']);
     const token = storage.authToken || "";
+
+    // Stop execution immediately if feature requires auth and token is not present
+    if (requiresAuth && !token) {
+      sendResponse({ success: false, authRequired: true, error: "Authentication required. Please log in." });
+      return;
+    }
 
     const headers = {
       'Content-Type': 'application/json',
@@ -60,7 +66,7 @@ async function handleApiRequest(url, payload, sendResponse) {
       body: JSON.stringify(payload)
     });
 
-    const data = await res.ok ? await res.json() : null;
+    const data = res.ok ? await res.json() : null;
     if (!res.ok) {
       if (res.status === 401) {
         sendResponse({ success: false, authRequired: true, error: data?.message || "Sign in required." });
@@ -81,7 +87,7 @@ async function handleApiRequest(url, payload, sendResponse) {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "API_COMPLEXITY") {
-    handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse);
+    handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse, true);
     return true; 
   }
   if (request.type === "API_FIND_BUG") {
@@ -89,30 +95,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       code: request.code,
       problemTitle: request.problemTitle,
       problemContext: request.problemContext
-    }, sendResponse);
+    }, sendResponse, true);
     return true;
   }
   if (request.type === "API_CHAT") {
     handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/sprintAIChat', {
       message: request.message,
       history: request.history
-    }, sendResponse);
+    }, sendResponse, true);
     return true;
   }
   if (request.type === "FETCH_THEME") {
     handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/fetchTheme', {
       theme: request.theme
-    }, sendResponse);
+    }, sendResponse, false);
     return true;
   }
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
     handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/fetchDetailedAnalysis', {
       code: request.code
-    }, sendResponse);
+    }, sendResponse, true);
     return true;
   }
   if (request.type === "SYNC_USER") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/syncUser', {}, sendResponse);
+    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/syncUser', {}, sendResponse, true);
     return true;
   }
   if (request.type === "GET_QUESTION_ID") {

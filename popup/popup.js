@@ -2,6 +2,7 @@ const MATCH_PATTERNS = [
   '*://*.leetcode.com/*',
   '*://*.leetcode.cn/*',
   '*://getsprint.me/*',
+  '*://*.getsprint.me/*',
   'http://localhost/*',
   'http://127.0.0.1/*'
 ];
