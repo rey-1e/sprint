@@ -19,31 +19,24 @@
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <img src="../icon.png" alt="Sprint icon" onerror="this.style.display='none'" />
-      <span class="ext-name">leetCode <span>Sprint.</span></span>
-    </div>
-    <div style="display: flex; align-items: center; gap: 6px;">
-      <!-- Single Settings Gear icon to switch view locally -->
-      <a href="#" class="info-question-link" id="settings-toggle-btn" title="Extension Settings" style="margin-right: 4px; display: inline-flex; align-items: center; justify-content: center;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-      </a>
-      <a href="https://getsprint.me" class="website-link" id="website-link" title="Visit getsprint.me">
-        getsprint.me
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-      </a>
-      <a href="https://getsprint.me/support.html" class="info-question-link" id="info-question-link" title="Help & Support">?</a>
-    </div>
-  </header>
-
   <!-- VIEW 1: Main Dashboard Section -->
   <div id="main-view" class="view-panel active">
+    <header>
+      <div class="brand">
+        <img src="../icon.png" alt="Sprint icon" onerror="this.style.display='none'" />
+        <span class="ext-name">leetCode <span>Sprint.</span></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <!-- Single Settings Gear icon to switch view locally -->
+        <a href="#" class="info-question-link" id="settings-toggle-btn" title="Extension Settings" style="margin-right: 4px; display: inline-flex; align-items: center; justify-content: center;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </a>
+      </div>
+    </header>
+
     <main>
       <div class="section">
         <div class="shortcut-group">
@@ -92,6 +85,16 @@
 
   <!-- VIEW 2: Integrated Settings View -->
   <div id="settings-view" class="view-panel">
+    <header>
+      <div class="brand">
+        <img src="../icon.png" alt="Sprint icon" onerror="this.style.display='none'" />
+        <span class="ext-name">Sprint <span>Settings.</span></span>
+      </div>
+      <div>
+        <a href="#" class="website-link" id="settings-back-btn" style="font-size: 11px; font-weight: 600;">&larr; Back</a>
+      </div>
+    </header>
+
     <main>
       <div class="section">
         <p class="section-label">Global Core Settings</p>
@@ -121,7 +124,7 @@
       </div>
     </main>
     <footer>
-      <button class="btn-donate" id="settings-back-btn" style="background: var(--ink-soft); box-shadow: none;">&larr; Back</button>
+      <a class="btn-donate" id="settings-upgrade-link" href="https://getsprint.me/payments/index.html" target="_blank">Upgrade to Premium ⚡</a>
     </footer>
   </div>
 

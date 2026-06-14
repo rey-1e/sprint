@@ -23,6 +23,7 @@ async function broadcastMessage(message) {
 
 document.addEventListener('DOMContentLoaded', async () => {
   setupLink('upgrade-link');
+  setupLink('settings-upgrade-link');
   setupLink('website-link');
   setupLink('info-question-link');
 
@@ -32,7 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Navigation pill logic to leetcode.html
   const leetcodePill = document.getElementById('leetcode-pill');
   if (leetcodePill) {
-    leetcodePill.addEventListener('click', () => {
+    leetcodePill.addEventListener('click', (e) => {
+      e.preventDefault();
       window.location.href = 'leetcode.html';
     });
   }
