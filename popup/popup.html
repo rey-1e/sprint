@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <title>Sprint</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Elegant view swapping transitions */
+    .view-panel {
+      display: none;
+    }
+    .view-panel.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
 
@@ -13,6 +22,13 @@
       <span class="ext-name">leetCode <span>Sprint.</span></span>
     </div>
     <div style="display: flex; align-items: center; gap: 6px;">
+      <!-- Single Settings Gear icon to switch view locally -->
+      <a href="#" class="info-question-link" id="settings-toggle-btn" title="Extension Settings" style="margin-right: 4px; display: inline-flex; align-items: center; justify-content: center;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </a>
       <a href="https://getsprint.me" class="website-link" id="website-link" title="Visit getsprint.me">
         getsprint.me
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -23,139 +39,169 @@
     </div>
   </header>
 
-  <main>
-    <div class="section">
-      <div class="shortcut-group">
-        <div class="shortcut-row">
-          <span class="shortcut-label">Company-wise Problems</span>
-          <div class="kbd-wrap">
-            <span class="kbd"><a href="https://getsprint.me/problemset" id="company-link">Click Here</a></span>
+  <!-- VIEW 1: Main Dashboard Section -->
+  <div id="main-view" class="view-panel active">
+    <main>
+      <div class="section">
+        <div class="shortcut-group">
+          <div class="shortcut-row">
+            <span class="shortcut-label">Company-wise Problems</span>
+            <div class="kbd-wrap">
+              <span class="kbd"><a href="https://getsprint.me/problemset" id="company-link">Click Here</a></span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="section" id="themes-section">
-      <div class="theme-section-header">
-        <p class="section-label" style="margin-bottom:0">Select Theme (beta)</p>
-        <div class="active-pill">
-          <span class="pip"></span>
-          <span id="active-label">Default Gray</span>
+      <div class="section" id="themes-section">
+        <div class="theme-section-header">
+          <p class="section-label" style="margin-bottom:0">Select Theme (beta)</p>
+          <div class="active-pill">
+            <span class="pip"></span>
+            <span id="active-label">Default Gray</span>
+          </div>
+        </div>
+
+        <div class="palette-grid" id="palette-grid">
+          <button class="dot" data-theme="default"          data-display="Default Gray"        style="background:#737373; color:#737373"><span class="tip">Default Gray</span></button>
+          <button class="dot" data-theme="amethyst"         data-display="Amethyst Nebula"     style="background:#9d4edd; color:#9d4edd"><span class="tip">Amethyst Nebula</span></button>
+          <button class="dot" data-theme="forest"           data-display="Emerald Aurora"      style="background:#10b981; color:#10b981"><span class="tip">Emerald Aurora</span></button>
+          <button class="dot" data-theme="sunset"           data-display="Sunset Horizon"      style="background:#ff6b6b; color:#ff6b6b"><span class="tip">Sunset Horizon</span></button>
+          <button class="dot" data-theme="space"            data-display="Midnight Abyss"      style="background:#3b82f6; color:#3b82f6"><span class="tip">Midnight Abyss</span></button>
+          <button class="dot" data-theme="cyberpunk"        data-display="Cyber Neon"          style="background:#ff007f; color:#ff007f"><span class="tip">Cyber Neon</span></button>
+          <button class="dot" data-theme="obsidian"         data-display="Obsidian Onyx"       style="background:#e5e5e5; color:#e5e5e5"><span class="tip">Obsidian Onyx</span></button>
+          <button class="dot" data-theme="dracula"          data-display="Dracula Grave"       style="background:#ff79c6; color:#ff79c6"><span class="tip">Dracula Grave</span></button>
+          <button class="dot" data-theme="nord"             data-display="Polar Nord"          style="background:#88c0d0; color:#88c0d0"><span class="tip">Polar Nord</span></button>
+          <button class="dot" data-theme="gruvbox"          data-display="Gruvbox Dark"        style="background:#fe8019; color:#fe8019"><span class="tip">Gruvbox Dark</span></button>
+          <button class="dot" data-theme="solarflare"       data-display="Solar Flare"         style="background:#ffb000; color:#ffb000"><span class="tip">Solar Flare</span></button>
+          <button class="dot" data-theme="monokai"          data-display="Monokai Carbon"      style="background:#a6e22e; color:#a6e22e"><span class="tip">Monokai Carbon</span></button>
+          <button class="dot" data-theme="plum"             data-display="Plum Eclipse"        style="background:#ec4899; color:#ec4899"><span class="tip">Plum Eclipse</span></button>
+          <button class="dot" data-theme="ocean"            data-display="Ocean Trench"        style="background:#06b6d4; color:#06b6d4"><span class="tip">Ocean Trench</span></button>
+          <button class="dot" data-theme="toxic"            data-display="Toxic Slime"         style="background:#39ff14; color:#39ff14"><span class="tip">Toxic Slime</span></button>
+          <button class="dot" data-theme="rorose-gold"      data-display="Rose Gold Dark"      style="background:#f43f5e; color:#f43f5e"><span class="tip">Rose Gold Dark</span></button>
+          <button class="dot" data-theme="aurora"           data-display="Aurora Green"        style="background:#2dd4bf; color:#2dd4bf"><span class="tip">Aurora Green</span></button>
+          <button class="dot" data-theme="cyber2077"        data-display="Cyberpunk 2077"      style="background:#f3e600; color:#f3e600"><span class="tip">Cyberpunk 2077</span></button>
+          <button class="dot" data-theme="royal"            data-display="Royal Velvet"        style="background:#6366f1; color:#6366f1"><span class="tip">Royal Velvet</span></button>
+          <button class="dot" data-theme="vampire"          data-display="Vampire Gothic"      style="background:#ef4444; color:#ef4444"><span class="tip">Vampire Gothic</span></button>
+          <button class="dot" data-theme="abyssal"          data-display="Abyssal Ice"         style="background:#00d4ff; color:#00d4ff"><span class="tip">Abyssal Ice</span></button>
+          <button class="dot" data-theme="void-orchid"      data-display="Void Orchid"         style="background:#bf5fff; color:#bf5fff"><span class="tip">Void Orchid</span></button>
+          <button class="dot" data-theme="phosphor"         data-display="Phosphor Matrix"     style="background:#7fff00; color:#7fff00"><span class="tip">Phosphor Matrix</span></button>
+          <button class="dot" data-theme="gilded"           data-display="Gilded Carbon"       style="background:#c8a96e; color:#c8a96e"><span class="tip">Gilded Carbon</span></button>
+          <button class="dot" data-theme="sakura"           data-display="Neon Sakura"         style="background:#ff4d8f; color:#ff4d8f"><span class="tip">Neon Sakura</span></button>
+          <button class="dot" data-theme="deep-horizon"     data-display="Deep Horizon"        style="background:#4fc3f7; color:#4fc3f7"><span class="tip">Deep Horizon</span></button>
+          <button class="dot" data-theme="starfield"        data-display="Starfield Lavender"  style="background:#a78bfa; color:#a78bfa"><span class="tip">Starfield Lavender</span></button>
+          <button class="dot" data-theme="ember"            data-display="Ember Forge"         style="background:#ff6a00; color:#ff6a00"><span class="tip">Ember Forge</span></button>
+          <button class="dot" data-theme="cryo"             data-display="Cryogenic Depths"    style="background:#00e5ff; color:#00e5ff"><span class="tip">Cryogenic Depths</span></button>
+          <button class="dot" data-theme="onyx-gold"        data-display="Matte Onyx Gold"     style="background:#d4af37; color:#d4af37"><span class="tip">Matte Onyx Gold</span></button>
+          <button class="dot" data-theme="jade"             data-display="Jade Terminal"       style="background:#14f0b0; color:#14f0b0"><span class="tip">Jade Terminal</span></button>
+          <button class="dot" data-theme="crimson-mist"     data-display="Crimson Mist"        style="background:#ff8fab; color:#ff8fab"><span class="tip">Crimson Mist</span></button>
+          <button class="dot" data-theme="phantom-reef"     data-display="Phantom Reef"        style="background:#56cfe1; color:#56cfe1"><span class="tip">Phantom Reef</span></button>
+          <button class="dot" data-theme="ancient"          data-display="Ancient Scroll"      style="background:#e8c84a; color:#e8c84a"><span class="tip">Ancient Scroll</span></button>
+          <button class="dot" data-theme="indigo-fog"       data-display="Indigo Fog"          style="background:#818cf8; color:#818cf8"><span class="tip">Indigo Fog</span></button>
+          <button class="dot" data-theme="pure-void"        data-display="Pure Void"           style="background:#f0f0f0; color:#f0f0f0"><span class="tip">Pure Void</span></button>
+          <button class="dot" data-theme="bioluminescence"  data-display="Bioluminescence"     style="background:#00ff9f; color:#00ff9f"><span class="tip">Bioluminescence</span></button>
+          <button class="dot" data-theme="arcane"           data-display="Arcane Rift"         style="background:#e879f9; color:#e879f9"><span class="tip">Arcane Rift</span></button>
+          <button class="dot" data-theme="polar-dawn"       data-display="Polar Dawn"          style="background:#38bdf8; color:#38bdf8"><span class="tip">Polar Dawn</span></button>
+          <button class="dot" data-theme="rad-moss"         data-display="Radioactive Moss"    style="background:#b5e853; color:#b5e853"><span class="tip">Radioactive Moss</span></button>
         </div>
       </div>
 
-      <div class="palette-grid" id="palette-grid">
-        <button class="dot" data-theme="default"          data-display="Default Gray"        style="background:#737373; color:#737373"><span class="tip">Default Gray</span></button>
-        <button class="dot" data-theme="amethyst"         data-display="Amethyst Nebula"     style="background:#9d4edd; color:#9d4edd"><span class="tip">Amethyst Nebula</span></button>
-        <button class="dot" data-theme="forest"           data-display="Emerald Aurora"      style="background:#10b981; color:#10b981"><span class="tip">Emerald Aurora</span></button>
-        <button class="dot" data-theme="sunset"           data-display="Sunset Horizon"      style="background:#ff6b6b; color:#ff6b6b"><span class="tip">Sunset Horizon</span></button>
-        <button class="dot" data-theme="space"            data-display="Midnight Abyss"      style="background:#3b82f6; color:#3b82f6"><span class="tip">Midnight Abyss</span></button>
-        <button class="dot" data-theme="cyberpunk"        data-display="Cyber Neon"          style="background:#ff007f; color:#ff007f"><span class="tip">Cyber Neon</span></button>
-        <button class="dot" data-theme="obsidian"         data-display="Obsidian Onyx"       style="background:#e5e5e5; color:#e5e5e5"><span class="tip">Obsidian Onyx</span></button>
-        <button class="dot" data-theme="dracula"          data-display="Dracula Grave"       style="background:#ff79c6; color:#ff79c6"><span class="tip">Dracula Grave</span></button>
-        <button class="dot" data-theme="nord"             data-display="Polar Nord"          style="background:#88c0d0; color:#88c0d0"><span class="tip">Polar Nord</span></button>
-        <button class="dot" data-theme="gruvbox"          data-display="Gruvbox Dark"        style="background:#fe8019; color:#fe8019"><span class="tip">Gruvbox Dark</span></button>
-        <button class="dot" data-theme="solarflare"       data-display="Solar Flare"         style="background:#ffb000; color:#ffb000"><span class="tip">Solar Flare</span></button>
-        <button class="dot" data-theme="monokai"          data-display="Monokai Carbon"      style="background:#a6e22e; color:#a6e22e"><span class="tip">Monokai Carbon</span></button>
-        <button class="dot" data-theme="plum"             data-display="Plum Eclipse"        style="background:#ec4899; color:#ec4899"><span class="tip">Plum Eclipse</span></button>
-        <button class="dot" data-theme="ocean"            data-display="Ocean Trench"        style="background:#06b6d4; color:#06b6d4"><span class="tip">Ocean Trench</span></button>
-        <button class="dot" data-theme="toxic"            data-display="Toxic Slime"         style="background:#39ff14; color:#39ff14"><span class="tip">Toxic Slime</span></button>
-        <button class="dot" data-theme="rosegold"         data-display="Rose Gold Dark"      style="background:#f43f5e; color:#f43f5e"><span class="tip">Rose Gold Dark</span></button>
-        <button class="dot" data-theme="aurora"           data-display="Aurora Green"        style="background:#2dd4bf; color:#2dd4bf"><span class="tip">Aurora Green</span></button>
-        <button class="dot" data-theme="cyber2077"        data-display="Cyberpunk 2077"      style="background:#f3e600; color:#f3e600"><span class="tip">Cyberpunk 2077</span></button>
-        <button class="dot" data-theme="royal"            data-display="Royal Velvet"        style="background:#6366f1; color:#6366f1"><span class="tip">Royal Velvet</span></button>
-        <button class="dot" data-theme="vampire"          data-display="Vampire Gothic"      style="background:#ef4444; color:#ef4444"><span class="tip">Vampire Gothic</span></button>
-        <button class="dot" data-theme="abyssal"          data-display="Abyssal Ice"         style="background:#00d4ff; color:#00d4ff"><span class="tip">Abyssal Ice</span></button>
-        <button class="dot" data-theme="void-orchid"      data-display="Void Orchid"         style="background:#bf5fff; color:#bf5fff"><span class="tip">Void Orchid</span></button>
-        <button class="dot" data-theme="phosphor"         data-display="Phosphor Matrix"     style="background:#7fff00; color:#7fff00"><span class="tip">Phosphor Matrix</span></button>
-        <button class="dot" data-theme="gilded"           data-display="Gilded Carbon"       style="background:#c8a96e; color:#c8a96e"><span class="tip">Gilded Carbon</span></button>
-        <button class="dot" data-theme="sakura"           data-display="Neon Sakura"         style="background:#ff4d8f; color:#ff4d8f"><span class="tip">Neon Sakura</span></button>
-        <button class="dot" data-theme="deep-horizon"     data-display="Deep Horizon"        style="background:#4fc3f7; color:#4fc3f7"><span class="tip">Deep Horizon</span></button>
-        <button class="dot" data-theme="starfield"        data-display="Starfield Lavender"  style="background:#a78bfa; color:#a78bfa"><span class="tip">Starfield Lavender</span></button>
-        <button class="dot" data-theme="ember"            data-display="Ember Forge"         style="background:#ff6a00; color:#ff6a00"><span class="tip">Ember Forge</span></button>
-        <button class="dot" data-theme="cryo"             data-display="Cryogenic Depths"    style="background:#00e5ff; color:#00e5ff"><span class="tip">Cryogenic Depths</span></button>
-        <button class="dot" data-theme="onyx-gold"        data-display="Matte Onyx Gold"     style="background:#d4af37; color:#d4af37"><span class="tip">Matte Onyx Gold</span></button>
-        <button class="dot" data-theme="jade"             data-display="Jade Terminal"       style="background:#14f0b0; color:#14f0b0"><span class="tip">Jade Terminal</span></button>
-        <button class="dot" data-theme="crimson-mist"     data-display="Crimson Mist"        style="background:#ff8fab; color:#ff8fab"><span class="tip">Crimson Mist</span></button>
-        <button class="dot" data-theme="phantom-reef"     data-display="Phantom Reef"        style="background:#56cfe1; color:#56cfe1"><span class="tip">Phantom Reef</span></button>
-        <button class="dot" data-theme="ancient"          data-display="Ancient Scroll"      style="background:#e8c84a; color:#e8c84a"><span class="tip">Ancient Scroll</span></button>
-        <button class="dot" data-theme="indigo-fog"       data-display="Indigo Fog"          style="background:#818cf8; color:#818cf8"><span class="tip">Indigo Fog</span></button>
-        <button class="dot" data-theme="pure-void"        data-display="Pure Void"           style="background:#f0f0f0; color:#f0f0f0"><span class="tip">Pure Void</span></button>
-        <button class="dot" data-theme="bioluminescence"  data-display="Bioluminescence"     style="background:#00ff9f; color:#00ff9f"><span class="tip">Bioluminescence</span></button>
-        <button class="dot" data-theme="arcane"           data-display="Arcane Rift"         style="background:#e879f9; color:#e879f9"><span class="tip">Arcane Rift</span></button>
-        <button class="dot" data-theme="polar-dawn"       data-display="Polar Dawn"          style="background:#38bdf8; color:#38bdf8"><span class="tip">Polar Dawn</span></button>
-        <button class="dot" data-theme="rad-moss"         data-display="Radioactive Moss"    style="background:#b5e853; color:#b5e853"><span class="tip">Radioactive Moss</span></button>
-      </div>
-    </div>
-
-    <div class="section">
-      <p class="section-label">Keyboard Shortcuts</p>
-      <div class="shortcut-group">
-        <div class="shortcut-row">
-          <span class="shortcut-label">Complexity Analysis</span>
-          <div class="kbd-wrap"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">X</span></div>
-        </div>
-        <div class="shortcut-row">
-          <span class="shortcut-label">AI Debugger Toggle</span>
-          <div class="kbd-wrap"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">Z</span></div>
-        </div>
-        <div class="shortcut-row">
-          <span class="shortcut-label">sprintAI Chat Toggle</span>
-          <div class="kbd-wrap"><span class="kbd">Alt</span><span class="kbd">Q</span></div>
+      <div class="section">
+        <p class="section-label">Keyboard Shortcuts</p>
+        <div class="shortcut-group">
+          <div class="shortcut-row">
+            <span class="shortcut-label">Complexity Analysis</span>
+            <div class="kbd-wrap"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">X</span></div>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-label">AI Debugger Toggle</span>
+            <div class="kbd-wrap"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">Z</span></div>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-label">sprintAI Chat Toggle</span>
+            <div class="kbd-wrap"><span class="kbd">Alt</span><span class="kbd">Q</span></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="section">
-      <p class="section-label">Visibility Settings</p>
-      <div class="shortcut-group">
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Show Floating Sphere</span>
-          <label class="sprint-switch"><input type="checkbox" id="showSphere" checked><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Remove Javascript Injections</span>
-          <label class="sprint-switch"><input type="checkbox" id="removeInjections"><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Locked Problems</span>
-          <label class="sprint-switch"><input type="checkbox" id="locked" checked><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Highlight Solved</span>
-          <label class="sprint-switch"><input type="checkbox" id="highlight"><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Solved Problems</span>
-          <label class="sprint-switch"><input type="checkbox" id="solved" checked><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Show Status <small>(table/editor)</small></span>
-          <label class="sprint-switch"><input type="checkbox" id="status" checked><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Show Acceptance Rate</span>
-          <label class="sprint-switch"><input type="checkbox" id="acceptance" checked><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Show Difficulty</span>
-          <label class="sprint-switch"><input type="checkbox" id="difficulty" checked><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Show Frequency</span>
-          <label class="sprint-switch"><input type="checkbox" id="frequency" checked><span class="sprint-slider"></span></label>
-        </div>
-        <div class="shortcut-row flex-row-align">
-          <span class="shortcut-label">Show Save Button</span>
-          <label class="sprint-switch"><input type="checkbox" id="save" checked><span class="sprint-slider"></span></label>
+      <div class="section">
+        <p class="section-label">LeetCode Visibility Settings</p>
+        <div class="shortcut-group">
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Locked Problems</span>
+            <label class="sprint-switch"><input type="checkbox" id="locked" checked><span class="sprint-slider"></span></label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Highlight Solved</span>
+            <label class="sprint-switch"><input type="checkbox" id="highlight"><span class="sprint-slider"></span></label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Solved Problems</span>
+            <label class="sprint-switch"><input type="checkbox" id="solved" checked><span class="sprint-slider"></span></label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Show Status <small>(table/editor)</small></span>
+            <label class="sprint-switch"><input type="checkbox" id="status" checked><span class="sprint-slider"></span></label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Show Acceptance Rate</span>
+            <label class="sprint-switch"><input type="checkbox" id="acceptance" checked><span class="sprint-slider"></span></label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Show Difficulty</span>
+            <label class="sprint-switch"><input type="checkbox" id="difficulty" checked><span class="sprint-slider"></span></label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Show Frequency</span>
+            <label class="sprint-switch"><input type="checkbox" id="frequency" checked><span class="sprint-slider"></span></label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Show Save Button</span>
+            <label class="sprint-switch"><input type="checkbox" id="save" checked><span class="sprint-slider"></span></label>
+          </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <footer>
-    <a class="btn-donate" id="upgrade-link" href="https://getsprint.me/payments/index.html" target="_blank">Upgrade to Premium ⚡</a>
-  </footer>
+    <footer>
+      <a class="btn-donate" id="upgrade-link" href="https://getsprint.me/payments/index.html" target="_blank">Upgrade to Premium ⚡</a>
+    </footer>
+  </div>
+
+  <!-- VIEW 2: Integrated Settings View (Strictly Extension Related options) -->
+  <div id="settings-view" class="view-panel">
+    <main>
+      <div class="section">
+        <p class="section-label">Global Core Settings</p>
+        <div class="shortcut-group">
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Show Floating Sphere</span>
+            <label class="sprint-switch">
+              <input type="checkbox" id="showSphere" checked>
+              <span class="sprint-slider"></span>
+            </label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Remove Javascript Injections</span>
+            <label class="sprint-switch">
+              <input type="checkbox" id="removeInjections">
+              <span class="sprint-slider"></span>
+            </label>
+          </div>
+          <div class="shortcut-row flex-row-align">
+            <span class="shortcut-label">Disable Selection Popup</span>
+            <label class="sprint-switch">
+              <input type="checkbox" id="removeSelectionPopup">
+              <span class="sprint-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <button class="btn-donate" id="settings-back-btn" style="background: var(--ink-soft);">Back to Dashboard</button>
+    </footer>
+  </div>
 
   <script src="popup.js"></script>
 </body>

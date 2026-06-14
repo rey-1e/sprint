@@ -95,6 +95,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   const comp = document.getElementById('company-link');
   if (comp) comp.addEventListener('click', (e) => { e.preventDefault(); chrome.tabs.create({ url: comp.href }); });
 
+  // Dual-view transition panel mappings
+  const settingsToggleBtn = document.getElementById('settings-toggle-btn');
+  const settingsBackBtn = document.getElementById('settings-back-btn');
+  const mainView = document.getElementById('main-view');
+  const settingsView = document.getElementById('settings-view');
+
+  if (settingsToggleBtn && settingsBackBtn && mainView && settingsView) {
+    settingsToggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      mainView.classList.remove('active');
+      settingsView.classList.add('active');
+    });
+
+    settingsBackBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      settingsView.classList.remove('active');
+      mainView.classList.add('active');
+    });
+  }
+
   const storage = await chrome.storage.local.get(['isPremium', 'authToken', 'leetcodeTheme']);
   
   let isPremium = storage.isPremium === true || storage.isPremium === 'true';
@@ -147,6 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const defaultOptions = [
     { optionName: 'removeInjections', checked: false },
     { optionName: 'showSphere', checked: true },
+    { optionName: 'removeSelectionPopup', checked: false },
     { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
     { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
     { optionName: 'acceptance', checked: true }, { optionName: 'difficulty', checked: true },
