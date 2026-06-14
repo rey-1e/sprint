@@ -975,8 +975,8 @@
       } else {
         // Formats upgrade warnings user friendly, offering clean redirects on 403 blocks
         if (res?.premiumRequired || res?.error?.includes("403")) {
-          timeSpan.textContent = '🔒';
-          spaceSpan.textContent = '🔒';
+          timeSpan.textContent = 'Err';
+          spaceSpan.textContent = 'Err';
           statusDiv.innerHTML = `Upgrade Required: <a href="https://getsprint.me/payments" target="_blank" style="color: var(--accent); text-decoration: underline; font-weight:600;">Upgrade Now</a>`;
           statusDiv.style.color = 'var(--text-warning)';
         } else {
