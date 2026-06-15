@@ -369,6 +369,7 @@
 
 /* Enhanced wrapping presets bar styling */
 .sprint-chat-presets-bar {
+  margin-top: 10px;
   display: flex;
   flex-wrap: wrap; /* Allows wrap grid to avoid scrolling */
   align-items: center;
