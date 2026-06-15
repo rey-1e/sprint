@@ -768,7 +768,7 @@
     checkboxInput.id = 'sprint-chat-no-code-checkbox';
 
     const checkboxText = document.createElement('span');
-    checkboxText.textContent = 'Do not output full code';
+    checkboxText.textContent = 'Do Not Output Full Code';
 
     checkboxLabel.appendChild(checkboxInput);
     checkboxLabel.appendChild(checkboxText);
