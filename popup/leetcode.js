@@ -98,19 +98,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (token) {
     chrome.runtime.sendMessage({ type: "SYNC_USER" }, async (response) => {
-      if (response?.success) {
-        const verifiedPremium = response.data.isPremium === true || response.data.isPremium === 'true';
-        await chrome.storage.local.set({ 
-          isPremium: verifiedPremium,
-          premiumUntil: response.data.premiumUntil
-        });
-        
-        if (verifiedPremium !== isPremium) {
-          isPremium = verifiedPremium;
-          renderThemesSection(isPremium);
-        }
-      }
-    });
+  if (response?.success) {
+    const verifiedPremium = response.data.isPremium === true || response.data.isPremium === 'true';
+    
+    const updateData = {
+      isPremium: verifiedPremium,
+      premiumUntil: response.data.premiumUntil
+    };
+
+    // If the server returned a persistent session token, save it to keep the session alive long-term
+    if (response.data.sessionToken) {
+      updateData.authToken = response.data.sessionToken;
+    }
+
+    await chrome.storage.local.set(updateData);
+    
+    if (verifiedPremium !== isPremium) {
+      isPremium = verifiedPremium;
+      renderThemesSection(isPremium);
+    }
+  }
+});
   }
 
   renderThemesSection(isPremium);

@@ -121,7 +121,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/fetchDetailedAnalysis', {
+    handleApiRequest('https://analyzedetailed-i6ptizncma-uc.a.run.app', {
       code: request.code
     }, sendResponse, true);
     return true;
