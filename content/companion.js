@@ -756,6 +756,24 @@
     const presetsBar = document.createElement('div');
     presetsBar.className = 'sprint-chat-presets-bar';
 
+    // "Do not answer" Option Checkbox Bar
+    const optionsBar = document.createElement('div');
+    optionsBar.className = 'sprint-chat-options-bar';
+
+    const checkboxLabel = document.createElement('label');
+    checkboxLabel.className = 'sprint-chat-checkbox-label';
+
+    const checkboxInput = document.createElement('input');
+    checkboxInput.type = 'checkbox';
+    checkboxInput.id = 'sprint-chat-no-code-checkbox';
+
+    const checkboxText = document.createElement('span');
+    checkboxText.textContent = 'Do not output full code';
+
+    checkboxLabel.appendChild(checkboxInput);
+    checkboxLabel.appendChild(checkboxText);
+    optionsBar.appendChild(checkboxLabel);
+
     const footer = document.createElement('div');
     footer.className = 'sprint-chat-footer';
 
@@ -779,6 +797,7 @@
     modal.appendChild(body);
     modal.appendChild(contextIndicator);
     modal.appendChild(presetsBar);
+    modal.appendChild(optionsBar); // Injected exactly above input field and below presets-bar
     modal.appendChild(footer);
     overlay.appendChild(modal);
 
@@ -823,11 +842,20 @@
 
   function sendMessage(text, container) {
     let finalPrompt = text;
+    
+    // Check if the "Do not output full code" checkbox is activated [1]
+    const noCodeCheckbox = shadow.getElementById('sprint-chat-no-code-checkbox');
+    const preventCode = noCodeCheckbox ? noCodeCheckbox.checked : false;
+
     if (activeSelectionContext && !contextAddedToSession) {
       finalPrompt = `Context code:\n\`\`\`\n${activeSelectionContext}\n\`\`\`\n\nQuery: ${text}`;
       contextAddedToSession = true;
       const indicator = shadow.getElementById('sprint-chat-context-indicator');
       if (indicator) indicator.style.display = 'none';
+    }
+
+    if (preventCode) {
+      finalPrompt += "\n\n(STRICT CONSTRAINT: Do not write, complete, or output the entire code solution. Provide conceptual guidance, pseudocode, or explanation only.)";
     }
 
     chatHistory.push({ role: 'user', content: finalPrompt });

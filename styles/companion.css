@@ -329,7 +329,7 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 18px;
+  padding: 14px 16px; /* Polished and balanced padding */
   background: #1c1c1f;
 }
 
@@ -369,12 +369,12 @@
 
 /* Enhanced wrapping presets bar styling */
 .sprint-chat-presets-bar {
-  margin-top: 10px;
+  margin-top: 10px; /* Aligned cleanly directly below message container */
   display: flex;
   flex-wrap: wrap; /* Allows wrap grid to avoid scrolling */
   align-items: center;
   gap: 6px 4px;
-  padding: 10px 14px;
+  padding: 8px 14px; /* Slightly compacted padding */
   background: #141416;
   border-top: 1px solid #2d2d30;
 }
@@ -398,6 +398,35 @@
   background: rgba(205, 92, 92, 0.1);
   border-color: var(--accent);
   color: #ffffff;
+}
+
+/* Chat Input Option Bar (Checkbox Layout) */
+.sprint-chat-options-bar {
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  background: #141416;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.sprint-chat-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-google);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.sprint-chat-checkbox-label input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+  width: 13px;
+  height: 13px;
 }
 
 /* Chat Message Bubbles */
@@ -554,7 +583,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px 14px 16px;
+  padding: 6px 16px 14px 16px; /* Optimized balance above the bottom edge */
   background: #141416;
 }
 
