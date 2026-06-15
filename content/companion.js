@@ -31,6 +31,12 @@
     </svg>
   `;
 
+  // Sphere Close Button
+  const sphereCloseBtn = document.createElement('div');
+  sphereCloseBtn.id = 'sprint-sphere-close';
+  sphereCloseBtn.innerHTML = '&times;';
+  sphere.appendChild(sphereCloseBtn);
+
   // Floating Action Panel
   const actionPanel = document.createElement('div');
   actionPanel.id = 'sprint-vertical-panel';
@@ -79,10 +85,10 @@
   let contextAddedToSession = false;
 
   const defaultPresets = [
-    { label: '🔍 Complexity', prompt: 'Analyze the space and time complexity of my selected solution code.' },
-    { label: '🐛 Bugs', prompt: 'Scan this selected code for hidden logical bugs or runtime failures.' },
-    { label: '✨ Optimize', prompt: 'Propose optimizations to improve speed or lessen memory usage.' },
-    { label: '💡 Explain', prompt: 'Explain this solution step by step in clear plain language.' }
+    { label: 'Complexity', prompt: 'Analyze the space and time complexity of my selected solution code.' },
+    { label: 'Bugs', prompt: 'Scan this selected code for hidden logical bugs or runtime failures.' },
+    { label: 'Optimize', prompt: 'Propose optimizations to improve speed or lessen memory usage.' },
+    { label: 'Explain', prompt: 'Explain this solution step by step in clear plain language.' }
   ];
 
   function checkAuthAndRun(callback) {
@@ -675,6 +681,30 @@
     titleWrapper.appendChild(svg);
     titleWrapper.appendChild(titleSpan);
 
+    const body = document.createElement('div');
+    body.className = 'sprint-modal-body sprint-chat-body';
+    body.id = 'sprint-chat-body';
+
+    const historyContainer = document.createElement('div');
+    historyContainer.className = 'sprint-chat-history';
+    historyContainer.id = 'sprint-chat-history';
+    body.appendChild(historyContainer);
+
+    renderChatHistory(historyContainer);
+
+    const newChatBtn = document.createElement('button');
+    newChatBtn.id = 'sprint-chat-new-btn';
+    newChatBtn.className = 'sprint-chat-new-btn';
+    newChatBtn.textContent = 'New Chat';
+    newChatBtn.addEventListener('click', () => {
+      chatHistory = [];
+      activeSelectionContext = null;
+      contextAddedToSession = false;
+      const indicator = shadow.getElementById('sprint-chat-context-indicator');
+      if (indicator) indicator.style.display = 'none';
+      renderChatHistory(historyContainer);
+    });
+
     const closeBtn = document.createElement('button');
     closeBtn.className = 'sprint-close-x';
 
@@ -704,18 +734,8 @@
     closeBtn.appendChild(closeSvg);
 
     header.appendChild(titleWrapper);
+    header.appendChild(newChatBtn);
     header.appendChild(closeBtn);
-
-    const body = document.createElement('div');
-    body.className = 'sprint-modal-body sprint-chat-body';
-    body.id = 'sprint-chat-body';
-
-    const historyContainer = document.createElement('div');
-    historyContainer.className = 'sprint-chat-history';
-    historyContainer.id = 'sprint-chat-history';
-    body.appendChild(historyContainer);
-
-    renderChatHistory(historyContainer);
 
     const contextIndicator = document.createElement('div');
     contextIndicator.id = 'sprint-chat-context-indicator';
@@ -1127,6 +1147,25 @@
       actionPanel.classList.add('visible');
     }
     setTimeout(() => { isDragging = false; }, 50);
+  });
+
+  sphereCloseBtn.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+  });
+
+  sphereCloseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    chrome.storage.local.get('options', (res) => {
+      const currentOpts = res.options || [];
+      const updated = currentOpts.map(o => {
+        return o.optionName === 'showSphere' ? { optionName: 'showSphere', checked: false } : o;
+      });
+      chrome.storage.local.set({ options: updated }, () => {
+        applyShowSphereOption(updated);
+        chrome.runtime.sendMessage({ action: 'applyVisibilityOptions', options: updated });
+      });
+    });
   });
 
   shadow.getElementById('btn-complexity').addEventListener('click', () => {

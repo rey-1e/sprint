@@ -30,13 +30,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   const checkboxes = document.querySelectorAll('.sprint-switch input');
   let { options } = await chrome.storage.local.get('options');
 
+  const defaultOptions = [
+    { optionName: 'removeInjections', checked: false },
+    { optionName: 'showSphere', checked: true },
+    { optionName: 'removeSelectionPopup', checked: false }
+  ];
+
   if (!options) {
-    options = [
-      { optionName: 'removeInjections', checked: false },
-      { optionName: 'showSphere', checked: true },
-      { optionName: 'removeSelectionPopup', checked: false }
-    ];
+    options = defaultOptions;
     await chrome.storage.local.set({ options });
+  } else {
+    let modified = false;
+    defaultOptions.forEach(defOpt => {
+      if (!options.some(opt => opt.optionName === defOpt.optionName)) {
+        options.push(defOpt);
+        modified = true;
+      }
+    });
+    if (modified) {
+      await chrome.storage.local.set({ options });
+    }
   }
 
   options.forEach(opt => {
@@ -49,11 +62,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       const storage = await chrome.storage.local.get('options');
       const currentOpts = storage.options || [];
 
-      // Update values for options present on this settings page
+      let found = false;
       const updated = currentOpts.map(opt => {
-        const input = document.getElementById(opt.optionName);
-        return input ? { optionName: opt.optionName, checked: input.checked } : opt;
+        if (opt.optionName === cb.id) {
+          found = true;
+          return { optionName: cb.id, checked: cb.checked };
+        }
+        return opt;
       });
+      if (!found) {
+        updated.push({ optionName: cb.id, checked: cb.checked });
+      }
 
       await chrome.storage.local.set({ options: updated });
       broadcastMessage({ action: 'applyVisibilityOptions', options: updated });

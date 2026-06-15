@@ -71,6 +71,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!options) {
     options = defaultOptions;
     await chrome.storage.local.set({ options });
+  } else {
+    let modified = false;
+    defaultOptions.forEach(defOpt => {
+      if (!options.some(opt => opt.optionName === defOpt.optionName)) {
+        options.push(defOpt);
+        modified = true;
+      }
+    });
+    if (modified) {
+      await chrome.storage.local.set({ options });
+    }
   }
 
   options.forEach(opt => {
@@ -82,9 +93,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     cb.addEventListener('change', async () => {
       const storage = await chrome.storage.local.get('options');
       const currentOpts = storage.options || [];
+      
+      let found = false;
       const updated = currentOpts.map(o => {
-        return o.optionName === cb.id ? { optionName: cb.id, checked: cb.checked } : o;
+        if (o.optionName === cb.id) {
+          found = true;
+          return { optionName: cb.id, checked: cb.checked };
+        }
+        return o;
       });
+      if (!found) {
+        updated.push({ optionName: cb.id, checked: cb.checked });
+      }
+
       await chrome.storage.local.set({ options: updated });
       broadcastMessage({ action: 'applyVisibilityOptions', options: updated });
     });

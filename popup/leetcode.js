@@ -173,12 +173,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     cb.addEventListener('change', async () => {
       const storageOpts = await chrome.storage.local.get('options');
       const currentOpts = storageOpts.options || [];
+      
+      let found = false;
       const updated = currentOpts.map(o => {
-        return o.optionName === cb.id ? { optionName: cb.id, checked: cb.checked } : o;
+        if (o.optionName === cb.id) {
+          found = true;
+          return { optionName: cb.id, checked: cb.checked };
+        }
+        return o;
       });
+      if (!found) {
+        updated.push({ optionName: cb.id, checked: cb.checked });
+      }
+
       await chrome.storage.local.set({ options: updated });
       broadcastMessage({ action: 'applyVisibilityOptions', options: updated });
     });
   });
 });
-
