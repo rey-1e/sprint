@@ -131,7 +131,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
   if (request.type === "GET_QUESTION_ID") {
-    fetch(chrome.runtime.getURL('ratings.json'))
+    fetch(chrome.runtime.getURL('content/leetcode/ratings.json'))
       .then(res => res.json())
       .then(data => {
         const matched = data.find(p => p.TitleSlug === request.slug);

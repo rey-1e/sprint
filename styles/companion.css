@@ -316,11 +316,18 @@
   animation: sprint-pop-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Chatbox Extension Layout */
+/* ═══════════════════════════════════════════════════════════
+   SprintAI Chat — Premium Design System
+   Matches Complexity Analyzer toast aesthetic
+   ═══════════════════════════════════════════════════════════ */
+
+/* Chat Modal Layout */
 .sprint-chat-modal {
-  width: 430px !important;
+  width: 420px !important;
   height: calc(100vh - 48px);
   max-height: calc(100vh - 48px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .sprint-chat-body {
@@ -329,82 +336,110 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 14px 16px; /* Polished and balanced padding */
-  background: #1c1c1f;
+  padding: 16px 18px;
+  background: var(--bg-dark);
 }
 
 /* Scrollbars */
 .sprint-chat-body::-webkit-scrollbar,
 .sprint-modal-body::-webkit-scrollbar {
-  width: 5px !important;
+  width: 4px !important;
   display: block !important;
 }
 
 .sprint-chat-body::-webkit-scrollbar-thumb,
 .sprint-modal-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.10) !important;
   border-radius: 99px !important;
 }
 
 .sprint-chat-body::-webkit-scrollbar-thumb:hover,
 .sprint-modal-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.20) !important;
+}
+
+.sprint-chat-body::-webkit-scrollbar-track,
+.sprint-modal-body::-webkit-scrollbar-track {
+  background: transparent !important;
 }
 
 .sprint-chat-history {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   min-height: 100%;
 }
 
+/* Empty State */
 .sprint-chat-placeholder {
   color: var(--text-muted);
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.7;
   text-align: center;
   margin: auto;
-  padding: 0 20px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
 }
 
-/* Enhanced wrapping presets bar styling */
-.sprint-chat-presets-bar {
-  margin-top: 10px; /* Aligned cleanly directly below message container */
+.sprint-chat-placeholder-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(205, 92, 92, 0.10);
+  border: 1px solid rgba(205, 92, 92, 0.18);
   display: flex;
-  flex-wrap: wrap; /* Allows wrap grid to avoid scrolling */
   align-items: center;
-  gap: 6px 4px;
-  padding: 8px 14px; /* Slightly compacted padding */
+  justify-content: center;
+  color: var(--accent);
+}
+
+.sprint-chat-placeholder p {
+  margin: 0;
+  font-size: 12.5px;
+  color: rgba(161, 161, 170, 0.7);
+  max-width: 260px;
+}
+
+/* Presets Bar */
+.sprint-chat-presets-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
   background: #141416;
-  border-top: 1px solid #2d2d30;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sprint-chat-preset-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
   color: var(--text-muted);
-  padding: 4px 8px; /* Slightly compacted padding */
+  padding: 4px 10px;
   font-family: var(--font-google);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.15s var(--ease-google);
   flex-shrink: 0 !important;
   white-space: nowrap !important;
 }
 
 .sprint-chat-preset-btn:hover {
-  background: rgba(205, 92, 92, 0.1);
-  border-color: var(--accent);
-  color: #ffffff;
+  background: rgba(205, 92, 92, 0.08);
+  border-color: rgba(205, 92, 92, 0.25);
+  color: #ffd1d1;
 }
 
-/* Chat Input Option Bar (Checkbox Layout) */
+/* Options Bar (Checkbox) */
 .sprint-chat-options-bar {
   display: flex;
   align-items: center;
-  padding: 6px 16px;
+  padding: 5px 16px;
   background: #141416;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -412,52 +447,64 @@
 .sprint-chat-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   font-family: var(--font-google);
   font-size: 11px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: rgba(161, 161, 170, 0.65);
   cursor: pointer;
   user-select: none;
+  transition: color 0.15s;
+}
+
+.sprint-chat-checkbox-label:hover {
+  color: var(--text-muted);
 }
 
 .sprint-chat-checkbox-label input[type="checkbox"] {
   margin: 0;
   cursor: pointer;
   accent-color: var(--accent);
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
 }
 
 /* Chat Message Bubbles */
 .sprint-chat-bubble {
-  max-width: 88%;
-  padding: 12px 16px;
+  max-width: 85%;
+  padding: 10px 14px;
   border-radius: 12px;
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-size: 13px;
+  line-height: 1.6;
   font-family: var(--font-google);
   word-wrap: break-word;
+  animation: sprint-bubble-in 0.2s var(--ease-google) forwards;
+}
+
+@keyframes sprint-bubble-in {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .sprint-chat-user {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, #b54e4e 100%);
   color: #ffffff;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
-  box-shadow: 0 4px 12px rgba(205, 92, 92, 0.2);
+  box-shadow: 0 3px 10px rgba(205, 92, 92, 0.20);
 }
 
 .sprint-chat-assistant {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-card);
   color: var(--text-main);
   align-self: flex-start;
   border-bottom-left-radius: 4px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 2px solid rgba(205, 92, 92, 0.35);
 }
 
 .sprint-chat-content p {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .sprint-chat-content p:last-child {
   margin-bottom: 0;
@@ -468,31 +515,64 @@
 }
 .sprint-chat-content li {
   margin-bottom: 4px;
+  font-size: 13px;
 }
 
+/* Typing Indicator — Animated Dots */
 .sprint-chat-typing {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
   align-self: flex-start;
-  font-style: italic;
-  font-size: 12.5px;
+  font-size: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom-left-radius: 4px;
 }
 
+.sprint-typing-dots {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.sprint-typing-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: sprint-dot-pulse 1.4s infinite ease-in-out both;
+}
+
+.sprint-typing-dots span:nth-child(1) { animation-delay: 0s; }
+.sprint-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.sprint-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes sprint-dot-pulse {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Error Bubble */
 .sprint-chat-error {
-  background: rgba(205, 92, 92, 0.08);
+  background: rgba(205, 92, 92, 0.06);
   color: var(--text-warning);
-  border: 1px solid rgba(205, 92, 92, 0.2);
+  border: 1px solid rgba(205, 92, 92, 0.15);
   align-self: center;
   text-align: center;
-  font-size: 12.5px;
+  font-size: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
 }
 
 /* Code Block Formatter */
 .sprint-chat-code-block-wrapper {
-  background: #0d0d0f;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #0c0c0e;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  margin: 12px 0;
+  margin: 10px 0;
   overflow: hidden;
   font-family: var(--font-mono);
   text-align: left;
@@ -502,13 +582,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 14px;
-  background: #121214;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 11px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--text-muted);
   font-family: var(--font-google);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .sprint-chat-copy-code {
@@ -517,53 +599,65 @@
   color: var(--accent);
   cursor: pointer;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: 3px;
   transition: background-color 0.15s, color 0.15s;
 }
 
 .sprint-chat-copy-code:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--accent-hover);
+  background: rgba(205, 92, 92, 0.1);
 }
 
 .sprint-chat-code-block-wrapper pre {
-  padding: 14px;
+  padding: 12px 14px;
   margin: 0;
   overflow-x: auto;
 }
 
+.sprint-chat-code-block-wrapper pre::-webkit-scrollbar {
+  height: 3px;
+}
+
+.sprint-chat-code-block-wrapper pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+}
+
 .sprint-chat-code-block-wrapper code {
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 12px;
   color: #e4e4e7;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .sprint-chat-inline-code {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-main);
-  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #eff1f6;
+  padding: 1px 6px;
   border-radius: 4px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11.5px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 /* Message Bubble Action Row */
 .sprint-chat-bubble-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  margin-top: 6px;
   padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .sprint-chat-copy-all-btn {
   background: transparent;
   border: none;
-  color: var(--text-muted);
-  font-size: 10.5px;
+  color: rgba(161, 161, 170, 0.6);
+  font-size: 10px;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -575,64 +669,104 @@
 
 .sprint-chat-copy-all-btn:hover {
   color: var(--text-main);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
 }
 
-/* Enhanced Input Footer */
+/* Input Footer */
 .sprint-chat-footer {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 16px 14px 16px; /* Optimized balance above the bottom edge */
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px 14px 12px;
   background: #141416;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .sprint-chat-input {
   flex: 1;
-  background: #1e1e20;
-  border: 1px solid #333336;
-  border-radius: 10px; 
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
   color: var(--text-main);
   font-family: var(--font-google);
   font-size: 13px;
-  padding: 12px 14px;
+  padding: 10px 14px;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  height: 44px;
-  max-height: 120px;
+  transition: border-color 0.2s var(--ease-google), box-shadow 0.2s var(--ease-google);
+  height: 42px;
+  max-height: 110px;
   box-sizing: border-box;
   resize: none;
-  line-height: 1.4;
+  line-height: 1.45;
   overflow-y: auto;
 }
 
+.sprint-chat-input::placeholder {
+  color: rgba(161, 161, 170, 0.45);
+}
+
 .sprint-chat-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(205, 92, 92, 0.18);
+  border-color: rgba(205, 92, 92, 0.45);
+  box-shadow: 0 0 0 2px rgba(205, 92, 92, 0.12);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .sprint-chat-send-btn {
   background: var(--accent);
   border: none;
-  border-radius: 10px; 
+  border-radius: 10px;
   color: #ffffff;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  transition: background-color 0.15s, transform 0.1s, box-shadow 0.2s;
   flex-shrink: 0;
 }
 
 .sprint-chat-send-btn:hover {
   background-color: var(--accent-hover);
-  box-shadow: 0 4px 12px rgba(205, 92, 92, 0.25);
+  box-shadow: 0 4px 14px rgba(205, 92, 92, 0.30);
 }
 
 .sprint-chat-send-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.93);
+}
+
+/* Context Indicator */
+.sprint-chat-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 16px;
+  background: rgba(205, 92, 92, 0.06);
+  border-top: 1px solid rgba(205, 92, 92, 0.12);
+  font-family: var(--font-google);
+  font-size: 11px;
+  color: rgba(255, 209, 209, 0.8);
+}
+
+.sprint-chat-context-bar strong {
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.sprint-chat-context-close {
+  background: none;
+  border: none;
+  color: rgba(161, 161, 170, 0.6);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px;
+  transition: color 0.15s;
+}
+
+.sprint-chat-context-close:hover {
+  color: var(--text-main);
 }
 
 /* Inline follow-up CTA */

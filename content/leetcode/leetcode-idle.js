@@ -1,6 +1,30 @@
 let isInjectingTags = false;
 let injectionsDisabled = false;
 
+// Performance: Cache JSON data per page load to avoid repeated fetches
+let _cachedCompanyData = null;
+let _cachedRatingsData = null;
+
+async function getCompanyData() {
+  if (!_cachedCompanyData) {
+    try {
+      const res = await fetch(chrome.runtime.getURL('content/leetcode/data.json'));
+      _cachedCompanyData = await res.json();
+    } catch (e) { _cachedCompanyData = {}; }
+  }
+  return _cachedCompanyData;
+}
+
+async function getRatingsData() {
+  if (!_cachedRatingsData) {
+    try {
+      const res = await fetch(chrome.runtime.getURL('content/leetcode/ratings.json'));
+      _cachedRatingsData = await res.json();
+    } catch (e) { _cachedRatingsData = []; }
+  }
+  return _cachedRatingsData;
+}
+
 function extractQuestionIdFromDOM() {
   const selectors = [
     '.text-title-large',
@@ -129,17 +153,15 @@ async function injectTags() {
     }
     if (!questionId) return;
 
-    const [compRes, ratRes] = await Promise.allSettled([
-      fetch(chrome.runtime.getURL('data.json')).then(r => r.json()),
-      fetch(chrome.runtime.getURL('ratings.json')).then(r => r.json())
+    const [companyData, ratingsData] = await Promise.all([
+      getCompanyData(),
+      getRatingsData()
     ]);
 
-    const comps = compRes.status === 'fulfilled' ? (compRes.value[questionId] || []) : [];
+    const comps = companyData[questionId] || [];
     let elo = null;
-    if (ratRes.status === 'fulfilled') {
-      const pData = ratRes.value.find(p => p.TitleSlug === slug);
-      if (pData?.Rating) elo = Math.round(pData.Rating);
-    }
+    const pData = ratingsData.find(p => p.TitleSlug === slug);
+    if (pData?.Rating) elo = Math.round(pData.Rating);
 
     let target = document.querySelector('[class*="text-difficulty-"]') || document.querySelector('[class*="text-sd-"]');
     if (!target) {
@@ -462,8 +484,15 @@ setTimeout(() => {
 }, 50);
 
 let debounce = null;
-const obs = new MutationObserver(() => {
+const obs = new MutationObserver((mutations) => {
   if (injectionsDisabled) return;
+  // Only react to structural additions
+  let hasAdditions = false;
+  for (const m of mutations) {
+    if (m.type === 'childList' && m.addedNodes.length > 0) { hasAdditions = true; break; }
+  }
+  if (!hasAdditions) return;
+
   if (debounce) clearTimeout(debounce);
   debounce = setTimeout(() => {
     if (!document.getElementById('custom-company-tags')) injectTags();
@@ -473,6 +502,6 @@ const obs = new MutationObserver(() => {
       injectSubmissionAnalysisUI();
     }
     if (!document.getElementById('sprint-google-editor-pill')) injectRedirectPills();
-  }, 120);
+  }, 200);
 });
 obs.observe(document.body, { childList: true, subtree: true });
