@@ -5,14 +5,7 @@ function setupLink(id) {
 
 async function broadcastMessage(message) {
   try {
-    const tabs = await chrome.tabs.query({ url: [
-      '*://*.leetcode.com/*',
-      '*://*.leetcode.cn/*',
-      '*://getsprint.me/*',
-      '*://*.getsprint.me/*',
-      'http://localhost/*',
-      'http://127.0.0.1/*'
-    ] });
+    const tabs = await chrome.tabs.query({});
     tabs.forEach(tab => {
       chrome.tabs.sendMessage(tab.id, message).catch(() => {});
     });
@@ -35,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (leetcodePill) {
     leetcodePill.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'leetcode.html';
+      window.location.href = 'leetcode/leetcode.html';
     });
   }
 
@@ -63,7 +56,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   let { options } = await chrome.storage.local.get('options');
 
   const defaultOptions = [
-    { optionName: 'removeInjections', checked: false },
     { optionName: 'showSphere', checked: true },
     { optionName: 'removeSelectionPopup', checked: false }
   ];

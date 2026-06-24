@@ -568,7 +568,7 @@
         const btn = document.createElement('button');
         btn.className = 'sprint-chat-preset-btn';
         // Enforced strict flex formatting and vertical margins on wrap
-        btn.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; flex-shrink: 0 !important; white-space: nowrap !important; margin-bottom: 2px;';
+        btn.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; margin-bottom: 2px;';
 
         const labelSpan = document.createElement('span');
         labelSpan.textContent = p.label;
@@ -607,7 +607,7 @@
       // Add Preset button (Enforces styling matching wrapping layout)
       const addBtn = document.createElement('button');
       addBtn.className = 'sprint-chat-preset-btn';
-      addBtn.style.cssText = 'background: rgba(205, 92, 92, 0.15); border-color: rgba(205, 92, 92, 0.3); color: #ffd1d1; padding: 4px 8px; flex-shrink: 0 !important; white-space: nowrap !important; display: inline-flex; align-items: center; margin-bottom: 2px;';
+      addBtn.style.cssText = 'background: rgba(205, 92, 92, 0.12); border-color: rgba(205, 92, 92, 0.25); color: #ffd1d1; display: inline-flex; align-items: center; margin-bottom: 2px;';
       addBtn.innerHTML = '+ Custom';
       addBtn.title = 'Create Custom Preset';
       addBtn.addEventListener('click', () => {
@@ -626,7 +626,7 @@
       // Reset button (Enforces styling matching wrapping layout)
       const resetBtn = document.createElement('button');
       resetBtn.className = 'sprint-chat-preset-btn';
-      resetBtn.style.cssText = 'background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.05); color: var(--text-muted); padding: 4px 8px; flex-shrink: 0 !important; white-space: nowrap !important; display: inline-flex; align-items: center; margin-bottom: 2px;';
+      resetBtn.style.cssText = 'background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.05); color: var(--text-muted); display: inline-flex; align-items: center; margin-bottom: 2px;';
       resetBtn.innerHTML = '↺ Reset';
       resetBtn.title = 'Reset Presets to Default';
       resetBtn.addEventListener('click', () => {
@@ -739,16 +739,17 @@
 
     const contextIndicator = document.createElement('div');
     contextIndicator.id = 'sprint-chat-context-indicator';
-    contextIndicator.style.cssText = 'background: rgba(205, 92, 92, 0.12); border-top: 1px solid rgba(205, 92, 92, 0.2); padding: 8px 14px; font-size: 11px; display: none; align-items: center; justify-content: space-between; color: #ffd1d1; font-family: var(--font-google);';
+    contextIndicator.className = 'sprint-chat-context-bar';
+    contextIndicator.style.display = 'none';
 
     if (activeSelectionContext && !contextAddedToSession) {
       const truncated = activeSelectionContext.length > 50 ? activeSelectionContext.substring(0, 50) + "..." : activeSelectionContext;
       contextIndicator.innerHTML = `
-        <span style="display: flex; align-items: center; gap: 6px;">
+        <span style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-          <strong>Context Attached:</strong> "${escapeHtml(truncated)}" (${activeSelectionContext.length} chars)
+          <strong>Context:</strong> <span style="opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(truncated)}</span>
         </span>
-        <button id="sprint-clear-context-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 2px;">&times;</button>
+        <button id="sprint-clear-context-btn" class="sprint-chat-context-close">&times;</button>
       `;
       contextIndicator.style.display = 'flex';
     }
@@ -863,7 +864,7 @@
 
     const typingBubble = document.createElement('div');
     typingBubble.className = 'sprint-chat-bubble sprint-chat-typing';
-    typingBubble.textContent = 'sprintAI is thinking...';
+    typingBubble.innerHTML = `<div class="sprint-typing-dots"><span></span><span></span><span></span></div> thinking...`;
     container.appendChild(typingBubble);
     scrollToBottom();
 
@@ -911,7 +912,10 @@
       const placeholder = document.createElement('div');
       placeholder.className = 'sprint-chat-placeholder';
       placeholder.innerHTML = `
-        <p>Ask anything about this problem context, optimized algorithms, or custom code drafts. sprintAI is fully synchronized.</p>
+        <div class="sprint-chat-placeholder-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <p>Ask about algorithms, debug code, or get optimization tips. SprintAI is ready to help.</p>
       `;
       container.appendChild(placeholder);
       return;
