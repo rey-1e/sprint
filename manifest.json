@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CodeSprint - AI Companion for Programmers",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "Site-Specific Customizations, Analyze complexities, AI Debugging, AI Assistant Tailored for Programmers",
   "icons": {
     "128": "icon.png",
