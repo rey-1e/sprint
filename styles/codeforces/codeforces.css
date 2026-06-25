@@ -1,0 +1,29 @@
+/* ==========================================
+   CODEFORCES ZENITH UTILITIES & PRODUCTIVITY
+   ========================================== */
+
+/* 1. Hide Tags Logic */
+.cf-zenith-hide-tags .tag-box:not([title*="Difficulty"]):not([title*="difficulty"]):not([href*="rating"]),
+.cf-zenith-hide-tags a.notice,
+.cf-zenith-hide-tags .notice,
+.cf-zenith-hide-tags div.notice,
+.cf-zenith-hide-tags td > div > a.notice,
+.cf-zenith-hide-tags td > div > div:nth-child(2) {
+  display: none !important;
+}
+
+/* 2. Hide Ratings Logic */
+.cf-zenith-hide-ratings span.tag-box[title*="Difficulty"],
+.cf-zenith-hide-ratings span.tag-box[title*="difficulty"],
+.cf-zenith-hide-ratings a.tag-box[title*="Difficulty"],
+.cf-zenith-hide-ratings a.tag-box[title*="difficulty"],
+.cf-zenith-hide-ratings .problems td:nth-child(4),
+.cf-zenith-hide-ratings .problems th:nth-child(4) {
+  display: none !important;
+}
+
+/* 3. Menu Box Padding Symmetry */
+.menu-box {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}

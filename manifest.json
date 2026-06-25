@@ -39,6 +39,20 @@
     },
     {
       "matches": [
+        "https://codeforces.com/*",
+        "https://*.codeforces.com/*"
+      ],
+      "js": [
+        "content/codeforces/codeforces-start.js"
+      ],
+      "css": [
+        "styles/codeforces/codeforces.css",
+        "styles/codeforces/codeforces-themes.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
         "https://leetcode.com/problems/*",
         "https://leetcode.com/submissions/*"
       ],
@@ -155,6 +169,15 @@
       ],
       "matches": [
         "https://leetcode.com/*"
+      ]
+    },
+    {
+      "resources": [
+        "styles/codeforces/codeforces-themes.css"
+      ],
+      "matches": [
+        "https://codeforces.com/*",
+        "https://*.codeforces.com/*"
       ]
     },
     {

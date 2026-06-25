@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sprint - Codeforces Options</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <img src="../../icon.png" alt="Sprint icon" onerror="this.style.display='none'" />
+      <span class="ext-name">Codeforces <span>Settings.</span></span>
+    </div>
+    <div>
+      <a href="../popup.html" class="website-link" style="font-size: 11px; font-weight: 600;">&larr; Back</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="section" id="cf-themes-section">
+      <div class="theme-section-header">
+        <p class="section-label" style="margin-bottom:0">Select Theme</p>
+        <div class="active-pill">
+          <span class="pip"></span>
+          <span id="active-label">Light</span>
+        </div>
+      </div>
+
+      <div class="palette-grid" id="cf-palette-grid">
+        <button class="dot" data-theme="light"      data-display="Light"            style="background:#ffffff; color:#ffffff; border: 1px solid #d4d4d8;"><span class="tip">Light</span></button>
+        <button class="dot" data-theme="midnight"    data-display="Midnight Slate"   style="background:#6366f1; color:#6366f1"><span class="tip">Midnight Slate</span></button>
+        <button class="dot" data-theme="nord"        data-display="Nordic Frost"     style="background:#88c0d0; color:#88c0d0"><span class="tip">Nordic Frost</span></button>
+        <button class="dot" data-theme="ocean"       data-display="Deep Ocean"       style="background:#00b4d8; color:#00b4d8"><span class="tip">Deep Ocean</span></button>
+        <button class="dot" data-theme="mocha"       data-display="Warm Mocha"       style="background:#f59e0b; color:#f59e0b"><span class="tip">Warm Mocha</span></button>
+        <button class="dot" data-theme="obsidian"    data-display="Obsidian Dark"    style="background:#f43f5e; color:#f43f5e"><span class="tip">Obsidian Dark</span></button>
+        <button class="dot" data-theme="dracula"     data-display="Dracula Classic"  style="background:#ff79c6; color:#ff79c6"><span class="tip">Dracula Classic</span></button>
+        <button class="dot" data-theme="gruvbox"     data-display="Gruvbox Retro"    style="background:#fe8019; color:#fe8019"><span class="tip">Gruvbox Retro</span></button>
+        <button class="dot" data-theme="forest"      data-display="Forest Haze"      style="background:#52b788; color:#52b788"><span class="tip">Forest Haze</span></button>
+        <button class="dot" data-theme="sunset"      data-display="Sunset Glow"      style="background:#f77f00; color:#f77f00"><span class="tip">Sunset Glow</span></button>
+        <button class="dot" data-theme="cyberpunk"   data-display="Cyberpunk Neon"   style="background:#00f5ff; color:#00f5ff"><span class="tip">Cyberpunk Neon</span></button>
+        <button class="dot" data-theme="rosegold"    data-display="Rose Gold"        style="background:#ffb7c5; color:#ffb7c5"><span class="tip">Rose Gold</span></button>
+        <button class="dot" data-theme="mono"        data-display="Monochrome Ink"   style="background:#7f7f7f; color:#7f7f7f"><span class="tip">Monochrome Ink</span></button>
+        <button class="dot" data-theme="solarized"   data-display="Solarized Dark"   style="background:#2aa198; color:#2aa198"><span class="tip">Solarized Dark</span></button>
+        <button class="dot" data-theme="indigo"      data-display="Aura Indigo"      style="background:#818cf8; color:#818cf8"><span class="tip">Aura Indigo</span></button>
+        <button class="dot" data-theme="emerald"     data-display="Emerald Night"    style="background:#34d399; color:#34d399"><span class="tip">Emerald Night</span></button>
+        <button class="dot" data-theme="rust"        data-display="Crimson Rust"     style="background:#e65f2b; color:#e65f2b"><span class="tip">Crimson Rust</span></button>
+        <button class="dot" data-theme="synthwave"   data-display="Synthwave '84"    style="background:#ff7ebb; color:#ff7ebb"><span class="tip">Synthwave '84</span></button>
+        <button class="dot" data-theme="amethyst"    data-display="Amethyst"         style="background:#a78bfa; color:#a78bfa"><span class="tip">Amethyst</span></button>
+        <button class="dot" data-theme="royal"       data-display="Royal Velvet"     style="background:#fbbf24; color:#fbbf24"><span class="tip">Royal Velvet</span></button>
+        <button class="dot" data-theme="space"       data-display="Cosmic Space"     style="background:#3b82f6; color:#3b82f6"><span class="tip">Cosmic Space</span></button>
+      </div>
+    </div>
+
+    <div class="section">
+      <p class="section-label">Anti-Spoiler Settings</p>
+      <div class="shortcut-group">
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Hide Problem Tags</span>
+          <label class="sprint-switch"><input type="checkbox" id="cfHideTags"><span class="sprint-slider"></span></label>
+        </div>
+        <div class="shortcut-row flex-row-align">
+          <span class="shortcut-label">Hide Problem Ratings</span>
+          <label class="sprint-switch"><input type="checkbox" id="cfHideRatings"><span class="sprint-slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <!-- Reserved -->
+  </footer>
+
+  <script src="codeforces.js"></script>
+</body>
+</html>

@@ -156,7 +156,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   if (request.type === "API_CHAT") {
     checkLimitAndRun("chat", 10, sendResponse, (wrappedResponse) => {
-      handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/sprintAIChat', {
+      handleApiRequest('https://sprintaichat-i6ptizncma-uc.a.run.app', {
         message: request.message,
         history: request.history
       }, wrappedResponse, true);
@@ -164,7 +164,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
   if (request.type === "FETCH_THEME") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/getTheme', {
+    handleApiRequest('https://gettheme-i6ptizncma-uc.a.run.app', {
+      themeName: request.theme
+    }, sendResponse, false);
+    return true;
+  }
+  if (request.type === "FETCH_CF_THEME") {
+    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/getCodeforcesTheme', {
       themeName: request.theme
     }, sendResponse, false);
     return true;
@@ -176,7 +182,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
   if (request.type === "SYNC_USER") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/syncUser', {}, sendResponse, true);
+    handleApiRequest('https://syncuser-i6ptizncma-uc.a.run.app', {}, sendResponse, true);
     return true;
   }
   if (request.type === "GET_QUESTION_ID") {
