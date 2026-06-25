@@ -270,65 +270,122 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 10px 16px 4px;
   background: #141416;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sprint-chat-preset-btn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  color: var(--text-muted);
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 100px;
+  color: rgba(210, 210, 218, 0.75);
+  padding: 5px 8px 5px 11px;
   font-family: var(--font-google);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   cursor: pointer;
   transition: all 0.15s var(--ease-google);
   flex-shrink: 0 !important;
   white-space: nowrap !important;
+  line-height: 1;
 }
 
 .sprint-chat-preset-btn:hover {
-  background: rgba(205, 92, 92, 0.08);
-  border-color: rgba(205, 92, 92, 0.25);
-  color: #ffd1d1;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(235, 235, 240, 0.95);
 }
 
-/* Options Bar (Checkbox) */
+
+
+.sprint-chat-preset-del {
+  color: rgba(161, 161, 170, 0.45);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transition: all 0.15s var(--ease-google);
+  margin-left: 1px;
+  flex-shrink: 0;
+}
+
+.sprint-chat-preset-del:hover {
+  color: rgba(239, 100, 100, 0.9) !important;
+  background-color: rgba(239, 68, 68, 0.08) !important;
+}
+
+/* Options Bar (Checkbox + Toolbar) */
 .sprint-chat-options-bar {
   display: flex;
   align-items: center;
-  padding: 5px 16px;
+  justify-content: space-between;
+  padding: 3px 16px 10px;
   background: #141416;
-  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  border-top: none;
+}
+
+.sprint-chat-options-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .sprint-chat-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-family: var(--font-google);
   font-size: 11px;
   font-weight: 500;
-  color: rgba(161, 161, 170, 0.65);
+  color: rgba(161, 161, 170, 0.5);
   cursor: pointer;
   user-select: none;
-  transition: color 0.15s;
+  letter-spacing: 0.01em;
 }
 
 .sprint-chat-checkbox-label:hover {
-  color: var(--text-muted);
+  color: rgba(210, 210, 218, 0.8);
 }
 
 .sprint-chat-checkbox-label input[type="checkbox"] {
-  margin: 0;
-  cursor: pointer;
-  accent-color: var(--accent);
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 12px;
   height: 12px;
+  cursor: pointer;
+  outline: none;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.sprint-chat-checkbox-label input[type="checkbox"]:checked {
+  background-color: rgba(205, 92, 92, 0.8);
+  border-color: rgba(205, 92, 92, 0.8);
+}
+
+.sprint-chat-checkbox-label input[type="checkbox"]:checked::after {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 6px;
+  border: solid white;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg) translate(-0.5px, -0.5px);
 }
 
 /* Chat Message Bubbles */
@@ -538,63 +595,118 @@
 .sprint-chat-footer {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  padding: 8px 14px 12px;
+  padding: 0 14px 14px;
   background: #141416;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-top: none;
+}
+
+.sprint-chat-input-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .sprint-chat-input {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
   color: var(--text-main);
   font-family: var(--font-google);
   font-size: 13px;
-  padding: 10px 14px;
+  padding: 12px 14px 34px 14px;
   outline: none;
-  transition: border-color 0.2s var(--ease-google), box-shadow 0.2s var(--ease-google);
-  height: 42px;
-  max-height: 110px;
+  transition: border-color 0.2s var(--ease-google), background 0.2s var(--ease-google);
+  height: 120px;
+  max-height: 240px;
   box-sizing: border-box;
   resize: none;
-  line-height: 1.45;
+  line-height: 1.5;
   overflow-y: auto;
+  letter-spacing: 0.005em;
+}
+
+.sprint-chat-input::-webkit-scrollbar {
+  width: 3px !important;
+  display: block !important;
+}
+
+.sprint-chat-input::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 99px !important;
+}
+
+.sprint-chat-input::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.sprint-chat-input::-webkit-scrollbar-track {
+  background: transparent !important;
 }
 
 .sprint-chat-input::placeholder {
-  color: rgba(161, 161, 170, 0.45);
+  color: rgba(161, 161, 170, 0.35);
+  font-weight: 400;
 }
 
 .sprint-chat-input:focus {
-  border-color: rgba(205, 92, 92, 0.45);
-  box-shadow: 0 0 0 2px rgba(205, 92, 92, 0.12);
-  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .sprint-chat-send-btn {
-  background: var(--accent);
+  position: absolute;
+  bottom: 7px;
+  right: 7px;
+  background: transparent;
   border: none;
-  border-radius: 10px;
-  color: #ffffff;
-  width: 42px;
-  height: 42px;
+  color: rgba(255, 255, 255, 0.3);
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.15s, transform 0.1s, box-shadow 0.2s;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
   flex-shrink: 0;
+  padding: 0;
 }
 
 .sprint-chat-send-btn:hover {
-  background-color: var(--accent-hover);
-  box-shadow: 0 4px 14px rgba(205, 92, 92, 0.30);
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .sprint-chat-send-btn:active {
-  transform: scale(0.93);
+  color: #ffffff;
+  transform: scale(0.92);
+}
+
+/* Input Tool Buttons (used in options toolbar) */
+.sprint-chat-input-tool-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.25);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: color 0.15s, background 0.15s;
+  padding: 0;
+}
+
+.sprint-chat-input-tool-btn:hover {
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sprint-chat-input-tool-btn:active {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* Context Indicator */
@@ -602,33 +714,41 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 16px;
-  background: rgba(205, 92, 92, 0.06);
-  border-top: 1px solid rgba(205, 92, 92, 0.12);
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(205, 92, 92, 0.04);
+  border-top: 1px solid rgba(205, 92, 92, 0.08);
   font-family: var(--font-google);
   font-size: 11px;
-  color: rgba(255, 209, 209, 0.8);
+  color: rgba(255, 209, 209, 0.65);
+  letter-spacing: 0.01em;
 }
 
 .sprint-chat-context-bar strong {
-  font-weight: 700;
-  color: var(--accent);
+  font-weight: 600;
+  color: rgba(205, 130, 130, 0.9);
   letter-spacing: 0.02em;
 }
 
 .sprint-chat-context-close {
   background: none;
   border: none;
-  color: rgba(161, 161, 170, 0.6);
+  color: rgba(161, 161, 170, 0.4);
   cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
-  padding: 2px;
-  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
 }
 
 .sprint-chat-context-close:hover {
-  color: var(--text-main);
+  color: rgba(210, 210, 218, 0.8);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* Inline follow-up CTA */
@@ -659,7 +779,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  border-bottom: 1px solid #2d2d30;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   background: #141416;
 }
 
@@ -695,24 +815,24 @@
 }
 
 .sprint-chat-new-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
   color: var(--text-muted);
   font-family: var(--font-google);
   font-size: 11px;
   font-weight: 600;
-  padding: 4px 8px;
+  padding: 4px 10px;
   cursor: pointer;
-  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  transition: all 0.15s var(--ease-google);
   margin-left: auto;
   margin-right: 8px;
 }
 
 .sprint-chat-new-btn:hover {
-  background: rgba(205, 92, 92, 0.15);
-  color: #ffffff;
-  border-color: var(--accent);
+  background: rgba(205, 92, 92, 0.10);
+  color: #ffd1d1;
+  border-color: rgba(205, 92, 92, 0.3);
 }
 
 .sprint-modal-body {

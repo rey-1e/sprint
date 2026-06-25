@@ -611,8 +611,6 @@
       presets.forEach((p, idx) => {
         const btn = document.createElement('button');
         btn.className = 'sprint-chat-preset-btn';
-        // Enforced strict flex formatting and vertical margins on wrap
-        btn.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; margin-bottom: 2px;';
 
         const labelSpan = document.createElement('span');
         labelSpan.textContent = p.label;
@@ -620,67 +618,52 @@
         labelSpan.addEventListener('click', (e) => {
           e.stopPropagation();
           input.value = p.prompt;
+          input.dispatchEvent(new Event('input'));
           input.focus();
         });
         btn.appendChild(labelSpan);
 
-        const delBtn = document.createElement('span');
-        delBtn.innerHTML = '&times;';
-        delBtn.style.cssText = 'color: var(--text-muted); font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 12px; border-radius: 50%; transition: color 0.15s, background-color 0.15s; margin-left: 4px;';
-        delBtn.title = 'Delete Preset';
-        delBtn.addEventListener('mouseenter', () => {
-          delBtn.style.color = '#ef4444';
-          delBtn.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
-        });
-        delBtn.addEventListener('mouseleave', () => {
-          delBtn.style.color = 'var(--text-muted)';
-          delBtn.style.backgroundColor = 'transparent';
-        });
-        delBtn.addEventListener('click', (e) => {
+        const delBtnContainer = document.createElement('span');
+        delBtnContainer.className = 'sprint-chat-preset-del';
+        delBtnContainer.title = 'Delete Preset';
+
+        const delSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        delSvg.setAttribute("width", "8");
+        delSvg.setAttribute("height", "8");
+        delSvg.setAttribute("viewBox", "0 0 24 24");
+        delSvg.setAttribute("fill", "none");
+        delSvg.setAttribute("stroke", "currentColor");
+        delSvg.setAttribute("stroke-width", "3");
+        delSvg.setAttribute("stroke-linecap", "round");
+        delSvg.setAttribute("stroke-linejoin", "round");
+        delSvg.style.display = 'block';
+
+        const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line1.setAttribute("x1", "18");
+        line1.setAttribute("y1", "6");
+        line1.setAttribute("x2", "6");
+        line1.setAttribute("y2", "18");
+        const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line2.setAttribute("x1", "6");
+        line2.setAttribute("y1", "6");
+        line2.setAttribute("x2", "18");
+        line2.setAttribute("y2", "18");
+
+        delSvg.appendChild(line1);
+        delSvg.appendChild(line2);
+        delBtnContainer.appendChild(delSvg);
+
+        delBtnContainer.addEventListener('click', (e) => {
           e.stopPropagation();
           const updated = presets.filter((_, i) => i !== idx);
           chrome.storage.local.set({ chatPresets: updated }, () => {
             renderPresets(bar, input);
           });
         });
-        btn.appendChild(delBtn);
+        btn.appendChild(delBtnContainer);
 
         bar.appendChild(btn);
       });
-
-      // Add Preset button (Enforces styling matching wrapping layout)
-      const addBtn = document.createElement('button');
-      addBtn.className = 'sprint-chat-preset-btn';
-      addBtn.style.cssText = 'background: rgba(205, 92, 92, 0.12); border-color: rgba(205, 92, 92, 0.25); color: #ffd1d1; display: inline-flex; align-items: center; margin-bottom: 2px;';
-      addBtn.innerHTML = '+ Custom';
-      addBtn.title = 'Create Custom Preset';
-      addBtn.addEventListener('click', () => {
-        const label = prompt("Enter a short label for your custom pill (e.g., 🚀 Optimize):");
-        if (!label) return;
-        const promptText = prompt("Enter the prompt text associated with this pill:");
-        if (!promptText) return;
-
-        const updated = [...presets, { label, prompt: promptText }];
-        chrome.storage.local.set({ chatPresets: updated }, () => {
-          renderPresets(bar, input);
-        });
-      });
-      bar.appendChild(addBtn);
-
-      // Reset button (Enforces styling matching wrapping layout)
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'sprint-chat-preset-btn';
-      resetBtn.style.cssText = 'background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.05); color: var(--text-muted); display: inline-flex; align-items: center; margin-bottom: 2px;';
-      resetBtn.innerHTML = '↺ Reset';
-      resetBtn.title = 'Reset Presets to Default';
-      resetBtn.addEventListener('click', () => {
-        if (confirm("Are you sure you want to reset all preset pills back to default?")) {
-          chrome.storage.local.set({ chatPresets: defaultPresets }, () => {
-            renderPresets(bar, input);
-          });
-        }
-      });
-      bar.appendChild(resetBtn);
     });
   }
 
@@ -690,6 +673,8 @@
 
     activeSelectionContext = getDeepSelection();
     contextAddedToSession = false;
+
+    let input;
 
     const overlay = document.createElement('div');
     overlay.id = 'sprint-chat-overlay';
@@ -707,10 +692,10 @@
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("width", "14");
-    svg.setAttribute("height", "14");
+    svg.setAttribute("width", "16");
+    svg.setAttribute("height", "16");
     svg.setAttribute("stroke", "currentColor");
-    svg.setAttribute("stroke-width", "2.5");
+    svg.setAttribute("stroke-width", "2");
     svg.setAttribute("fill", "none");
     svg.setAttribute("stroke-linecap", "round");
     svg.setAttribute("stroke-linejoin", "round");
@@ -746,6 +731,10 @@
       contextAddedToSession = false;
       const indicator = shadow.getElementById('sprint-chat-context-indicator');
       if (indicator) indicator.style.display = 'none';
+      if (input) {
+        input.value = '';
+        input.style.height = '120px';
+      }
       renderChatHistory(historyContainer);
     });
 
@@ -753,12 +742,12 @@
     closeBtn.className = 'sprint-close-x';
 
     const closeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    closeSvg.setAttribute("width", "12");
-    closeSvg.setAttribute("height", "12");
+    closeSvg.setAttribute("width", "16");
+    closeSvg.setAttribute("height", "16");
     closeSvg.setAttribute("viewBox", "0 0 24 24");
     closeSvg.setAttribute("fill", "none");
     closeSvg.setAttribute("stroke", "currentColor");
-    closeSvg.setAttribute("stroke-width", "2.5");
+    closeSvg.setAttribute("stroke-width", "2");
     closeSvg.setAttribute("stroke-linecap", "round");
     closeSvg.setAttribute("stroke-linejoin", "round");
 
@@ -789,11 +778,13 @@
     if (activeSelectionContext && !contextAddedToSession) {
       const truncated = activeSelectionContext.length > 50 ? activeSelectionContext.substring(0, 50) + "..." : activeSelectionContext;
       contextIndicator.innerHTML = `
-        <span style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-          <strong>Context:</strong> <span style="opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(truncated)}</span>
+        <span style="display: flex; align-items: center; gap: 6px; overflow: hidden; min-width: 0;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <strong>Context:</strong> <span style="opacity:0.65; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(truncated)}</span>
         </span>
-        <button id="sprint-clear-context-btn" class="sprint-chat-context-close">&times;</button>
+        <button id="sprint-clear-context-btn" class="sprint-chat-context-close">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       `;
       contextIndicator.style.display = 'flex';
     }
@@ -819,24 +810,67 @@
     checkboxLabel.appendChild(checkboxText);
     optionsBar.appendChild(checkboxLabel);
 
+    // Preset management buttons (right side of options bar)
+    const optionsToolbar = document.createElement('div');
+    optionsToolbar.className = 'sprint-chat-options-toolbar';
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'sprint-chat-input-tool-btn';
+    addBtn.title = 'Add Custom Preset';
+    addBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+    addBtn.addEventListener('click', () => {
+      const label = prompt("Enter a short label for your custom pill (e.g., 🚀 Optimize):");
+      if (!label) return;
+      const promptText = prompt("Enter the prompt text associated with this pill:");
+      if (!promptText) return;
+      chrome.storage.local.get(['chatPresets'], (res) => {
+        const presets = res.chatPresets || defaultPresets;
+        const updated = [...presets, { label, prompt: promptText }];
+        chrome.storage.local.set({ chatPresets: updated }, () => {
+          renderPresets(presetsBar, input);
+        });
+      });
+    });
+
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'sprint-chat-input-tool-btn';
+    resetBtn.title = 'Reset Presets to Default';
+    resetBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>`;
+    resetBtn.addEventListener('click', () => {
+      if (confirm("Are you sure you want to reset all preset pills back to default?")) {
+        chrome.storage.local.set({ chatPresets: defaultPresets }, () => {
+          renderPresets(presetsBar, input);
+        });
+      }
+    });
+
+    optionsToolbar.appendChild(addBtn);
+    optionsToolbar.appendChild(resetBtn);
+    optionsBar.appendChild(optionsToolbar);
+
     const footer = document.createElement('div');
     footer.className = 'sprint-chat-footer';
 
-    const input = document.createElement('textarea');
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'sprint-chat-input-container';
+
+    input = document.createElement('textarea');
     input.placeholder = 'Ask anything...';
     input.className = 'sprint-chat-input';
 
     const sendBtn = document.createElement('button');
     sendBtn.className = 'sprint-chat-send-btn';
+    sendBtn.title = 'Send Message';
     sendBtn.innerHTML = `
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="22" y1="2" x2="11" y2="13"></line>
         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
       </svg>
     `;
 
-    footer.appendChild(input);
-    footer.appendChild(sendBtn);
+    inputContainer.appendChild(input);
+    inputContainer.appendChild(sendBtn);
+    footer.appendChild(inputContainer);
 
     modal.appendChild(header);
     modal.appendChild(body);
@@ -865,10 +899,19 @@
       const text = input.value.trim();
       if (!text) return;
       input.value = '';
+      input.style.height = '120px';
       sendMessage(text, historyContainer);
     };
 
     sendBtn.addEventListener('click', triggerSendMessage);
+    
+    // Auto-resizing textarea
+    const adjustInputHeight = () => {
+      input.style.height = 'auto';
+      const newHeight = Math.max(120, Math.min(input.scrollHeight + 2, 240));
+      input.style.height = `${newHeight}px`;
+    };
+    input.addEventListener('input', adjustInputHeight);
     
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -1005,7 +1048,7 @@
         const copyAllBtn = document.createElement('button');
         copyAllBtn.className = 'sprint-chat-copy-all-btn';
         copyAllBtn.innerHTML = `
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
