@@ -136,12 +136,6 @@ async function checkLimitAndRun(featureKey, limitVal, sendResponse, callback) {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === "API_COMPLEXINGS") {
-    checkLimitAndRun("complexity", 15, sendResponse, (wrappedResponse) => {
-      handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, wrappedResponse, true);
-    });
-    return true; 
-  }
   if (request.type === "API_COMPLEXITY") {
     checkLimitAndRun("complexity", 15, sendResponse, (wrappedResponse) => {
       handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, wrappedResponse, true);
