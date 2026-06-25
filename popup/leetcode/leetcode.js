@@ -25,61 +25,6 @@ function renderThemesSection(isPremium) {
   const existingOverlay = themes.querySelector('.themes-lock-overlay');
   if (existingOverlay) existingOverlay.remove();
   themes.classList.remove('premium-locked');
-
-  if (!isPremium) {
-    themes.classList.add('premium-locked');
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'themes-lock-overlay';
-    
-    const content = document.createElement('div');
-    content.className = 'lock-overlay-content';
-
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("width", "16");
-    svg.setAttribute("height", "16");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("fill", "none");
-    svg.setAttribute("stroke", "currentColor");
-    svg.setAttribute("stroke-width", "2.5");
-    svg.style.marginBottom = "4px";
-
-    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.setAttribute("x", "3");
-    rect.setAttribute("y", "11");
-    rect.setAttribute("width", "18");
-    rect.setAttribute("height", "11");
-    rect.setAttribute("rx", "2");
-    rect.setAttribute("ry", "2");
-
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", "M7 11V7a5 5 0 0 1 10 0v4");
-
-    svg.appendChild(rect);
-    svg.appendChild(path);
-
-    const lockText = document.createElement('span');
-    lockText.textContent = "Premium Themes Locked";
-
-    const ctaBtn = document.createElement('a');
-    ctaBtn.id = 'lock-cta-btn';
-    ctaBtn.className = 'btn-lock-upgrade';
-    ctaBtn.href = 'https://getsprint.me/payments/index.html';
-    ctaBtn.textContent = 'Upgrade Now';
-
-    content.appendChild(svg);
-    content.appendChild(lockText);
-    content.appendChild(ctaBtn);
-    overlay.appendChild(content);
-
-    themes.style.position = 'relative';
-    themes.appendChild(overlay);
-    
-    ctaBtn.addEventListener('click', (e) => { 
-      e.preventDefault(); 
-      chrome.tabs.create({ url: ctaBtn.href }); 
-    });
-  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -135,7 +80,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   dots.forEach(dot => {
     dot.addEventListener('click', async () => {
-      if (!isPremium && dot.dataset.theme !== 'default') return;
       const { theme, display } = dot.dataset;
       document.querySelector('.dot.active')?.classList.remove('active');
       dot.classList.add('active');

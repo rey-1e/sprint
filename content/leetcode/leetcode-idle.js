@@ -215,18 +215,7 @@ async function injectTags() {
 
 function findSubmissionTargetDiv() {
   const boxes = document.querySelectorAll('div.flex.w-full.flex-col.gap-2.rounded-lg.border.p-3, div[class*="rounded-lg"][class*="border"]');
-  let target = Array.from(boxes).find(d => d.textContent.includes('Runtime') || d.textContent.includes('Memory'));
-  if (target) return target;
-
-  const divs = document.querySelectorAll('div');
-  for (const div of divs) {
-    if (div.children.length >= 2 && div.textContent.includes('Runtime') && div.textContent.includes('Memory')) {
-      if (div.classList.contains('border') || div.classList.contains('rounded-lg') || div.querySelector('[class*="bg-"]')) {
-        return div;
-      }
-    }
-  }
-  return null;
+  return Array.from(boxes).find(d => d.textContent.includes('Runtime') && d.textContent.includes('Memory'));
 }
 
 function injectSubmissionAnalysisUI() {
@@ -446,8 +435,9 @@ function injectAll() {
   if (injectionsDisabled) return;
   injectTags();
   
+  const isSubmissionPage = /\/submissions\/\d+/.test(window.location.pathname) || /\/submissions\/detail\/\d+/.test(window.location.pathname);
   const hasSubmissionBox = !!findSubmissionTargetDiv();
-  if (window.location.pathname.includes('/submissions/') || hasSubmissionBox) {
+  if (isSubmissionPage && hasSubmissionBox) {
     injectSubmissionAnalysisUI();
   }
   injectRedirectPills();
@@ -497,8 +487,9 @@ const obs = new MutationObserver((mutations) => {
   debounce = setTimeout(() => {
     if (!document.getElementById('custom-company-tags')) injectTags();
     
+    const isSubmissionPage = /\/submissions\/\d+/.test(window.location.pathname) || /\/submissions\/detail\/\d+/.test(window.location.pathname);
     const hasSubmissionBox = !!findSubmissionTargetDiv();
-    if (!document.getElementById('sprint-submission-analysis') && (window.location.pathname.includes('/submissions/') || hasSubmissionBox)) {
+    if (!document.getElementById('sprint-submission-analysis') && isSubmissionPage && hasSubmissionBox) {
       injectSubmissionAnalysisUI();
     }
     if (!document.getElementById('sprint-google-editor-pill')) injectRedirectPills();

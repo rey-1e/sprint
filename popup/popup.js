@@ -32,6 +32,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Navigation pill logic to codeforces.html
+  const codeforcesPill = document.getElementById('codeforces-pill');
+  if (codeforcesPill) {
+    codeforcesPill.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'codeforces/codeforces.html';
+    });
+  }
+
   // Dual-view transition panel mappings
   const settingsToggleBtn = document.getElementById('settings-toggle-btn');
   const settingsBackBtn = document.getElementById('settings-back-btn');

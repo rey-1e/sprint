@@ -1,0 +1,15 @@
+/* ==========================================
+   CODEFORCES ZENITH — STRUCTURAL THEME ENGINE
+   Color palettes served from sprint-server.
+   This file contains only structural inversion
+   rules and fallback defaults.
+   ========================================== */
+
+/* Fallback variable defaults (overridden by server-served CSS) */
+html[data-theme]:not([data-theme="light"]) {
+  --bg-input: #e5efff;
+  --card-input: #d1def4;
+  --accent-input: #0000a1;
+  --text-input: #000000;
+  --border-input: #b2c3db;
+}

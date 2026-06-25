@@ -164,7 +164,7 @@
       selectionPopup = document.createElement('div');
       selectionPopup.id = 'sprint-selection-popup';
       
-      const boundedX = Math.max(10, Math.min(window.innerWidth - 130, x));
+      const boundedX = Math.max(10, Math.min(window.innerWidth - 165, x));
       const boundedY = Math.max(10, Math.min(window.innerHeight - 50, y));
       selectionPopup.style.left = `${boundedX}px`;
       selectionPopup.style.top = `${boundedY}px`;
@@ -179,10 +179,31 @@
         <button class="sprint-selection-btn" id="sel-btn-chat" title="sprintAI Chat">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </button>
+        <button class="sprint-selection-btn" id="sel-btn-copy" title="Copy Text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </button>
       `;
 
       shadow.appendChild(selectionPopup);
       selectionPopup.style.pointerEvents = 'auto';
+
+      shadow.getElementById('sel-btn-copy').addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(selectedText).then(() => {
+          const btn = shadow.getElementById('sel-btn-copy');
+          if (btn) {
+            btn.style.color = 'var(--text-success)';
+            setTimeout(() => {
+              btn.style.color = '';
+            }, 1000);
+          }
+        }).catch(err => {
+          console.error("Sprint Copy selection failed:", err);
+        });
+      });
 
       shadow.getElementById('sel-btn-complexity').addEventListener('click', (e) => {
         e.stopPropagation();

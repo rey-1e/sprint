@@ -44,8 +44,9 @@ chrome.commands.onCommand.addListener((command) => {
 
 async function handleApiRequest(url, payload, sendResponse, requiresAuth = false) {
   try {
-    const storage = await chrome.storage.local.get(['authToken']);
+    const storage = await chrome.storage.local.get(['authToken', 'isPremium']);
     const token = storage.authToken || "";
+    const isPremium = storage.isPremium === true || storage.isPremium === 'true';
 
     if (requiresAuth && !token) {
       sendResponse({ success: false, authRequired: true, error: "Authentication required. Please log in." });
@@ -57,7 +58,7 @@ async function handleApiRequest(url, payload, sendResponse, requiresAuth = false
       'X-Client-Version': '3.0'
     };
 
-    if (token) {
+    if (token && (requiresAuth || isPremium)) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
@@ -90,32 +91,86 @@ async function handleApiRequest(url, payload, sendResponse, requiresAuth = false
   }
 }
 
+async function checkLimitAndRun(featureKey, limitVal, sendResponse, callback) {
+  try {
+    const storage = await chrome.storage.local.get(['isPremium', 'usageLimits']);
+    const isPremium = storage.isPremium === true || storage.isPremium === 'true';
+
+    if (isPremium) {
+      callback(sendResponse);
+      return;
+    }
+
+    const today = new Date().toLocaleDateString();
+    let usageLimits = storage.usageLimits || {};
+    
+    if (!usageLimits[featureKey] || usageLimits[featureKey].date !== today) {
+      usageLimits[featureKey] = {
+        count: 0,
+        date: today
+      };
+    }
+
+    if (usageLimits[featureKey].count >= limitVal) {
+      sendResponse({ success: false, limitReached: true, error: "Daily usage limits reached. Click here to upgrade at getsprint.me/payments." });
+      return;
+    }
+
+    const wrappedSendResponse = async (response) => {
+      if (response && response.success) {
+        usageLimits[featureKey].count += 1;
+        await chrome.storage.local.set({ usageLimits });
+      }
+      sendResponse(response);
+    };
+
+    callback(wrappedSendResponse);
+  } catch (err) {
+    console.error("Sprint limit check error:", err);
+    callback(sendResponse);
+  }
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "API_COMPLEXINGS") {
-    handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse, true);
+    checkLimitAndRun("complexity", 15, sendResponse, (wrappedResponse) => {
+      handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, wrappedResponse, true);
+    });
     return true; 
   }
   if (request.type === "API_COMPLEXITY") {
-    handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, sendResponse, true);
+    checkLimitAndRun("complexity", 15, sendResponse, (wrappedResponse) => {
+      handleApiRequest('https://analyze-i6ptizncma-uc.a.run.app', { code: request.code }, wrappedResponse, true);
+    });
     return true; 
   }
   if (request.type === "API_FIND_BUG") {
-    handleApiRequest('https://findmybug-i6ptizncma-uc.a.run.app', {
-      code: request.code,
-      problemTitle: request.problemTitle,
-      problemContext: request.problemContext
-    }, sendResponse, true);
+    checkLimitAndRun("bug", 7, sendResponse, (wrappedResponse) => {
+      handleApiRequest('https://findmybug-i6ptizncma-uc.a.run.app', {
+        code: request.code,
+        problemTitle: request.problemTitle,
+        problemContext: request.problemContext
+      }, wrappedResponse, true);
+    });
     return true;
   }
   if (request.type === "API_CHAT") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/sprintAIChat', {
-      message: request.message,
-      history: request.history
-    }, sendResponse, true);
+    checkLimitAndRun("chat", 10, sendResponse, (wrappedResponse) => {
+      handleApiRequest('https://sprintaichat-i6ptizncma-uc.a.run.app', {
+        message: request.message,
+        history: request.history
+      }, wrappedResponse, true);
+    });
     return true;
   }
   if (request.type === "FETCH_THEME") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/getTheme', {
+    handleApiRequest('https://gettheme-i6ptizncma-uc.a.run.app', {
+      themeName: request.theme
+    }, sendResponse, false);
+    return true;
+  }
+  if (request.type === "FETCH_CF_THEME") {
+    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/getCodeforcesTheme', {
       themeName: request.theme
     }, sendResponse, false);
     return true;
@@ -123,11 +178,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "FETCH_DETAILED_ANALYSIS") {
     handleApiRequest('https://analyzedetailed-i6ptizncma-uc.a.run.app', {
       code: request.code
-    }, sendResponse, true);
+    }, sendResponse, false);
     return true;
   }
   if (request.type === "SYNC_USER") {
-    handleApiRequest('https://us-central1-sprint-87863.cloudfunctions.net/syncUser', {}, sendResponse, true);
+    handleApiRequest('https://syncuser-i6ptizncma-uc.a.run.app', {}, sendResponse, true);
     return true;
   }
   if (request.type === "GET_QUESTION_ID") {

@@ -213,7 +213,6 @@
       await chrome.storage.local.remove('cachedThemeCSS');
       return;
     }
-
     chrome.runtime.sendMessage({ type: "FETCH_THEME", theme }, async (res) => {
       if (res?.success && res.data?.fullCSS) {
         document.documentElement.setAttribute('data-lc-theme', theme);
@@ -221,33 +220,7 @@
         injectSecureStyle(res.data.fullCSS);
         await chrome.storage.local.set({ cachedThemeCSS: res.data.fullCSS });
       } else {
-        const isNetworkOrServerError = res && res.error && (
-          res.error.includes("Connection failed") || 
-          res.error.includes("Server error: 5")
-        );
-
-        if (isNetworkOrServerError) {
-          console.warn("Sprint Theme Sync: Temporary server or connection error. Preserving cached theme.");
-          return;
-        }
-
-        // Check if premium validation exists in local storage
-        const localStore = await chrome.storage.local.get(['isPremium']);
-        const isPrem = localStore.isPremium === true || localStore.isPremium === 'true';
-
-        if (!isPrem) {
-          clearSecureStyle();
-          await chrome.storage.local.remove('cachedThemeCSS');
-          await chrome.storage.local.set({ leetcodeTheme: 'default' });
-          savedTheme = 'default';
-          
-          if (!isBgCheck && theme !== 'default') {
-            alert("Premium is required to use Custom Themes!");
-            window.open('https://getsprint.me/payments', '_blank');
-          }
-        } else {
-          console.warn("Sprint Theme Sync: Theme download failed, but local Premium status is verified.");
-        }
+        console.warn("Sprint Theme Sync: Theme download failed.");
       }
     });
   }
