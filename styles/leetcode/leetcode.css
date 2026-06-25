@@ -16,37 +16,38 @@
 }
 
 .company-tag {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    color: #FAFAFA !important;
-    padding: 4px 8px !important;
-    border-radius: 12px !important;
-    font-size: 12px !important;
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: rgba(250, 250, 250, 0.9) !important;
+    padding: 4px 9px !important;
+    border-radius: 100px !important;
+    font-size: 11.5px !important;
     font-weight: 500 !important;
     white-space: nowrap !important; 
     transition: background-color 0.15s;
-    flex-shrink: 0 !important; /* Keep tags structural shape */
+    flex-shrink: 0 !important;
+    letter-spacing: 0.005em !important;
 }
 
 .company-tag:hover {
-    background-color: rgba(255, 255, 255, 0.12) !important;
+    background-color: rgba(255, 255, 255, 0.10) !important;
 }
 
 .sprint-ai-analysis {
     background-color: #1e1e20 !important;
     padding: 16px !important;
     border-radius: 12px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
     width: 100%;
     margin-bottom: 16px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 13px !important;
-    line-height: 1.5;
+    line-height: 1.55;
     box-sizing: border-box;
 }
 
 .sprint-ai-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.sprint-ai-tabs { display: flex; gap: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); width: 100%; padding-bottom: 8px; }
+.sprint-ai-tabs { display: flex; gap: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); width: 100%; padding-bottom: 8px; }
 .sprint-ai-tab {
     color: #a1a1aa;
     cursor: pointer;          
@@ -58,8 +59,9 @@
     position: relative;
     padding-bottom: 8px;
     user-select: none;
+    letter-spacing: 0.005em;
 }
-.sprint-ai-tab:hover { color: #ffffff; }
+.sprint-ai-tab:hover { color: #d4d4d8; }
 .sprint-ai-tab.active { color: #CD5C5C; }
 .sprint-ai-tab.active::after {
     content: '';
@@ -69,58 +71,60 @@
     right: 0;
     height: 2px;
     background-color: #CD5C5C;
+    border-radius: 1px;
 }
 
 .sprint-ai-summary {
     font-size: 13px;
     line-height: 1.6;
     padding: 10px 14px;
-    background: rgba(205, 92, 92, 0.08);
-    border-left: 3px solid #CD5C5C;
-    border-radius: 0 6px 6px 0;
+    background: rgba(205, 92, 92, 0.06);
+    border-left: 2px solid rgba(205, 92, 92, 0.7);
+    border-radius: 0 8px 8px 0;
     margin-bottom: 14px;
-    color: #ffd1d1;
+    color: rgba(255, 209, 209, 0.85);
 }
 
 .sprint-ai-summary-muted {
     font-size: 13px;
     line-height: 1.6;
     padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.03);
-    border-left: 3px solid #a1a1aa;
-    border-radius: 0 6px 6px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 2px solid rgba(161, 161, 170, 0.4);
+    border-radius: 0 8px 8px 0;
     margin-bottom: 14px;
-    color: #a1a1aa;
+    color: rgba(161, 161, 170, 0.8);
 }
 
 .sprint-ai-grid { display: grid; grid-template-columns: 100px 1fr; gap: 12px 16px; align-items: flex-start; }
-.sprint-ai-label { color: #a1a1aa; font-weight: 500; font-size: 12.5px; }
-.sprint-ai-val { color: #ffffff; font-size: 13px; line-height: 1.4; }
+.sprint-ai-label { color: rgba(161, 161, 170, 0.75); font-weight: 500; font-size: 12.5px; letter-spacing: 0.005em; }
+.sprint-ai-val { color: rgba(255, 255, 255, 0.9); font-size: 13px; line-height: 1.45; }
 .sprint-ai-content { animation: sprintFadeIn 0.15s ease-out forwards; }
 
 @keyframes sprintFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .sprint-pill-editor-btn {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    color: rgba(255, 255, 255, 0.8) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     padding: 0 12px !important;
-    border-radius: 4px !important;
-    font-size: 12px !important;
+    border-radius: 100px !important;
+    font-size: 11.5px !important;
     font-weight: 500 !important;
     text-decoration: none !important;
     transition: all 0.15s !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    height: 28px !important;
+    height: 26px !important;
     box-sizing: border-box !important;
     align-self: center !important;
     margin-left: auto !important;
     margin-right: 12px !important;
+    letter-spacing: 0.005em !important;
 }
 .sprint-pill-editor-btn:hover {
-    background-color: rgba(255, 255, 255, 0.14) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.22) !important;
+    background-color: rgba(255, 255, 255, 0.10) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
 }
