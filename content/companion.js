@@ -22,60 +22,10 @@
   const uiContainer = document.createElement('div');
   uiContainer.id = 'sprint-shadow-container';
 
-  // Draggable sphere trigger
-  const sphere = document.createElement('div');
-  sphere.id = 'sprint-sphere';
-  sphere.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-    </svg>
-  `;
-
-  // Sphere Close Button
-  const sphereCloseBtn = document.createElement('div');
-  sphereCloseBtn.id = 'sprint-sphere-close';
-  sphereCloseBtn.innerHTML = '&times;';
-  sphere.appendChild(sphereCloseBtn);
-
-  // Floating Action Panel
-  const actionPanel = document.createElement('div');
-  actionPanel.id = 'sprint-vertical-panel';
-
-  const buttonsData = [
-    {
-      id: 'btn-complexity',
-      tooltip: 'Analyze Complexity',
-      svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
-    },
-    {
-      id: 'btn-bug',
-      tooltip: 'Find My Bug',
-      svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`
-    },
-    {
-      id: 'btn-chat',
-      tooltip: 'sprintAI Chat',
-      svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`
-    }
-  ];
-
-  buttonsData.forEach(data => {
-    const btn = document.createElement('button');
-    btn.className = 'sprint-icon-btn';
-    btn.id = data.id;
-    btn.innerHTML = `
-      ${data.svg}
-      <span class="sprint-tooltip">${data.tooltip}</span>
-    `;
-    actionPanel.appendChild(btn);
-  });
-
   // Toast Container
   const toastContainer = document.createElement('div');
   toastContainer.id = 'sprint-toast-container';
 
-  uiContainer.appendChild(sphere);
-  uiContainer.appendChild(actionPanel);
   uiContainer.appendChild(toastContainer);
   shadow.appendChild(uiContainer);
 
@@ -368,6 +318,79 @@
     toast.querySelector('.sprint-toast-close').addEventListener('click', closeSelf);
     const timeout = setTimeout(closeSelf, 4000);
     toast.dataset.timeout = timeout;
+  }
+
+  function getHoursUntilReset() {
+    const nextMidnight = new Date();
+    nextMidnight.setUTCHours(24, 0, 0, 0);
+    const diffMs = nextMidnight.getTime() - Date.now();
+    return Math.max(1, Math.round(diffMs / (1000 * 60 * 60)));
+  }
+
+  function createLimitReachedWarning() {
+    const toast = document.createElement('div');
+    toast.className = 'sprint-toast';
+    
+    const hoursRemaining = getHoursUntilReset();
+
+    toast.innerHTML = `
+      <div class="sprint-toast-header">
+        <span>Limit Reached</span>
+        <button class="sprint-toast-close">&times;</button>
+      </div>
+      <div class="complexity-container" style="padding: 12px 16px 16px;">
+        <div class="complexity-item" style="gap: 10px; align-items: flex-start;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span style="font-weight: 600; font-family: var(--font-google); color: var(--text-warning); font-size: 13px; line-height: 1.5; text-align: left;">
+            Limits will reset in ${hoursRemaining} hours. <a href="https://getsprint.me/payments" target="_blank" style="color: var(--accent); text-decoration: underline; font-weight: 700;">Get Unlimited at $0.15</a>
+          </span>
+        </div>
+      </div>
+      <div class="sprint-toast-progress-bar" style="background-color: var(--text-warning);"></div>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 50);
+
+    const progressBar = toast.querySelector('.sprint-toast-progress-bar');
+    progressBar.style.animation = 'shrinkWidth 4s linear forwards';
+
+    const closeSelf = () => {
+      toast.classList.add('slide-out');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    };
+
+    toast.querySelector('.sprint-toast-close').addEventListener('click', closeSelf);
+    const timeout = setTimeout(closeSelf, 4000);
+    toast.dataset.timeout = timeout;
+  }
+
+  function checkLimitAndRunFeature(featureKey, limitVal, callback) {
+    chrome.storage.local.get(['isPremium', 'usageLimits'], (storage) => {
+      const isPremium = storage.isPremium === true || storage.isPremium === 'true';
+      if (isPremium) {
+        callback();
+        return;
+      }
+
+      const today = new Date().toISOString().slice(0, 10);
+      const usageLimits = storage.usageLimits || {};
+      const limitInfo = usageLimits[featureKey];
+
+      if (limitInfo && limitInfo.date === today && limitInfo.count >= limitVal) {
+        createLimitReachedWarning();
+        return;
+      }
+
+      callback();
+    });
   }
 
   function closeBugModal() {
@@ -1024,43 +1047,45 @@
       return;
     }
 
-    const toast = createToast("Complexity Analysis", "Analyzing selection...", "...", "...", false, false);
+    checkLimitAndRunFeature("complexity", 15, () => {
+      const toast = createToast("Complexity Analysis", "Analyzing selection...", "...", "...", false, false);
 
-    chrome.runtime.sendMessage({ type: "API_COMPLEXITY", code }, (res) => {
-      if (res?.authRequired) {
-        if (toast) toast.remove();
-        alert("You need to log in to use AI features!");
-        window.open("https://getsprint.me/login", "_blank");
-        return;
-      }
-
-      if (!toast) return;
-
-      const timeSpan = toast.querySelector('.complexity-container .complexity-item:nth-child(1) .complexity-value');
-      const spaceSpan = toast.querySelector('.complexity-container .complexity-item:nth-child(2) .complexity-value');
-      const statusDiv = toast.querySelector('.complexity-status');
-
-      if (res?.success) {
-        timeSpan.textContent = res.data.time || 'N/A';
-        spaceSpan.textContent = res.data.space || 'N/A';
-        statusDiv.textContent = 'Analysis Complete';
-        statusDiv.style.color = 'var(--text-success)';
-      } else {
-        // Formats upgrade warnings user friendly, offering clean redirects on 403 blocks
-        if (res?.premiumRequired || res?.error?.includes("403")) {
-          timeSpan.textContent = 'Err';
-          spaceSpan.textContent = 'Err';
-          statusDiv.innerHTML = `Upgrade Required: <a href="https://getsprint.me/payments" target="_blank" style="color: var(--accent); text-decoration: underline; font-weight:600;">Upgrade Now</a>`;
-          statusDiv.style.color = 'var(--text-warning)';
-        } else {
-          timeSpan.textContent = 'Err';
-          spaceSpan.textContent = 'Err';
-          statusDiv.textContent = res?.error || 'Analysis Failed';
-          statusDiv.style.color = 'var(--text-warning)';
+      chrome.runtime.sendMessage({ type: "API_COMPLEXITY", code }, (res) => {
+        if (res?.authRequired) {
+          if (toast) toast.remove();
+          alert("You need to log in to use AI features!");
+          window.open("https://getsprint.me/login", "_blank");
+          return;
         }
-      }
 
-      finalizeToast(toast);
+        if (!toast) return;
+
+        const timeSpan = toast.querySelector('.complexity-container .complexity-item:nth-child(1) .complexity-value');
+        const spaceSpan = toast.querySelector('.complexity-container .complexity-item:nth-child(2) .complexity-value');
+        const statusDiv = toast.querySelector('.complexity-status');
+
+        if (res?.success) {
+          timeSpan.textContent = res.data.time || 'N/A';
+          spaceSpan.textContent = res.data.space || 'N/A';
+          statusDiv.textContent = 'Analysis Complete';
+          statusDiv.style.color = 'var(--text-success)';
+          finalizeToast(toast);
+        } else {
+          toast.remove();
+          if (res?.limitReached || res?.premiumRequired || res?.error?.includes("403") || res?.error?.toLowerCase().includes("limit")) {
+            chrome.storage.local.get(['usageLimits'], (store) => {
+              const usageLimits = store.usageLimits || {};
+              const today = new Date().toISOString().slice(0, 10);
+              usageLimits["complexity"] = { count: 15, date: today };
+              chrome.storage.local.set({ usageLimits });
+            });
+            createLimitReachedWarning();
+          } else {
+            // Show error as a temporary toast
+            const errToast = createToast("Complexity Analysis", res?.error || 'Analysis Failed', "Err", "Err", true, true);
+          }
+        }
+      });
     });
   }
 
@@ -1071,210 +1096,66 @@
       return;
     }
 
-    openBugModal("Analyzing Code Logic...", "Consulting AI model to scan for anomalies...");
+    checkLimitAndRunFeature("bug", 7, () => {
+      openBugModal("Analyzing Code Logic...", "Consulting AI model to scan for anomalies...");
 
-    chrome.runtime.sendMessage({
-      type: "API_FIND_BUG",
-      code,
-      problemTitle: document.title,
-      problemContext: `Host context: ${window.location.hostname}`
-    }, (res) => {
-      if (res?.authRequired) {
-        closeBugModal();
-        alert("You need to log in to use AI features!");
-        window.open("https://getsprint.me/login", "_blank");
-        return;
-      }
-
-      const titleEl = shadow.getElementById('wrong-title');
-      const container = shadow.getElementById('wrong-feedback-container');
-      if (!container || !titleEl) return;
-
-      container.innerHTML = '';
-
-      if (res?.success) {
-        titleEl.textContent = 'Issue Found';
-        titleEl.style.color = '#b56363';
-        
-        const rawText = (res.data.feedback || "No major logical issues found.").trim();
-        const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-        
-        lines.forEach((line) => {
-          const p = document.createElement('p');
-          p.style.marginBottom = '10px';
-          p.style.color = '#a1a1aa';
-          
-          if (line.startsWith('-')) {
-            p.textContent = `• ${line.substring(1).trim()}`;
-          } else {
-            p.textContent = line;
-          }
-          container.appendChild(p);
-        });
-      } else {
-        // Friendly visual representation for 403 Premium Required blocks inside bugs Modal
-        if (res?.premiumRequired || res?.error?.includes("403")) {
-          titleEl.textContent = 'Upgrade Required';
-          titleEl.style.color = 'var(--accent)';
-          
-          const p = document.createElement('p');
-          p.innerHTML = `This feature requires a premium account. Please <a href="https://getsprint.me/payments" target="_blank" style="color: var(--accent); text-decoration: underline; font-weight: 600;">Upgrade to Premium ⚡</a> to scan for bugs.`;
-          container.appendChild(p);
-        } else {
-          titleEl.textContent = 'Analysis Failed';
-          titleEl.style.color = '#f87171';
-          
-          const p = document.createElement('p');
-          p.textContent = res?.error || "Could not reach analysis model.";
-          container.appendChild(p);
+      chrome.runtime.sendMessage({
+        type: "API_FIND_BUG",
+        code,
+        problemTitle: document.title,
+        problemContext: `Host context: ${window.location.hostname}`
+      }, (res) => {
+        if (res?.authRequired) {
+          closeBugModal();
+          alert("You need to log in to use AI features!");
+          window.open("https://getsprint.me/login", "_blank");
+          return;
         }
-      }
-    });
-  }
 
-  // Drag Physics inside Window boundaries
-  let isDragging = false;
-  let startY = 0;
-  let startX = 0;
-  let startBottom = 24;
-  let startRight = 24;
-  let hoverTimeout = null;
+        if (res?.success) {
+          const titleEl = shadow.getElementById('wrong-title');
+          const container = shadow.getElementById('wrong-feedback-container');
+          if (!container || !titleEl) return;
 
-  const showPanel = () => {
-    if (isDragging) return;
-    clearTimeout(hoverTimeout);
-    
-    const s = shadow.getElementById('sprint-sphere');
-    if (s && !s.classList.contains('sprint-companion-hidden')) {
-      actionPanel.classList.add('visible');
-    }
-  };
-
-  const hidePanel = () => {
-    hoverTimeout = setTimeout(() => {
-      actionPanel.classList.remove('visible');
-    }, 250);
-  };
-
-  sphere.addEventListener('mouseenter', showPanel);
-  sphere.addEventListener('mouseleave', hidePanel);
-  actionPanel.addEventListener('mouseenter', showPanel);
-  actionPanel.addEventListener('mouseleave', hidePanel);
-
-  sphere.addEventListener('pointerdown', (e) => {
-    isDragging = false;
-    startY = e.clientY;
-    startX = e.clientX;
-    const computed = window.getComputedStyle(sphere);
-    startBottom = parseInt(computed.bottom) || 24;
-    startRight = parseInt(computed.right) || 24;
-    sphere.setPointerCapture(e.pointerId);
-  });
-
-  sphere.addEventListener('pointermove', (e) => {
-    if (e.buttons !== 1) return;
-    const deltaY = startY - e.clientY; 
-    const deltaX = startX - e.clientX;
-
-    if (Math.abs(deltaY) > 6 || Math.abs(deltaX) > 6) {
-      isDragging = true;
-      actionPanel.classList.remove('visible');
-      
-      const computedRight = startRight + deltaX;
-      const computedBottom = startBottom + deltaY;
-      
-      const boundedRight = Math.max(10, Math.min(window.innerWidth - 60, computedRight));
-      const boundedBottom = Math.max(10, Math.min(window.innerHeight - 60, computedBottom));
-
-      sphere.style.right = `${boundedRight}px`;
-      sphere.style.bottom = `${boundedBottom}px`;
-      
-      actionPanel.style.right = `${boundedRight}px`;
-      actionPanel.style.bottom = `${boundedBottom + 48}px`;
-    }
-  });
-
-  sphere.addEventListener('pointerup', (e) => {
-    sphere.releasePointerCapture(e.pointerId);
-    if (!isDragging) {
-      actionPanel.classList.add('visible');
-    }
-    setTimeout(() => { isDragging = false; }, 50);
-  });
-
-  sphereCloseBtn.addEventListener('pointerdown', (e) => {
-    e.stopPropagation();
-  });
-
-  sphereCloseBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    chrome.storage.local.get('options', (res) => {
-      const currentOpts = res.options || [];
-      const updated = currentOpts.map(o => {
-        return o.optionName === 'showSphere' ? { optionName: 'showSphere', checked: false } : o;
-      });
-      chrome.storage.local.set({ options: updated }, () => {
-        applyShowSphereOption(updated);
-        chrome.runtime.sendMessage({ action: 'applyVisibilityOptions', options: updated });
+          container.innerHTML = '';
+          titleEl.textContent = 'Issue Found';
+          titleEl.style.color = '#b56363';
+          
+          const rawText = (res.data.feedback || "No major logical issues found.").trim();
+          const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+          
+          lines.forEach((line) => {
+            const p = document.createElement('p');
+            p.style.marginBottom = '10px';
+            p.style.color = '#a1a1aa';
+            
+            if (line.startsWith('-')) {
+              p.textContent = `• ${line.substring(1).trim()}`;
+            } else {
+              p.textContent = line;
+            }
+            container.appendChild(p);
+          });
+        } else {
+          closeBugModal();
+          if (res?.limitReached || res?.premiumRequired || res?.error?.includes("403") || res?.error?.toLowerCase().includes("limit")) {
+            chrome.storage.local.get(['usageLimits'], (store) => {
+              const usageLimits = store.usageLimits || {};
+              const today = new Date().toISOString().slice(0, 10);
+              usageLimits["bug"] = { count: 7, date: today };
+              chrome.storage.local.set({ usageLimits });
+            });
+            createLimitReachedWarning();
+          } else {
+            // Show error as a temporary toast warning instead of leaving modal broken
+            const errToast = createToast("Debugger Analysis", res?.error || 'Analysis Failed', "Err", "Err", true, true);
+          }
+        }
       });
     });
-  });
-
-  shadow.getElementById('btn-complexity').addEventListener('click', () => {
-    checkAuthAndRun(() => {
-      performComplexityAnalysis();
-    });
-    actionPanel.classList.remove('visible');
-  });
-
-  shadow.getElementById('btn-bug').addEventListener('click', () => {
-    checkAuthAndRun(() => {
-      const modalContainer = shadow.getElementById('sprint-custom-overlay');
-      if (modalContainer) {
-        closeBugModal();
-      } else {
-        performBugCheck();
-      }
-    });
-    actionPanel.classList.remove('visible');
-  });
-
-  shadow.getElementById('btn-chat').addEventListener('click', () => {
-    checkAuthAndRun(() => {
-      const modalContainer = shadow.getElementById('sprint-chat-overlay');
-      if (modalContainer) {
-        closeChatModal();
-      } else {
-        openChatModal();
-      }
-    });
-    actionPanel.classList.remove('visible');
-  });
-
-  function applyShowSphereOption(options) {
-    const showSphereOpt = options?.find(o => o.optionName === 'showSphere');
-    const show = showSphereOpt ? showSphereOpt.checked : true;
-    const s = shadow.getElementById('sprint-sphere');
-    const p = shadow.getElementById('sprint-vertical-panel');
-    if (s && p) {
-      if (show) {
-        s.classList.remove('sprint-companion-hidden');
-      } else {
-        s.classList.add('sprint-companion-hidden');
-        p.classList.remove('visible');
-      }
-    }
   }
-
-  chrome.storage.local.get('options', (res) => {
-    applyShowSphereOption(res?.options);
-  });
 
   chrome.runtime.onMessage.addListener((request) => {
-    if (request.action === "applyVisibilityOptions") {
-      applyShowSphereOption(request.options);
-    }
     if (request.type === "TRIGGER_ACTION") {
       const code = request.code || getDeepSelection();
       
@@ -1310,18 +1191,11 @@
     }
   });
 
-  chrome.storage.onChanged.addListener((changes) => {
-    if (changes.options) {
-      applyShowSphereOption(changes.options.newValue);
-    }
-  });
-
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeBugModal();
       closeChatModal();
       removeSelectionPopupEl();
-      actionPanel.classList.remove('visible');
       const toasts = toastContainer.querySelectorAll('.sprint-toast');
       toasts.forEach(t => {
         t.classList.add('slide-out');

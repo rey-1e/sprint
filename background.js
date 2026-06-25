@@ -101,7 +101,7 @@ async function checkLimitAndRun(featureKey, limitVal, sendResponse, callback) {
       return;
     }
 
-    const today = new Date().toLocaleDateString();
+    const today = new Date().toISOString().slice(0, 10);
     let usageLimits = storage.usageLimits || {};
     
     if (!usageLimits[featureKey] || usageLimits[featureKey].date !== today) {
@@ -119,6 +119,10 @@ async function checkLimitAndRun(featureKey, limitVal, sendResponse, callback) {
     const wrappedSendResponse = async (response) => {
       if (response && response.success) {
         usageLimits[featureKey].count += 1;
+        await chrome.storage.local.set({ usageLimits });
+      } else if (response && (response.limitReached || response.premiumRequired || response.error?.includes("403") || response.error?.toLowerCase().includes("limit"))) {
+        usageLimits[featureKey].count = limitVal;
+        usageLimits[featureKey].date = today;
         await chrome.storage.local.set({ usageLimits });
       }
       sendResponse(response);

@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   let { options } = await chrome.storage.local.get('options');
 
   const defaultOptions = [
-    { optionName: 'showSphere', checked: true },
     { optionName: 'removeSelectionPopup', checked: false }
   ];
 

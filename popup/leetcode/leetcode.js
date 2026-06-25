@@ -94,7 +94,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const defaultOptions = [
     { optionName: 'removeInjections', checked: false },
-    { optionName: 'showSphere', checked: true },
     { optionName: 'removeSelectionPopup', checked: false },
     { optionName: 'locked', checked: true }, { optionName: 'highlight', checked: false },
     { optionName: 'solved', checked: true }, { optionName: 'status', checked: true },
